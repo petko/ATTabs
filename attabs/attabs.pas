@@ -497,6 +497,9 @@ type
     function GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
     function GetInitialVerticalIndent: integer;
     function GetButtonsEmpty: boolean;
+    function GetTabBgColor_Passive(AIndex: integer): TColor;
+    function GetTabBgColor_Active(AIndex: integer): TColor;
+    function GetTabBgColor_Plus: TColor;
     function IsScrollMarkNeeded: boolean;
     function GetMaxEdgePos: integer;
     function GetRectOfButton(AButton: TATTabButton): TRect;
@@ -1274,9 +1277,6 @@ begin
   //skip tabs scrolled lefter
   if ARect.Right<=0 then exit;
 
-  if FOptShowFlat and not (FOptShowFlatMouseOver and ATabMouseOver) then
-    AColorBg:= ColorBg;
-
   if FOptShowEntireColor and (AColorHilite<>clNone) then
     AColorBg:= AColorHilite;
 
@@ -1558,7 +1558,7 @@ begin
       RectBitmap.Right:= FBitmapRound.Width;
       RectBitmap.Bottom:= RectBitmap.Right;
 
-      FBitmapRound.Canvas.Brush.Color:= IfThen(FOptShowFlat, FColorBg, ATabBg);
+      FBitmapRound.Canvas.Brush.Color:= ATabBg;
       FBitmapRound.Canvas.FillRect(RectBitmap);
 
       FBitmapRound.Canvas.Brush.Color:= ATabCloseBg;
@@ -1915,7 +1915,7 @@ end;
 procedure TATTabs.DoPaintTo(C: TCanvas);
 var
   RRect, RBottom, RectX: TRect;
-  NColorBg, NColorXBg, NColorXBorder, NColorXMark, NColorFont: TColor;
+  NColorXBg, NColorXBorder, NColorXMark, NColorFont: TColor;
   NLineX1, NLineY1, NLineX2, NLineY2: integer;
   ElemType: TATTabElemType;
   Data: TATTabData;
@@ -2034,7 +2034,7 @@ begin
     begin
       DoPaintTabTo(C, RRect,
         '',
-        IfThen((FTabIndexOver=cTabIndexPlus) and not _IsDrag, FColorTabOver, FColorTabPassive),
+        GetTabBgColor_Plus,
         FColorBorderPassive,
         FColorBorderActive,
         clNone,
@@ -2064,11 +2064,6 @@ begin
       bMouseOver:= i=FTabIndexOver;
       bShowX:= IsShowX(i);
 
-      if bMouseOver and not _IsDrag then
-        NColorBg:= FColorTabOver
-      else
-        NColorBg:= FColorTabPassive;
-
       if bMouseOver then
         ElemType:= aeTabPassiveOver
       else
@@ -2093,7 +2088,7 @@ begin
 
         DoPaintTabTo(C, RRect,
           Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
-          NColorBg,
+          GetTabBgColor_Passive(i),
           FColorBorderPassive,
           FColorBorderActive,
           Data.TabColor,
@@ -2114,7 +2109,7 @@ begin
       if bShowX then
         DoPaintX(C, RectX,
           bMouseOverX,
-          NColorBg,
+          GetTabBgColor_Passive(i),
           NColorXBg,
           NColorXBorder,
           NColorXMark
@@ -2135,8 +2130,6 @@ begin
     begin
       Data:= TATTabData(FTabList.Items[i]);
 
-      NColorBg:= FColorTabActive;
-
       if FOptActiveFontStyleUsed then
         NFontStyle:= FOptActiveFontStyle
       else
@@ -2152,7 +2145,7 @@ begin
 
       DoPaintTabTo(C, RRect,
         Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
-        NColorBg,
+        GetTabBgColor_Active(i),
         FColorBorderActive,
         IfThen(FOptShowBorderActiveLow, FColorBorderActive, clNone),
         Data.TabColor,
@@ -2173,7 +2166,7 @@ begin
     if bShowX then
       DoPaintX(C, RectX,
         bMouseOverX,
-        NColorBg,
+        GetTabBgColor_Active(i),
         NColorXBg,
         NColorXBorder,
         NColorXMark
@@ -3883,6 +3876,36 @@ begin
 
   FTabIndexAnimated:= -1;
   Enabled:= true;
+end;
+
+function TATTabs.GetTabBgColor_Plus: TColor;
+begin
+  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=cTabIndexPlus)) then
+    Result:= FColorBg
+  else
+  if (FTabIndexOver=cTabIndexPlus) and not _IsDrag then
+    Result:= FColorTabOver
+  else
+    Result:= FColorTabPassive;
+end;
+
+function TATTabs.GetTabBgColor_Passive(AIndex: integer): TColor;
+begin
+  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex)) then
+    Result:= FColorBg
+  else
+  if (FTabIndexOver=AIndex) and not _IsDrag then
+    Result:= FColorTabOver
+  else
+    Result:= FColorTabPassive;
+end;
+
+function TATTabs.GetTabBgColor_Active(AIndex: integer): TColor;
+begin
+  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex)) then
+    Result:= FColorBg
+  else
+    Result:= FColorTabActive;
 end;
 
 
