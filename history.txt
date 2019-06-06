@@ -1,5 +1,6 @@
 
 2019.06.06
++ add: property OptShowFlatMouseOver
 + add: PropertyEditor under Delphi (patch by @srd-software)
 + add: changes in design-time are applied immediately
 
