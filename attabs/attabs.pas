@@ -23,7 +23,7 @@ uses
   Windows,
   {$endif}
   Classes, Types, Graphics,
-  Controls, Messages,
+  Controls, Messages, ImgList,
   {$ifdef FPC}
   InterfaceBase,
   LCLIntf,
@@ -56,6 +56,12 @@ type
     );
 
 type
+  TATTabListCollection = class(TCollection)
+  public
+    AOwner: TCustomControl;
+  end;
+
+type
   { TATTabData }
 
   TATTabData = class(TCollectionItem)
@@ -69,11 +75,16 @@ type
     FTabSpecialWidth: integer;
     FTabSpecialHeight: integer;
     FTabRect: TRect;
-    FTabImageIndex: integer;
+    FTabImageIndex: TImageIndex;
     FTabPopupMenu: TPopupMenu;
     FTabFontStyle: TFontStyles;
     FTabStartsNewLine: boolean;
     FTabHideXButton: boolean;
+    procedure UpdateTabSet;
+    procedure SetTabImageIndex(const Value: TImageIndex);
+    procedure SetTabCaption(const Value: TATTabString);
+    procedure SetTabColor(const Value: TColor);
+    procedure SetTabHideXButton(const Value: boolean);
   public
     constructor Create(ACollection: TCollection); override;
     property TabObject: TObject read FTabObject write FTabObject;
@@ -81,16 +92,16 @@ type
     property TabSpecial: boolean read FTabSpecial write FTabSpecial default false;
     property TabStartsNewLine: boolean read FTabStartsNewLine write FTabStartsNewLine;
   published
-    property TabCaption: TATTabString read FTabCaption write FTabCaption;
+    property TabCaption: TATTabString read FTabCaption write SetTabCaption;
     property TabHint: TATTabString read FTabHint write FTabHint;
-    property TabColor: TColor read FTabColor write FTabColor default clNone;
+    property TabColor: TColor read FTabColor write SetTabColor default clNone;
     property TabModified: boolean read FTabModified write FTabModified default false;
-    property TabImageIndex: integer read FTabImageIndex write FTabImageIndex default -1;
+    property TabImageIndex: TImageIndex read FTabImageIndex write SetTabImageIndex default -1;
     property TabFontStyle: TFontStyles read FTabFontStyle write FTabFontStyle default [];
     property TabPopupMenu: TPopupMenu read FTabPopupMenu write FTabPopupMenu;
     property TabSpecialWidth: integer read FTabSpecialWidth write FTabSpecialWidth default 0;
     property TabSpecialHeight: integer read FTabSpecialHeight write FTabSpecialHeight default 0;
-    property TabHideXButton: boolean read FTabHideXButton write FTabHideXButton default false;
+    property TabHideXButton: boolean read FTabHideXButton write SetTabHideXButton default false;
   end;
 
 type
@@ -396,7 +407,7 @@ type
     FTabIndexHinted: integer;
     FTabIndexHintedPrev: integer;
     FTabIndexAnimated: integer;
-    FTabList: TCollection;
+    FTabList: TATTabListCollection;
     FTabMenu: TATTabPopupMenu;
     FCaptionList: TStringList;
     FMultilineActive: boolean;
@@ -513,6 +524,7 @@ type
     procedure DoTabDropToOtherControl(ATarget: TControl; const APnt: TPoint);
     function GetTabTick(AIndex: integer): Int64;
     function _IsDrag: boolean;
+    procedure SetOptShowPlusTab(const Value: boolean);
 
   public
     constructor Create(AOnwer: TComponent); override;
@@ -587,7 +599,8 @@ type
     property PopupMenu;
     property ShowHint;
     property Visible;
-    property Tabs: TCollection read FTabList write FTabList;
+    //property Tabs: TCollection read FTabList write FTabList;
+    property Tabs: TATTabListCollection read FTabList write FTabList;
 
     property OnClick;
     property OnDblClick;
@@ -688,7 +701,7 @@ type
     property OptShowDropMark: boolean read FOptShowDropMark write FOptShowDropMark default _InitOptShowDropMark;
     property OptShowXRounded: boolean read FOptShowXRounded write FOptShowXRounded default _InitOptShowXRounded;
     property OptShowXButtons: TATTabShowClose read FOptShowXButtons write FOptShowXButtons default _InitOptShowXButtons;
-    property OptShowPlusTab: boolean read FOptShowPlusTab write FOptShowPlusTab default _InitOptShowPlusTab;
+    property OptShowPlusTab: boolean read FOptShowPlusTab write SetOptShowPlusTab default _InitOptShowPlusTab;
     property OptShowArrowsNear: boolean read FOptShowArrowsNear write FOptShowArrowsNear default _InitOptShowArrowsNear;
     property OptShowModifiedText: TATTabString read FOptShowModifiedText write FOptShowModifiedText;
     property OptShowBorderActiveLow: boolean read FOptShowBorderActiveLow write FOptShowBorderActiveLow default _InitOptShowBorderActiveLow;
@@ -753,6 +766,43 @@ uses
 
 const
   cSmoothScale = 5;
+
+procedure TATTabData.UpdateTabSet;
+begin
+  if Collection is TATTabListCollection then
+    if TATTabListCollection(Collection).AOwner is TATTabs then
+      TATTabListCollection(Collection).AOwner.Invalidate;
+end;
+
+procedure TATTabData.SetTabImageIndex(const Value: TImageIndex);
+begin
+  FTabImageIndex := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabData.SetTabCaption(const Value: TATTabString);
+begin
+  FTabCaption := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabData.SetTabColor(const Value: TColor);
+begin
+  FTabColor := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabData.SetTabHideXButton(const Value: boolean);
+begin
+  FTabHideXButton := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabs.SetOptShowPlusTab(const Value: boolean);
+begin
+  FOptShowPlusTab := Value;
+  Invalidate;
+end;
 
 function IsDoubleBufferedNeeded: boolean;
 begin
@@ -1150,7 +1200,9 @@ begin
   FTabIndexHinted:= -1;
   FTabIndexAnimated:= -1;
   FAnimationOffset:= 0;
-  FTabList:= TCollection.Create(TATTabData);
+  //FTabList:= TCollection.Create(TATTabData);
+  FTabList:= TATTabListCollection.Create(TATTabData);
+  FTabList.AOwner:= Self;
   FTabMenu:= nil;
   FScrollPos:= 0;
   FCaptionList:= TStringList.Create;
@@ -2282,6 +2334,7 @@ begin
   if FOptButtonLayout=AValue then Exit;
   FOptButtonLayout:= AValue;
   ApplyButtonLayout;
+  Invalidate;
 end;
 
 procedure TATTabs.SetOptMouseDragEnabled(AValue: boolean);
@@ -2302,6 +2355,7 @@ begin
   FOptVarWidth:= AValue;
   if not AValue then
     FScrollPos:= 0;
+  Invalidate;
 end;
 
 
@@ -2412,7 +2466,7 @@ begin
   //IsRightClick:= FMouseDownRightBtn and
   //  (Abs(X-FMouseDownPnt.X) < cTabsMouseMaxDistanceToClick) and
   //  (Abs(Y-FMouseDownPnt.Y) < cTabsMouseMaxDistanceToClick);
-       
+
   FMouseDown:= false;
   FMouseDownDbl:= false;
   FMouseDownRightBtn:= false;
