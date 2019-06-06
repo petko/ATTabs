@@ -1,6 +1,7 @@
 
 2019.06.06
 + add: PropertyEditor under Delphi (patch by @srd-software)
++ add: changes in design-time are applied immediately
 
 2019.02.17
 + add: option for rounded X mark on mouse-over OptShowXRounded
