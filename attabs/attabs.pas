@@ -549,7 +549,7 @@ type
       AObject: TObject = nil;
       AModified: boolean = false;
       AColor: TColor = clNone;
-      AImageIndex: integer = -1;
+      AImageIndex: TImageIndex = -1;
       APopupMenu: TPopupMenu = nil;
       AFontStyle: TFontStyles = [];
       const AHint: TATTabString = '');
@@ -2714,7 +2714,7 @@ procedure TATTabs.AddTab(
   AObject: TObject = nil;
   AModified: boolean = false;
   AColor: TColor = clNone;
-  AImageIndex: integer = -1;
+  AImageIndex: TImageIndex = -1;
   APopupMenu: TPopupMenu = nil;
   AFontStyle: TFontStyles = [];
   const AHint: TATTabString = '');
