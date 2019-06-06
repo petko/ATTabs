@@ -500,6 +500,7 @@ type
     function GetTabBgColor_Passive(AIndex: integer): TColor;
     function GetTabBgColor_Active(AIndex: integer): TColor;
     function GetTabBgColor_Plus: TColor;
+    function GetTabFlatEffective(AIndex: integer): boolean; inline;
     function IsScrollMarkNeeded: boolean;
     function GetMaxEdgePos: integer;
     function GetRectOfButton(AButton: TATTabButton): TRect;
@@ -1865,7 +1866,7 @@ procedure TATTabs.GetTabXProps(AIndex: integer; const ARect: TRect;
   out AMouseOverX: boolean;
   out ARectX: TRect);
 begin
-  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex)) then
+  if GetTabFlatEffective(AIndex) then
     AColorXBg:= FColorBg
   else
     AColorXBg:= FColorCloseBg;
@@ -3879,9 +3880,14 @@ begin
   Enabled:= true;
 end;
 
+function TATTabs.GetTabFlatEffective(AIndex: integer): boolean; inline;
+begin
+  Result:= FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex));
+end;
+
 function TATTabs.GetTabBgColor_Plus: TColor;
 begin
-  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=cTabIndexPlus)) then
+  if GetTabFlatEffective(cTabIndexPlus) then
     Result:= FColorBg
   else
   if (FTabIndexOver=cTabIndexPlus) and not _IsDrag then
@@ -3892,7 +3898,7 @@ end;
 
 function TATTabs.GetTabBgColor_Passive(AIndex: integer): TColor;
 begin
-  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex)) then
+  if GetTabFlatEffective(AIndex) then
     Result:= FColorBg
   else
   if (FTabIndexOver=AIndex) and not _IsDrag then
@@ -3903,7 +3909,7 @@ end;
 
 function TATTabs.GetTabBgColor_Active(AIndex: integer): TColor;
 begin
-  if FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex)) then
+  if GetTabFlatEffective(AIndex) then
     Result:= FColorBg
   else
     Result:= FColorTabActive;
