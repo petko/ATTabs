@@ -266,6 +266,7 @@ const
   _InitOptHotFontStyleUsed = false;
 
   _InitOptShowFlat = false;
+  _InitOptShowFlatMouseOver = true;
   _InitOptShowFlatSep = true;
   _InitOptPosition = atpTop;
   _InitOptFillWidth = true;
@@ -375,6 +376,7 @@ type
     FOptWhichActivateOnClose: TATTabActionOnClose;
     FOptCaptionAlignment: TAlignment;
     FOptShowFlat: boolean;
+    FOptShowFlatMouseOver: boolean;
     FOptShowFlatSepar: boolean;
     FOptShowXRounded: boolean;
     FOptShowXButtons: TATTabShowClose; //show mode for "x" buttons
@@ -482,7 +484,8 @@ type
     procedure DoPaintTabTo(C: TCanvas; ARect: TRect; const ACaption: TATTabString;
       AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg,
       AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; AShowCloseBtn,
-      ATabModified, ATabActive: boolean; AImageIndex: integer;
+      ATabModified, ATabActive, ATabMouseOver: boolean;
+      AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
       AColorArr: TColor);
@@ -696,6 +699,7 @@ type
     property OptShowAngled: boolean read FOptShowAngled write FOptShowAngled default _InitOptShowAngled;
     property OptShowAngleTangent: single read FAngleTangent write FAngleTangent {$ifdef fpc} default _InitOptShowAngleTangent {$endif};
     property OptShowFlat: boolean read FOptShowFlat write FOptShowFlat default _InitOptShowFlat;
+    property OptShowFlatMouseOver: boolean read FOptShowFlatMouseOver write FOptShowFlatMouseOver default _InitOptShowFlatMouseOver;
     property OptShowFlatSepar: boolean read FOptShowFlatSepar write FOptShowFlatSepar default _InitOptShowFlatSep;
     property OptShowScrollMark: boolean read FOptShowScrollMark write FOptShowScrollMark default _InitOptShowScrollMark;
     property OptShowDropMark: boolean read FOptShowDropMark write FOptShowDropMark default _InitOptShowDropMark;
@@ -1153,6 +1157,7 @@ begin
   FOptHotFontStyleUsed:= _InitOptHotFontStyleUsed;
 
   FOptShowFlat:= _InitOptShowFlat;
+  FOptShowFlatMouseOver:= _InitOptShowFlatMouseOver;
   FOptShowFlatSepar:= _InitOptShowFlatSep;
   FOptPosition:= _InitOptPosition;
   FOptShowNumberPrefix:= _InitOptShowNumberPrefix;
@@ -1250,8 +1255,8 @@ end;
 procedure TATTabs.DoPaintTabTo(
   C: TCanvas; ARect: TRect; const ACaption: TATTabString;
   AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
-  AShowCloseBtn, ATabModified, ATabActive: boolean;
-  AImageIndex: integer;
+  AShowCloseBtn, ATabModified, ATabActive, ATabMouseOver: boolean;
+  AImageIndex: TImageIndex;
   AFontStyle: TFontStyles);
 const
   cIndentSep = 2;
@@ -1269,7 +1274,7 @@ begin
   //skip tabs scrolled lefter
   if ARect.Right<=0 then exit;
 
-  if FOptShowFlat then
+  if FOptShowFlat and not (FOptShowFlatMouseOver and ATabMouseOver) then
     AColorBg:= ColorBg;
 
   if FOptShowEntireColor and (AColorHilite<>clNone) then
@@ -2040,6 +2045,7 @@ begin
         false,
         false,
         false,
+        FTabIndexOver=cTabIndexPlus,
         -1, //no icon
         []
         );
@@ -2098,6 +2104,7 @@ begin
           bShowX,
           Data.TabModified,
           false,
+          FTabIndexOver=i,
           Data.TabImageIndex,
           NFontStyle
           );
@@ -2156,6 +2163,7 @@ begin
         bShowX,
         Data.TabModified,
         true,
+        FTabIndexOver=i,
         Data.TabImageIndex,
         NFontStyle
         );
