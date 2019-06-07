@@ -484,7 +484,7 @@ type
     procedure DoPaintTabTo(C: TCanvas; ARect: TRect; const ACaption: TATTabString;
       AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg,
       AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; AShowCloseBtn,
-      ATabModified, ATabActive, ATabMouseOver: boolean;
+      ATabModified, ATabActive: boolean;
       AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
@@ -1259,7 +1259,7 @@ end;
 procedure TATTabs.DoPaintTabTo(
   C: TCanvas; ARect: TRect; const ACaption: TATTabString;
   AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
-  AShowCloseBtn, ATabModified, ATabActive, ATabMouseOver: boolean;
+  AShowCloseBtn, ATabModified, ATabActive: boolean;
   AImageIndex: TImageIndex;
   AFontStyle: TFontStyles);
 const
@@ -2047,7 +2047,6 @@ begin
         false,
         false,
         false,
-        FTabIndexOver=cTabIndexPlus,
         -1, //no icon
         []
         );
@@ -2101,7 +2100,6 @@ begin
           bShowX,
           Data.TabModified,
           false,
-          FTabIndexOver=i,
           Data.TabImageIndex,
           NFontStyle
           );
@@ -2158,7 +2156,6 @@ begin
         bShowX,
         Data.TabModified,
         true,
-        FTabIndexOver=i,
         Data.TabImageIndex,
         NFontStyle
         );
