@@ -534,7 +534,7 @@ type
     procedure SetOptShowPlusTab(const Value: boolean);
 
   public
-    constructor Create(AOnwer: TComponent); override;
+    constructor Create(AOwner: TComponent); override;
     function CanFocus: boolean; override;
     destructor Destroy; override;
     procedure DragDrop(Source: TObject; X, Y: integer); override;
@@ -1076,7 +1076,7 @@ begin
   Result:= FTabList.Count;
 end;
 
-constructor TATTabs.Create(AOnwer: TComponent);
+constructor TATTabs.Create(AOwner: TComponent);
 begin
   inherited;
 
@@ -1084,7 +1084,12 @@ begin
   ControlStyle:= ControlStyle+[csOpaque];
   DoubleBuffered:= IsDoubleBufferedNeeded;
   DragMode:= dmManual; //required Manual
-  ParentColor:= false;
+
+  //http://delphidabbler.com/tips/76
+  if (csDesigning in ComponentState) and not
+    (csReading in AOwner.ComponentState) then
+    {this is true if the component is dropped on the form}
+      ParentColor:= false; //defaults to false only at first creation
 
   Width:= 400;
   Height:= 35;
@@ -1913,7 +1918,7 @@ end;
 procedure TATTabs.DoPaintBgTo(C: TCanvas; const ARect: TRect);
 begin
   if ParentColor and Assigned(Parent) then
-    C.Brush.Color:= Parent.Color
+    C.Brush.Color:= Parent.Brush.Color
   else
     C.Brush.Color:= FColorBg;
 
@@ -3883,7 +3888,7 @@ begin
   Enabled:= true;
 end;
 
-function TATTabs.GetTabFlatEffective(AIndex: integer): boolean; inline;
+function TATTabs.GetTabFlatEffective(AIndex: integer): boolean; {$ifdef fpc}inline;{$endif} //inline; alone gives invalid compiler directive error
 begin
   Result:= FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex));
 end;
