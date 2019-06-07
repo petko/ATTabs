@@ -46,6 +46,7 @@ begin
   if GetComponent(Index) is TATTabData then
   if TATTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner is TATTabs then
   begin
+    if TATTabs(TATTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner).Images <> nil then
     Result := TATTabs(TATTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner).Images;
     //debug use:
     //ShowMessage( FTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner.Name );
