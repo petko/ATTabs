@@ -601,6 +601,7 @@ type
     property DragMode;
     property Enabled;
     property Font;
+    property ParentColor;
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
@@ -1083,6 +1084,7 @@ begin
   ControlStyle:= ControlStyle+[csOpaque];
   DoubleBuffered:= IsDoubleBufferedNeeded;
   DragMode:= dmManual; //required Manual
+  ParentColor:= false;
 
   Width:= 400;
   Height:= 35;
@@ -1910,7 +1912,11 @@ end;
 
 procedure TATTabs.DoPaintBgTo(C: TCanvas; const ARect: TRect);
 begin
-  C.Brush.Color:= FColorBg;
+  if ParentColor and Assigned(Parent) then
+    C.Brush.Color:= Parent.Color
+  else
+    C.Brush.Color:= FColorBg;
+
   C.FillRect(ARect);
 end;
 
