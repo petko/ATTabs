@@ -785,8 +785,11 @@ end;
 
 procedure TATTabData.SetTabImageIndex(const Value: TImageIndex);
 begin
+  if FTabImageIndex <> Value then
+  begin
   FTabImageIndex := Value;
   UpdateTabSet;
+  end;
 end;
 
 procedure TATTabData.SetTabCaption(const Value: TATTabString);
@@ -1764,6 +1767,9 @@ begin
       DoUpdateCaptionProps(C, TempCaption, NLineHeight, Extent);
       FTabWidth:= Extent.CX + 2*FOptSpaceBeforeText;
 
+      if not Assigned(FImages) then //no imagelist
+        Data.TabImageIndex := -1;
+
       if Data.TabImageIndex>=0 then
         if FOptIconPosition in [aipIconLefterThanText, aipIconRighterThanText] then
           Inc(FTabWidth, FImages.Width);
@@ -1918,9 +1924,15 @@ end;
 procedure TATTabs.DoPaintBgTo(C: TCanvas; const ARect: TRect);
 begin
   if ParentColor and Assigned(Parent) then
-    C.Brush.Color:= Parent.Brush.Color
+  begin
+    if C.Brush.Color <> Parent.Brush.Color then
+      C.Brush.Color:= Parent.Brush.Color;
+  end
   else
-    C.Brush.Color:= FColorBg;
+  begin
+    if C.Brush.Color <> FColorBg then
+      C.Brush.Color:= FColorBg;
+  end;
 
   C.FillRect(ARect);
 end;

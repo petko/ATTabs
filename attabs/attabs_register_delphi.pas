@@ -30,6 +30,8 @@ begin
 end;
 
 function TImageIndexProperty.GetImageListAt(Index: Integer): TCustomImageList;
+var
+  aTab: TATTabData;
 begin
 
   Result := nil; //default
@@ -43,10 +45,17 @@ begin
 
   //Basic idea from:
   //https://stackoverflow.com/questions/41345168/delphi-component-design-get-property-from-component-from-subproperty
+  aTab := nil;
+
   if GetComponent(Index) is TATTabData then
-  if TATTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner is TATTabs then
+    aTab := TATTabData(GetComponent(Index));
+
+  if aTab = nil then exit;
+
+  if TATTabListCollection(aTab.Collection).AOwner is TATTabs then
   begin
-    Result := TATTabs(TATTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner).Images;
+    if TATTabs(TATTabListCollection(aTab.Collection).AOwner).Images <> nil then
+    Result := TATTabs(TATTabListCollection(aTab.Collection).AOwner).Images;
     //debug use:
     //ShowMessage( FTabListCollection((GetComponent(Index) as TATTabData).Collection).AOwner.Name );
     exit;
