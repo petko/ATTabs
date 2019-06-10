@@ -497,7 +497,7 @@ type
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
-    function GetPositionEx(APos: TATTabPosition; AInverted: boolean): TATTabPosition;
+    function GetPositionInverted(APos: TATTabPosition): TATTabPosition;
     function GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
     function GetInitialVerticalIndent: integer;
     function GetButtonsEmpty: boolean;
@@ -1429,8 +1429,10 @@ begin
   begin
     if ATabActive then
     begin
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark,
-        GetPositionEx(FOptPosition, FOptShowActiveMarkInverted));
+      ColorPos:= FOptPosition;
+      if FOptShowActiveMarkInverted then
+        ColorPos:= GetPositionInverted(ColorPos);
+      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark, ColorPos);
     end;
   end
   else
@@ -3944,11 +3946,8 @@ begin
     Result:= FColorTabActive;
 end;
 
-function TATTabs.GetPositionEx(APos: TATTabPosition; AInverted: boolean): TATTabPosition;
+function TATTabs.GetPositionInverted(APos: TATTabPosition): TATTabPosition;
 begin
-  if not AInverted then
-    Result:= APos
-  else
   case APos of
     atpTop:
       Result:= atpBottom;
