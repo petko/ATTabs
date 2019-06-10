@@ -1424,17 +1424,17 @@ begin
   begin
     if ATabActive then
     begin
-      C.Brush.Color:= ColorActiveMark;
       case FOptPosition of
         atpTop:
-          C.FillRect(Rect(PL2.X+2, ARect.Bottom-FOptActiveMarkSize, PR2.X, ARect.Bottom));
+          ColorPos:= atpBottom;
         atpBottom:
-          C.FillRect(Rect(PL1.X+2, ARect.Top, PR1.X, ARect.Top+FOptActiveMarkSize));
+          ColorPos:= atpTop;
         atpLeft:
-          C.FillRect(Rect(ClientWidth-FOptActiveMarkSize, PR1.Y, ClientWidth, PR2.Y));
+          ColorPos:= atpRight;
         atpRight:
-          C.FillRect(Rect(0, PL1.Y, FOptActiveMarkSize, PL2.Y))
-       end;
+          ColorPos:= atpLeft;
+      end;
+      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark, ColorPos);
     end;
   end
   else
