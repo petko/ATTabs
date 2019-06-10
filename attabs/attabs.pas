@@ -475,7 +475,8 @@ type
     procedure DoPaintButtonClose(C: TCanvas);
     procedure DoPaintButtonPlus(C: TCanvas);
     procedure DoPaintButtonsBG(C: TCanvas);
-    procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint; AColor: TColor);
+    procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
+      AColor: TColor; APos: TATTabPosition);
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
@@ -1282,6 +1283,7 @@ var
   TempCaption: TATTabString;
   Extent: TSize;
   bNeedMoreSpace: boolean;
+  ColorPos: TATTabPosition;
   i: integer;
 begin
   //optimize for 200 tabs
@@ -1531,7 +1533,19 @@ begin
   //colored band
   if not FOptShowEntireColor then
     if AColorHilite<>clNone then
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite);
+    begin
+      case FOptPosition of
+        atpTop:
+          ColorPos:= FOptColoredBandForTop;
+        atpBottom:
+          ColorPos:= FOptColoredBandForBottom;
+        atpLeft:
+          ColorPos:= FOptColoredBandForLeft;
+        atpRight:
+          ColorPos:= FOptColoredBandForRight;
+      end;
+      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
+    end;
 end;
 
 procedure TATTabs.DoPaintX(C: TCanvas;
@@ -3632,26 +3646,15 @@ begin
     Result:= FOptTabHeight;
 end;
 
-procedure TATTabs.DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint; AColor: TColor);
+procedure TATTabs.DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint; AColor: TColor;
+  APos: TATTabPosition);
 var
   NColor: TColor;
-  Pos: TATTabPosition;
 begin
   NColor:= C.Brush.Color;
   C.Brush.Color:= AColor;
 
-  case FOptPosition of
-    atpTop:
-      Pos:= FOptColoredBandForTop;
-    atpBottom:
-      Pos:= FOptColoredBandForBottom;
-    atpLeft:
-      Pos:= FOptColoredBandForLeft;
-    atpRight:
-      Pos:= FOptColoredBandForRight;
-  end;
-
-  case Pos of
+  case APos of
     atpTop:
       C.FillRect(Rect(PL1.X+1+Ord(FOptShowFlat), PL1.Y+1, PR1.X, PR1.Y+1+FOptColoredBandSize));
     atpBottom:
