@@ -283,6 +283,7 @@ const
   _InitOptShowEntireColor = false;
   _InitOptShowAngled = false;
   _InitOptShowAngleTangent = 2.6;
+  _InitOptShowActiveMarkInverted = true;
   _InitRoundedBitmapSize = 60;
 
   _InitOptMouseMiddleClickClose = true;
@@ -389,6 +390,7 @@ type
     FOptShowScrollMark: boolean;
     FOptShowDropMark: boolean;
     FOptShowAngled: boolean;
+    FOptShowActiveMarkInverted: boolean;
     FOptActiveFontStyle: TFontStyles;
     FOptActiveFontStyleUsed: boolean;
     FOptHotFontStyle: TFontStyles;
@@ -495,6 +497,7 @@ type
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
+    function GetPositionEx(APos: TATTabPosition; AInverted: boolean): TATTabPosition;
     function GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
     function GetInitialVerticalIndent: integer;
     function GetButtonsEmpty: boolean;
@@ -718,6 +721,7 @@ type
     property OptShowBorderActiveLow: boolean read FOptShowBorderActiveLow write FOptShowBorderActiveLow default _InitOptShowBorderActiveLow;
     property OptShowEntireColor: boolean read FOptShowEntireColor write FOptShowEntireColor default _InitOptShowEntireColor;
     property OptShowNumberPrefix: TATTabString read FOptShowNumberPrefix write FOptShowNumberPrefix;
+    property OptShowActiveMarkInverted: boolean read FOptShowActiveMarkInverted write FOptShowActiveMarkInverted default _InitOptShowActiveMarkInverted;
     property OptActiveFontStyle: TFontStyles read FOptActiveFontStyle write FOptActiveFontStyle default _InitOptActiveFontStyle;
     property OptActiveFontStyleUsed: boolean read FOptActiveFontStyleUsed write FOptActiveFontStyleUsed default _InitOptActiveFontStyleUsed;
     property OptHotFontStyle: TFontStyles read FOptHotFontStyle write FOptHotFontStyle default _InitOptHotFontStyle;
@@ -1187,6 +1191,7 @@ begin
   FOptShowBorderActiveLow:= _InitOptShowBorderActiveLow;
   FOptShowEntireColor:= _InitOptShowEntireColor;
   FOptShowAngled:= _InitOptShowAngled;
+  FOptShowActiveMarkInverted:= _InitOptShowActiveMarkInverted;
 
   FOptMouseMiddleClickClose:= _InitOptMouseMiddleClickClose;
   FOptMouseDoubleClickClose:= _InitOptMouseDoubleClickClose;
@@ -1424,17 +1429,8 @@ begin
   begin
     if ATabActive then
     begin
-      case FOptPosition of
-        atpTop:
-          ColorPos:= atpBottom;
-        atpBottom:
-          ColorPos:= atpTop;
-        atpLeft:
-          ColorPos:= atpRight;
-        atpRight:
-          ColorPos:= atpLeft;
-      end;
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark, ColorPos);
+      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark,
+        GetPositionEx(FOptPosition, FOptShowActiveMarkInverted));
     end;
   end
   else
@@ -3948,6 +3944,22 @@ begin
     Result:= FColorTabActive;
 end;
 
+function TATTabs.GetPositionEx(APos: TATTabPosition; AInverted: boolean): TATTabPosition;
+begin
+  if not AInverted then
+    Result:= APos
+  else
+  case APos of
+    atpTop:
+      Result:= atpBottom;
+    atpBottom:
+      Result:= atpTop;
+    atpLeft:
+      Result:= atpRight;
+    atpRight:
+      Result:= atpLeft;
+  end;
+end;
 
 end.
 
