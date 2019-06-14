@@ -1939,9 +1939,10 @@ end;
 function TATTabs.IsPaintNeeded(AElemType: TATTabElemType;
   AIndex: integer; ACanvas: TCanvas; const ARect: TRect): boolean;
 begin
-  Result:= true;
-  if Assigned(FOnTabDrawBefore) then
-    FOnTabDrawBefore(Self, AElemType, AIndex, ACanvas, ARect, Result);
+  Result:= not IsRectEmpty(ARect);
+  if Result then
+    if Assigned(FOnTabDrawBefore) then
+      FOnTabDrawBefore(Self, AElemType, AIndex, ACanvas, ARect, Result);
 end;
 
 function TATTabs.DoPaintAfter(AElemType: TATTabElemType;
@@ -3430,8 +3431,8 @@ begin
     ElemType:= aeButtonPlus;
 
   R:= FRectButtonPlus;
-  if R.Right>0 then
-    if IsPaintNeeded(ElemType, -1, C, R) then
+
+  if IsPaintNeeded(ElemType, -1, C, R) then
     begin
       NColor:= IfThen(
         bOver and not _IsDrag,
@@ -3458,8 +3459,8 @@ begin
     ElemType:= aeButtonClose;
 
   R:= FRectButtonClose;
-  if R.Right>0 then
-    if IsPaintNeeded(ElemType, -1, C, R) then
+
+  if IsPaintNeeded(ElemType, -1, C, R) then
     begin
       NColor:= IfThen(
         bOver and not _IsDrag,
@@ -3484,8 +3485,7 @@ begin
   else
     ElemType:= aeArrowDropdown;
 
-  if FRectArrowDown.Right>0 then
-    if IsPaintNeeded(ElemType, -1, C, FRectArrowDown) then
+  if IsPaintNeeded(ElemType, -1, C, FRectArrowDown) then
     begin
       DoPaintBgTo(C, FRectArrowDown);
       DoPaintArrowTo(C,
@@ -3511,8 +3511,7 @@ begin
   else
     ElemType:= aeArrowScrollLeft;
 
-  if FRectArrowLeft.Right>0 then
-    if IsPaintNeeded(ElemType, -1, C, FRectArrowLeft) then
+  if IsPaintNeeded(ElemType, -1, C, FRectArrowLeft) then
     begin
       R:= FRectArrowLeft;
       if FOptShowArrowsNear then
@@ -3540,8 +3539,7 @@ begin
   else
     ElemType:= aeArrowScrollRight;
 
-  if FRectArrowRight.Right<>0 then
-    if IsPaintNeeded(ElemType, -1, C, FRectArrowRight) then
+  if IsPaintNeeded(ElemType, -1, C, FRectArrowRight) then
     begin
       R:= FRectArrowRight;
       if FOptShowArrowsNear then
