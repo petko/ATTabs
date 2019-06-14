@@ -1150,11 +1150,13 @@ begin
   FOptAnimationStepH:= _InitOptAnimationStepH;
   FOptAnimationPause:= _InitOptAnimationPause;
 
-  FOptButtonLayout:= _InitOptButtonLayout;
-  ApplyButtonLayout;
   FOptButtonSize:= _InitOptButtonSize;
   FOptButtonSizeSpace:= _InitOptButtonSizeSpace;
   FOptButtonSizeSeparator:= _InitOptButtonSizeSeparator;
+
+  FOptButtonLayout:= _InitOptButtonLayout;
+  ApplyButtonLayout;
+
   FOptCaptionAlignment:= taLeftJustify;
   FOptIconPosition:= aipIconLefterThanText;
   FOptWhichActivateOnClose:= aocRight;
