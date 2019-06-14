@@ -1940,7 +1940,7 @@ end;
 function TATTabs.IsPaintNeeded(AElemType: TATTabElemType;
   AIndex: integer; ACanvas: TCanvas; const ARect: TRect): boolean;
 begin
-  Result:= not IsRectEmpty(ARect);
+  Result:= ARect.Right>ARect.Left;
   if Result then
     if Assigned(FOnTabDrawBefore) then
       FOnTabDrawBefore(Self, AElemType, AIndex, ACanvas, ARect, Result);
