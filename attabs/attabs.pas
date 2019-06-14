@@ -2244,18 +2244,20 @@ end;
 
 procedure TATTabs.DoTextOut(C: TCanvas; AX, AY: integer;
   const AClipRect: TRect; const AText: string);
+{$ifdef WIDE}
 var
   Str: WideString;
 begin
-  {$ifdef WIDE}
   Str:= UTF8Decode(AText);
   ExtTextOutW(C.Handle, AX, AY, ETO_CLIPPED, @AClipRect,
     PWideChar(Str), Length(Str), nil);
-  {$else}
+end;
+{$else}
+begin
   ExtTextOut(C.Handle, AX, AY, ETO_CLIPPED, @AClipRect,
     PChar(AText), Length(AText), nil);
-  {$endif}
 end;
+{$endif}
 
 procedure TATTabs.DoPaintDropMark(C: TCanvas);
 var
@@ -3980,7 +3982,7 @@ begin
   Enabled:= true;
 end;
 
-function TATTabs.GetTabFlatEffective(AIndex: integer): boolean; {$ifdef fpc}inline;{$endif} //inline; alone gives invalid compiler directive error
+function TATTabs.GetTabFlatEffective(AIndex: integer): boolean;
 begin
   Result:= FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex));
 end;
