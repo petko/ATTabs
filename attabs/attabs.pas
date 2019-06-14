@@ -12,7 +12,6 @@ unit attabs;
   {$define windows}
   {$ifdef VER150} //Delphi 7
     {$define WIDE}
-    //{$define TNT} //Tnt controls
   {$endif}
 {$endif}
 
@@ -30,15 +29,10 @@ uses
   LCLType,
   LCLProc,
   {$endif}
-  {$ifdef TNT}
-  TntMenus,
-  {$endif}
   Menus;
 
 type
   TATTabString = {$ifdef WIDE} WideString {$else} string {$endif};
-  TATTabPopupMenu = {$ifdef TNT} TTntPopupMenu {$else} TPopupMenu {$endif};
-  TATTabMenuItem = {$ifdef TNT} TTntMenuItem {$else} TMenuItem {$endif};
 
 type
   TATTabPosition = (
@@ -421,7 +415,7 @@ type
     FTabIndexHintedPrev: integer;
     FTabIndexAnimated: integer;
     FTabList: TATTabListCollection;
-    FTabMenu: TATTabPopupMenu;
+    FTabMenu: TPopupMenu;
     FCaptionList: TStringList;
     FMultilineActive: boolean;
 
@@ -551,7 +545,7 @@ type
     procedure SetOptShowPlusTab(const Value: boolean);
 
   public
-    TabMenuExternal: TATTabPopupMenu;
+    TabMenuExternal: TPopupMenu;
 
     constructor Create(AOwner: TComponent); override;
     function CanFocus: boolean; override;
@@ -3002,12 +2996,11 @@ end;
 
 procedure TATTabs.ShowTabMenu;
 var
-  i: integer;
-  mi: TATTabMenuItem;
+  mi: TMenuItem;
   P: TPoint;
+  i: integer;
   bShow: boolean;
 begin
-
   if Assigned(TabMenuExternal) then
   begin
     P:= Point(FRectArrowDown.Left, FRectArrowDown.Bottom);
@@ -3024,12 +3017,12 @@ begin
   if not bShow then Exit;
 
   if not Assigned(FTabMenu) then
-    FTabMenu:= TATTabPopupMenu.Create(Self);
+    FTabMenu:= TPopupMenu.Create(Self);
   FTabMenu.Items.Clear;
 
   for i:= 0 to TabCount-1 do
   begin
-    mi:= TATTabMenuItem.Create(Self);
+    mi:= TMenuItem.Create(Self);
     mi.Tag:= i;
     mi.Caption:= TATTabData(FTabList.Items[i]).TabCaption;
     mi.OnClick:= TabMenuClick;
@@ -3344,8 +3337,6 @@ begin
 end;
 
 function TATTabs.GetMaxScrollPos: integer;
-var
-  NPos: integer;
 begin
   Result:= GetMaxEdgePos;
   if Result=0 then exit;

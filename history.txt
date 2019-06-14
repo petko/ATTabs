@@ -4,6 +4,7 @@
 + add: OptButtonSizeSeparator
 + add: OptButtonLayout allows chars "|" (separator) and "_" (space)
 + add: TabMenuExternal (TPopupMenu)
+* removed support for TNT Controls
 
 2019.06.07
 + add: ParentColor
