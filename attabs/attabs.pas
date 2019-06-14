@@ -3663,7 +3663,7 @@ begin
             ElemType:= aeButtonUser;
 
           DoPaintBgTo(C, R);
-          DoPaintAfter(ElemType, Abs(NIndex)-Abs(cTabIndexUser0), C, R);
+          DoPaintAfter(ElemType, Ord(AButtons[i].Id)-Ord(atbUser0), C, R);
         end;
       atbSpace:
         begin
