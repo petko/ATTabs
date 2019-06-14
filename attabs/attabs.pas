@@ -494,7 +494,7 @@ type
       ATabModified, ATabActive: boolean;
       AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
-    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor); inline;
+    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
       ATabCloseBorder, ATabCloseXMark: TColor);
@@ -1560,6 +1560,8 @@ begin
           ColorPos:= FOptColoredBandForLeft;
         atpRight:
           ColorPos:= FOptColoredBandForRight;
+        else
+          raise Exception.Create('Unknown tab pos');
       end;
       DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
     end;
@@ -2059,6 +2061,8 @@ begin
           NLineX2:= RBottom.Right;
           NLineY2:= RBottom.Bottom;
         end;
+      else
+        raise Exception.Create('Unknown tab pos');
     end;
 
     if IsPaintNeeded(ElemType, -1, C, RBottom) then
@@ -2680,6 +2684,7 @@ begin
   if TabCount=0 then exit;
   FTabIndexOver:= GetTabAt(X, Y, IsX);
   FTabIndexDrop:= FTabIndexOver;
+  Data:= nil;
 
   // LCL dragging with DragMode=automatic is started too early.
   // so use DragMode=manual and DragStart.
@@ -3635,6 +3640,8 @@ begin
     atbUser2: Result:= cTabIndexUser2;
     atbUser3: Result:= cTabIndexUser3;
     atbUser4: Result:= cTabIndexUser4;
+    else
+      raise Exception.Create('Unknown button id');
   end;
 end;
 
@@ -3802,8 +3809,10 @@ end;
 procedure TATTabs.DoUpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
   out ALineHeight: integer; out ATextSize: TSize);
 var
-  Ex: TSize;
+  {$ifdef WIDE}
   StrW: WideString;
+  {$endif}
+  Ex: TSize;
   i: integer;
 begin
   ALineHeight:= 0;
@@ -4028,6 +4037,8 @@ begin
       Result:= atpRight;
     atpRight:
       Result:= atpLeft;
+    else
+      raise Exception.Create('Unknown tab pos');
   end;
 end;
 
