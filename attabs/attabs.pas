@@ -503,7 +503,8 @@ type
       AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
       AColorArr: TColor);
-    procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons);
+    procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons;
+      AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
@@ -2235,8 +2236,8 @@ begin
   DoPaintArrowDown(C);
   DoPaintButtonPlus(C);
   DoPaintButtonClose(C);
-  DoPaintUserButtons(C, FButtonsLeft);
-  DoPaintUserButtons(C, FButtonsRight);
+  DoPaintUserButtons(C, FButtonsLeft, true);
+  DoPaintUserButtons(C, FButtonsRight, false);
 
   if FOptShowDropMark then
     if _IsDrag then
@@ -3640,17 +3641,15 @@ begin
   end;
 end;
 
-procedure TATTabs.DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons);
+procedure TATTabs.DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
 var
   ElemType: TATTabElemType;
   R: TRect;
   NIndex, i: integer;
-  AtLeft: boolean;
 begin
   for i:= 0 to High(AButtons) do
   begin
     if AButtons[i].Id=atbNone then Break;
-    AtLeft:= @AButtons=@FButtonsLeft;
     R:= GetRectOfButtonIndex(i, AtLeft);
 
     case AButtons[i].Id of
