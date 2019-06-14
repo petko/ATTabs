@@ -140,7 +140,7 @@ type
     atbUser4
     );
 
-  TATTabButtons = array[0..20] of record
+  TATTabButtons = array of record
     Id: TATTabButton;
     Size: integer;
   end;
@@ -495,17 +495,15 @@ type
       ATabModified, ATabActive: boolean;
       AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
-    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
-      AColorArr: TColor);
-    procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons;
-      AtLeft: boolean);
+    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor);
+    procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
     function GetButtonsWidth(const B: TATTabButtons): integer;
     function GetPositionInverted(APos: TATTabPosition): TATTabPosition;
-    function GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
+    function GetIndexOfButton(const AButtons: TATTabButtons; ABtn: TATTabButton): integer;
     function GetInitialVerticalIndent: integer;
     function GetButtonsEmpty: boolean;
     function GetTabBgColor_Passive(AIndex: integer): TColor;
@@ -791,6 +789,13 @@ uses
 
 const
   cSmoothScale = 5;
+
+procedure AddTabButton(var Buttons: TATTabButtons; Id: TATTabButton; Size: integer);
+begin
+  SetLength(Buttons, Length(Buttons)+1);
+  Buttons[Length(Buttons)-1].Id:= Id;
+  Buttons[Length(Buttons)-1].Size:= Size;
+end;
 
 procedure TATTabData.UpdateTabSet;
 begin
@@ -2925,13 +2930,13 @@ begin
 end;
 
 
-function TATTabs.GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
+function TATTabs.GetIndexOfButton(const AButtons: TATTabButtons; ABtn: TATTabButton): integer;
 var
   i: integer;
 begin
   Result:= -1;
-  for i:= 0 to High(AData) do
-    if AData[i].Id=ABtn then
+  for i:= 0 to Length(AButtons)-1 do
+    if AButtons[i].Id=ABtn then
       begin Result:= i; exit; end;
 end;
 
@@ -3560,24 +3565,23 @@ procedure TATTabs.ApplyButtonLayout;
   //
   procedure ApplySide(var Btns: TATTabButtons; const S: string);
   var
-    N, i: integer;
+    i: integer;
   begin
-    N:= 0;
-    FillChar(Btns, SizeOf(Btns), 0);
+    SetLength(Btns, 0);
     for i:= 1 to Length(S) do
       case S[i] of
-        '<': begin Btns[N].Id:= atbScrollLeft;   Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '>': begin Btns[N].Id:= atbScrollRight;  Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        'v': begin Btns[N].Id:= atbDropdownMenu; Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '+': begin Btns[N].Id:= atbPlus;         Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        'x': begin Btns[N].Id:= atbClose;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '0': begin Btns[N].Id:= atbUser0;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '1': begin Btns[N].Id:= atbUser1;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '2': begin Btns[N].Id:= atbUser2;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '3': begin Btns[N].Id:= atbUser3;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '4': begin Btns[N].Id:= atbUser4;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
-        '_': begin Btns[N].Id:= atbSpace;        Btns[N].Size:= FOptButtonSizeSpace;     Inc(N) end;
-        '|': begin Btns[N].Id:= atbSeparator;    Btns[N].Size:= FOptButtonSizeSeparator; Inc(N) end;
+        '<': AddTabButton(Btns, atbScrollLeft,   FOptButtonSize);
+        '>': AddTabButton(Btns, atbScrollRight,  FOptButtonSize);
+        'v': AddTabButton(Btns, atbDropdownMenu, FOptButtonSize);
+        '+': AddTabButton(Btns, atbPlus,         FOptButtonSize);
+        'x': AddTabButton(Btns, atbClose,        FOptButtonSize);
+        '0': AddTabButton(Btns, atbUser0,        FOptButtonSize);
+        '1': AddTabButton(Btns, atbUser1,        FOptButtonSize);
+        '2': AddTabButton(Btns, atbUser2,        FOptButtonSize);
+        '3': AddTabButton(Btns, atbUser3,        FOptButtonSize);
+        '4': AddTabButton(Btns, atbUser4,        FOptButtonSize);
+        '_': AddTabButton(Btns, atbSpace,        FOptButtonSizeSpace);
+        '|': AddTabButton(Btns, atbSeparator,    FOptButtonSizeSeparator);
       end;
   end;
   //
@@ -3629,10 +3633,9 @@ var
   NIndex, i: integer;
   R: TRect;
 begin
-  for i:= 0 to High(AButtons) do
+  for i:= 0 to Length(AButtons)-1 do
   begin
     BtnId:= AButtons[i].Id;
-    if BtnId=atbNone then Break;
     R:= GetRectOfButtonIndex(i, AtLeft);
 
     case BtnId of
@@ -3681,11 +3684,8 @@ var
   i: integer;
 begin
   Result:= 0;
-  for i:= 0 to High(B) do
-  begin
-    if B[i].Id=atbNone then Break;
+  for i:= 0 to Length(B)-1 do
     Inc(Result, B[i].Size);
-  end;
 end;
 
 function TATTabs.GetButtonsEmpty: boolean;
