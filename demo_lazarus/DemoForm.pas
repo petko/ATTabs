@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, LCLProc, LCLType, attabs;
+  Dialogs, ExtCtrls, StdCtrls, LCLProc, LCLType, Spin, attabs;
 
 type
   { TForm1 }
@@ -38,11 +38,13 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Label8: TLabel;
     labStatus: TLabel;
     btnModify: TButton;
     Label2: TLabel;
     chkShowFullColor: TCheckBox;
     Label3: TLabel;
+    edInitial: TSpinEdit;
     procedure btnStressClick(Sender: TObject);
     procedure btnToggleSpecialClick(Sender: TObject);
     procedure chkAngledChange(Sender: TObject);
@@ -60,6 +62,7 @@ type
     procedure comboLayoutChange(Sender: TObject);
     procedure comboShowXChange(Sender: TObject);
     procedure comboTruncateChange(Sender: TObject);
+    procedure edInitialChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
@@ -328,6 +331,12 @@ end;
 procedure TForm1.comboTruncateChange(Sender: TObject);
 begin
   t_top.OptTruncateCaption:= TATTabTruncateCaption(comboTruncate.ItemIndex);
+  t_top.Invalidate;
+end;
+
+procedure TForm1.edInitialChange(Sender: TObject);
+begin
+  t_top.OptSpaceInitial:= edInitial.Value;
   t_top.Invalidate;
 end;
 
