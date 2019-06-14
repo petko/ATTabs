@@ -500,6 +500,7 @@ type
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
+    function GetButtonsEdgeCoord(AtLeft: boolean): integer;
     function GetButtonsWidth(const B: TATTabButtons): integer;
     function GetPositionInverted(APos: TATTabPosition): TATTabPosition;
     function GetIndexOfButton(const AButtons: TATTabButtons; ABtn: TATTabButton): integer;
@@ -2939,16 +2940,28 @@ begin
       begin Result:= i; exit; end;
 end;
 
+function TATTabs.GetButtonsEdgeCoord(AtLeft: boolean): integer;
+begin
+  if AtLeft then
+    Result:=
+      + IfThen(FOptPosition=atpLeft, FOptSpacer)
+      + IfThen(FOptPosition=atpRight, FOptSpacer2)
+      + FOptSpaceInitial
+  else
+    Result:=
+      ClientWidth
+      -IfThen(FOptPosition=atpLeft, FOptSpacer2)
+      -IfThen(FOptPosition=atpRight, FOptSpacer)
+      -1;
+end;
+
 function TATTabs.GetRectOfButtonIndex(AIndex: integer; AtLeft: boolean): TRect;
 var
   NPos, i: integer;
 begin
+  NPos:= GetButtonsEdgeCoord(AtLeft);
   if AtLeft then
   begin
-    NPos:= 0
-      + IfThen(FOptPosition=atpLeft, FOptSpacer)
-      + IfThen(FOptPosition=atpRight, FOptSpacer2)
-      + FOptSpaceInitial;
     for i:= 0 to AIndex do
     begin
       Result.Left:= NPos;
@@ -2958,10 +2971,6 @@ begin
   end
   else
   begin
-    NPos:= ClientWidth
-      -IfThen(FOptPosition=atpLeft, FOptSpacer2)
-      -IfThen(FOptPosition=atpRight, FOptSpacer)
-      -1;
     for i:= 0 to AIndex do
     begin
       Result.Right:= NPos;
@@ -3726,16 +3735,14 @@ end;
 
 procedure TATTabs.DoPaintButtonsBG(C: TCanvas);
 var
-  RL, RR: TRect;
+  X1, X2: integer;
 begin
   if FOptPosition in [atpLeft, atpRight] then
     if not GetButtonsEmpty then
     begin
-      RL:= GetRectOfButtonIndex(0, true);
-      RR:= GetRectOfButtonIndex(0, false);
-      DoPaintBgTo(C, Rect(
-        RL.Left, 0,
-        RR.Right, FOptTabHeight));
+      X1:= GetButtonsEdgeCoord(true);
+      X2:= GetButtonsEdgeCoord(false);
+      DoPaintBgTo(C, Rect(X1, 0, X2, FOptTabHeight));
     end;
 end;
 
