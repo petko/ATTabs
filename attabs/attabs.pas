@@ -2946,10 +2946,11 @@ begin
     Result.Left:= Result.Right-FOptButtonSize;
   end;
 
-  Result.Top:= IfThen(
-    FOptPosition in [atpTop, atpBottom],
-    FOptSpacer,
-    0);
+  if FOptPosition in [atpTop, atpBottom] then
+    Result.Top:= FOptSpacer
+  else
+    Result.Top:= 0;
+
   Result.Bottom:= Result.Top+FOptTabHeight;
 
   if FOptPosition=atpBottom then Inc(Result.Top);
