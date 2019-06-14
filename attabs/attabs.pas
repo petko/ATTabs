@@ -3643,19 +3643,21 @@ end;
 
 procedure TATTabs.DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
 var
+  BtnId: TATTabButton;
   ElemType: TATTabElemType;
-  R: TRect;
   NIndex, i: integer;
+  R: TRect;
 begin
   for i:= 0 to High(AButtons) do
   begin
-    if AButtons[i].Id=atbNone then Break;
+    BtnId:= AButtons[i].Id;
+    if BtnId=atbNone then Break;
     R:= GetRectOfButtonIndex(i, AtLeft);
 
-    case AButtons[i].Id of
+    case BtnId of
       atbUser0..atbUser4:
         begin
-          NIndex:= ConvertButtonIdToTabIndex(AButtons[i].Id);
+          NIndex:= ConvertButtonIdToTabIndex(BtnId);
 
           if FTabIndexOver=NIndex then
             ElemType:= aeButtonUserOver
@@ -3663,7 +3665,7 @@ begin
             ElemType:= aeButtonUser;
 
           DoPaintBgTo(C, R);
-          DoPaintAfter(ElemType, Ord(AButtons[i].Id)-Ord(atbUser0), C, R);
+          DoPaintAfter(ElemType, Ord(BtnId)-Ord(atbUser0), C, R);
         end;
       atbSpace:
         begin
