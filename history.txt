@@ -3,6 +3,7 @@
 + add: OptButtonSizeSpace
 + add: OptButtonSizeSeparator
 + add: OptButtonLayout allows chars "|" (separator) and "_" (space)
++ add: TabMenuExternal (TPopupMenu)
 
 2019.06.07
 + add: ParentColor
