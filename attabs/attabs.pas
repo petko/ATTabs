@@ -3749,17 +3749,19 @@ begin
 end;
 
 procedure TATTabs.DoUpdateCanvasAntialiasMode(C: TCanvas);
+{$ifdef fpc}
+begin
+  C.AntialiasingMode:= amOn;
+end;
+{$else}
 var
   p: TPoint;
 begin
-  {$ifdef fpc}
-  C.AntialiasingMode:= amOn;
-  {$else}
   GetBrushOrgEx(C.Handle, p);
   SetStretchBltMode(C.Handle, HALFTONE);
   SetBrushOrgEx(C.Handle, p.x, p.y, @p);
-  {$endif}
 end;
+{$endif}
 
 procedure TATTabs.DoUpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
 var
