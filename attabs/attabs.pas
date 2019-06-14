@@ -551,7 +551,8 @@ type
     procedure SetOptShowPlusTab(const Value: boolean);
 
   public
-    TabMenu: TATTabPopupMenu;
+    TabMenuExternal: TATTabPopupMenu;
+
     constructor Create(AOwner: TComponent); override;
     function CanFocus: boolean; override;
     destructor Destroy; override;
@@ -3006,11 +3007,11 @@ var
   bShow: boolean;
 begin
 
-  if Assigned(TabMenu) then
+  if Assigned(TabMenuExternal) then
   begin
     P:= Point(FRectArrowDown.Left, FRectArrowDown.Bottom);
     P:= ClientToScreen(P);
-    TabMenu.Popup(P.X, P.Y);
+    TabMenuExternal.Popup(P.X, P.Y);
     exit;
   end;
 
