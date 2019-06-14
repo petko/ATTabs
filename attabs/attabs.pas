@@ -509,6 +509,7 @@ type
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
+    function GetButtonsWidth(const B: TATTabButtons): integer;
     function GetPositionInverted(APos: TATTabPosition): TATTabPosition;
     function GetIndexOfButton(AData: TATTabButtons; ABtn: TATTabButton): integer;
     function GetInitialVerticalIndent: integer;
@@ -1986,18 +1987,8 @@ begin
 
   FAngleSide:= Trunc(FOptTabHeight/FAngleTangent);
 
-  FRealIndentLeft:= FOptSpaceInitial;
-  FRealIndentRight:= FOptSpaceInitial;
-  for i:= 0 to High(TATTabButtons) do
-  begin
-    if FButtonsLeft[i].Id=atbNone then Break;
-    Inc(FRealIndentLeft, FButtonsLeft[i].Size);
-  end;
-  for i:= 0 to High(TATTabButtons) do
-  begin
-    if FButtonsRight[i].Id=atbNone then Break;
-    Inc(FRealIndentRight, FButtonsRight[i].Size);
-  end;
+  FRealIndentLeft:= FOptSpaceInitial + GetButtonsWidth(FButtonsLeft);
+  FRealIndentRight:= FOptSpaceInitial + GetButtonsWidth(FButtonsRight);
 
   FRectArrowLeft:= GetRectOfButton(atbScrollLeft);
   FRectArrowRight:= GetRectOfButton(atbScrollRight);
@@ -3692,6 +3683,18 @@ begin
   begin
     DoHandleRightClick;
     Handled:= true;
+  end;
+end;
+
+function TATTabs.GetButtonsWidth(const B: TATTabButtons): integer;
+var
+  i: integer;
+begin
+  Result:= 0;
+  for i:= 0 to High(B) do
+  begin
+    if B[i].Id=atbNone then Break;
+    Inc(Result, B[i].Size);
   end;
 end;
 
