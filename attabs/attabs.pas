@@ -3569,41 +3569,41 @@ end;
 
 procedure TATTabs.ApplyButtonLayout;
   //
-  procedure ApplySide(var Side: TATTabButtons; const S: string);
+  procedure ApplySide(var Btns: TATTabButtons; const S: string);
   var
     N, i: integer;
   begin
     N:= 0;
-    FillChar(Side, SizeOf(Side), 0);
+    FillChar(Btns, SizeOf(Btns), 0);
     for i:= 1 to Length(S) do
       case S[i] of
-        '<': begin Side[N].Id:= atbScrollLeft;   Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '>': begin Side[N].Id:= atbScrollRight;  Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        'v': begin Side[N].Id:= atbDropdownMenu; Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '+': begin Side[N].Id:= atbPlus;         Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        'x': begin Side[N].Id:= atbClose;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '0': begin Side[N].Id:= atbUser0;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '1': begin Side[N].Id:= atbUser1;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '2': begin Side[N].Id:= atbUser2;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '3': begin Side[N].Id:= atbUser3;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '4': begin Side[N].Id:= atbUser4;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
-        '_': begin Side[N].Id:= atbSpace;        Side[N].Size:= FOptButtonSizeSpace;     Inc(N) end;
-        '|': begin Side[N].Id:= atbSeparator;    Side[N].Size:= FOptButtonSizeSeparator; Inc(N) end;
+        '<': begin Btns[N].Id:= atbScrollLeft;   Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '>': begin Btns[N].Id:= atbScrollRight;  Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        'v': begin Btns[N].Id:= atbDropdownMenu; Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '+': begin Btns[N].Id:= atbPlus;         Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        'x': begin Btns[N].Id:= atbClose;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '0': begin Btns[N].Id:= atbUser0;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '1': begin Btns[N].Id:= atbUser1;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '2': begin Btns[N].Id:= atbUser2;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '3': begin Btns[N].Id:= atbUser3;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '4': begin Btns[N].Id:= atbUser4;        Btns[N].Size:= FOptButtonSize;          Inc(N) end;
+        '_': begin Btns[N].Id:= atbSpace;        Btns[N].Size:= FOptButtonSizeSpace;     Inc(N) end;
+        '|': begin Btns[N].Id:= atbSeparator;    Btns[N].Size:= FOptButtonSizeSeparator; Inc(N) end;
       end;
   end;
   //
 var
-  S, SL, SR: string;
+  S, SLeft, SRight: string;
   N: integer;
 begin
   S:= FOptButtonLayout;
   N:= Pos(',', S);
-  if N=0 then N:= 200;
-  SL:= Copy(S, 1, N-1);
-  SR:= Copy(S, N+1, MaxInt);
+  if N=0 then N:= Length(S)+1;
+  SLeft:= Copy(S, 1, N-1);
+  SRight:= Copy(S, N+1, MaxInt);
 
-  ApplySide(FButtonsLeft, SL);
-  ApplySide(FButtonsRight, SwapString(SR));
+  ApplySide(FButtonsLeft, SLeft);
+  ApplySide(FButtonsRight, SwapString(SRight));
 end;
 
 procedure TATTabs.DoClickUser(AIndex: integer);
