@@ -125,7 +125,6 @@ type
 
 type
   TATTabButton = (
-    atbNone,
     atbPlus,
     atbClose,
     atbScrollLeft,
@@ -3691,8 +3690,8 @@ end;
 function TATTabs.GetButtonsEmpty: boolean;
 begin
   Result:=
-    (FButtonsLeft[0].Id=atbNone) and
-    (FButtonsRight[0].Id=atbNone);
+    (Length(FButtonsLeft)=0) and
+    (Length(FButtonsRight)=0);
 end;
 
 function TATTabs.GetInitialVerticalIndent: integer;
