@@ -2934,7 +2934,7 @@ begin
     Result.Left:= AIndex*FOptButtonSize
       +IfThen(FOptPosition=atpLeft, FOptSpacer)
       +IfThen(FOptPosition=atpRight, FOptSpacer2)
-      +1;
+      +FOptSpaceInitial;
     Result.Right:= Result.Left+FOptButtonSize;
   end
   else
