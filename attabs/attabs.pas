@@ -468,7 +468,7 @@ type
     FOnTabGetCloseAction: TATTabGetCloseActionEvent;
 
     procedure ApplyButtonLayout;
-    function ConvertButtonIdToTabIndex(Id: TATTabButton): integer;
+    function ConvertButtonIdToTabIndex(Id: TATTabButton): integer; inline;
     procedure DoAnimationTabAdd(AIndex: integer);
     procedure DoAnimationTabClose(AIndex: integer);
     procedure DoClickUser(AIndex: integer);
@@ -486,7 +486,7 @@ type
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
-    procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string);
+    procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string); inline;
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
     procedure DoPaintTabTo(C: TCanvas; ARect: TRect; const ACaption: TATTabString;
       AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg,
@@ -494,7 +494,7 @@ type
       ATabModified, ATabActive: boolean;
       AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
-    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor);
+    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor); inline;
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
       ATabCloseBorder, ATabCloseXMark: TColor);
@@ -502,10 +502,10 @@ type
     procedure DoPaintScrollMark(C: TCanvas);
     function GetButtonsEdgeCoord(AtLeft: boolean): integer;
     function GetButtonsWidth(const B: TATTabButtons): integer;
-    function GetPositionInverted(APos: TATTabPosition): TATTabPosition;
+    function GetPositionInverted(APos: TATTabPosition): TATTabPosition; inline;
     function GetIndexOfButton(const AButtons: TATTabButtons; ABtn: TATTabButton): integer;
-    function GetInitialVerticalIndent: integer;
-    function GetButtonsEmpty: boolean;
+    function GetInitialVerticalIndent: integer; inline;
+    function GetButtonsEmpty: boolean; inline;
     function GetTabBgColor_Passive(AIndex: integer): TColor;
     function GetTabBgColor_Active(AIndex: integer): TColor;
     function GetTabBgColor_Plus: TColor;
@@ -522,24 +522,24 @@ type
     procedure SetTabIndex(AIndex: integer);
     procedure GetTabXProps(AIndex: integer; const ARect: TRect; out AColorXBg,
       AColorXBorder, AColorXMark: TColor; out AMouseOverX: boolean; out ARectX: TRect);
-    function IsIndexOk(AIndex: integer): boolean;
+    function IsIndexOk(AIndex: integer): boolean; inline;
     function IsShowX(AIndex: integer): boolean;
     function IsPaintNeeded(AElemType: TATTabElemType;
       AIndex: integer; ACanvas: TCanvas; const ARect: TRect): boolean;
     function DoPaintAfter(AElemType: TATTabElemType;
       AIndex: integer; ACanvas: TCanvas; const ARect: TRect): boolean;
     procedure TabMenuClick(Sender: TObject);
-    function GetTabWidth_Plus_Raw: integer;
+    function GetTabWidth_Plus_Raw: integer; inline;
     procedure DoUpdateTabWidths;
     procedure DoUpdateTabRects(C: TCanvas);
     procedure DoUpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
-    procedure DoUpdateCanvasAntialiasMode(C: TCanvas);
+    procedure DoUpdateCanvasAntialiasMode(C: TCanvas); inline;
     procedure DoUpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
       out ALineHeight: integer; out ATextSize: TSize);
     procedure DoTabDrop;
     procedure DoTabDropToOtherControl(ATarget: TControl; const APnt: TPoint);
     function GetTabTick(AIndex: integer): Int64;
-    function _IsDrag: boolean;
+    function _IsDrag: boolean; inline;
     procedure SetOptShowPlusTab(const Value: boolean);
 
   public
@@ -2669,7 +2669,7 @@ begin
 end;
 
 type
-  TControl2 = class(TControl);
+  TControlHack = class(TControl);
 
 procedure TATTabs.MouseMove(Shift: TShiftState; X, Y: integer);
 var
@@ -3166,12 +3166,12 @@ var
 begin
   if not (ATarget is TATTabs) then
   begin
-    if Assigned(TControl2(ATarget).OnDragDrop) then
+    if Assigned(TControlHack(ATarget).OnDragDrop) then
     begin
       P:= APnt;
       Data:= GetTabData(FTabIndex);
       if Data<>nil then
-        TControl2(ATarget).OnDragDrop(ATarget, Data.TabObject, P.X, P.Y);
+        TControlHack(ATarget).OnDragDrop(ATarget, Data.TabObject, P.X, P.Y);
     end;
     Exit;
   end;  

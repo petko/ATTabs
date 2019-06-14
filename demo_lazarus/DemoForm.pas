@@ -479,8 +479,6 @@ procedure TForm1.TabDrawBefore_Bottom(Sender: TObject;
   C: TCanvas; const ARect: TRect; var ACanDraw: boolean);
 var
   D: TATTabData;
-  NColor: TColor;
-  R: TRect;
 begin
   case AType of
     {
