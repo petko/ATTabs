@@ -137,6 +137,8 @@ type
     atbScrollLeft,
     atbScrollRight,
     atbDropdownMenu,
+    atbSpace,
+    atbSeparator,
     atbUser0,
     atbUser1,
     atbUser2,
@@ -144,7 +146,10 @@ type
     atbUser4
     );
 
-  TATTabButtons = array[0..20] of TATTabButton;
+  TATTabButtons = array[0..20] of record
+    Id: TATTabButton;
+    Size: integer;
+  end;
 
 type
   TATTabIconPosition = (
@@ -237,6 +242,8 @@ const
   _InitOptAnimationPause = 60;
   _InitOptButtonLayout = '<>,v';
   _InitOptButtonSize = 16;
+  _InitOptButtonSizeSpace = 10;
+  _InitOptButtonSizeSeparator = 5;
   _InitOptTabHeight = 24;
   _InitOptTabWidthMinimal = 40;
   _InitOptTabWidthMaximal = 300;
@@ -333,6 +340,8 @@ type
     FButtonsLeft: TATTabButtons;
     FButtonsRight: TATTabButtons;
     FOptButtonSize: integer;
+    FOptButtonSizeSpace: integer;
+    FOptButtonSizeSeparator: integer;
     FOptButtonLayout: string;
 
     FOptAnimationEnabled: boolean;
@@ -466,6 +475,7 @@ type
     FOnTabGetCloseAction: TATTabGetCloseActionEvent;
 
     procedure ApplyButtonLayout;
+    function ConvertButtonIdToTabIndex(Id: TATTabButton): integer;
     procedure DoAnimationTabAdd(AIndex: integer);
     procedure DoAnimationTabClose(AIndex: integer);
     procedure DoClickUser(AIndex: integer);
@@ -479,6 +489,7 @@ type
     procedure DoPaintButtonsBG(C: TCanvas);
     procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
       AColor: TColor; APos: TATTabPosition);
+    procedure DoPaintSeparator(C: TCanvas; const R: TRect);
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
@@ -492,7 +503,7 @@ type
       AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
       AColorArr: TColor);
-    procedure DoPaintUserButtons(C: TCanvas);
+    procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
       ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
@@ -670,6 +681,8 @@ type
     property OptAnimationPause: integer read FOptAnimationPause write FOptAnimationPause default _InitOptAnimationPause;
     property OptButtonLayout: string read FOptButtonLayout write SetOptButtonLayout;
     property OptButtonSize: integer read FOptButtonSize write FOptButtonSize default _InitOptButtonSize;
+    property OptButtonSizeSpace: integer read FOptButtonSizeSpace write FOptButtonSizeSpace default _InitOptButtonSizeSpace;
+    property OptButtonSizeSeparator: integer read FOptButtonSizeSeparator write FOptButtonSizeSeparator default _InitOptButtonSizeSeparator;
     property OptVarWidth: boolean read FOptVarWidth write SetOptVarWidth default false;
     property OptMultiline: boolean read FOptMultiline write FOptMultiline default false;
     property OptFillWidth: boolean read FOptFillWidth write FOptFillWidth default _InitOptFillWidth;
@@ -1138,6 +1151,8 @@ begin
   FOptButtonLayout:= _InitOptButtonLayout;
   ApplyButtonLayout;
   FOptButtonSize:= _InitOptButtonSize;
+  FOptButtonSizeSpace:= _InitOptButtonSizeSpace;
+  FOptButtonSizeSeparator:= _InitOptButtonSizeSeparator;
   FOptCaptionAlignment:= taLeftJustify;
   FOptIconPosition:= aipIconLefterThanText;
   FOptWhichActivateOnClose:= aocRight;
@@ -1973,11 +1988,15 @@ begin
   FRealIndentLeft:= FOptSpaceInitial;
   FRealIndentRight:= FOptSpaceInitial;
   for i:= 0 to High(TATTabButtons) do
-    if FButtonsLeft[i]<>atbNone then
-      Inc(FRealIndentLeft, FOptButtonSize);
+  begin
+    if FButtonsLeft[i].Id=atbNone then Break;
+    Inc(FRealIndentLeft, FButtonsLeft[i].Size);
+  end;
   for i:= 0 to High(TATTabButtons) do
-    if FButtonsRight[i]<>atbNone then
-      Inc(FRealIndentRight, FOptButtonSize);
+  begin
+    if FButtonsRight[i].Id=atbNone then Break;
+    Inc(FRealIndentRight, FButtonsRight[i].Size);
+  end;
 
   FRectArrowLeft:= GetRectOfButton(atbScrollLeft);
   FRectArrowRight:= GetRectOfButton(atbScrollRight);
@@ -2216,7 +2235,8 @@ begin
   DoPaintArrowDown(C);
   DoPaintButtonPlus(C);
   DoPaintButtonClose(C);
-  DoPaintUserButtons(C);
+  DoPaintUserButtons(C, FButtonsLeft);
+  DoPaintUserButtons(C, FButtonsRight);
 
   if FOptShowDropMark then
     if _IsDrag then
@@ -2923,27 +2943,39 @@ var
 begin
   Result:= -1;
   for i:= 0 to High(AData) do
-    if AData[i]=ABtn then
+    if AData[i].Id=ABtn then
       begin Result:= i; exit; end;
 end;
 
 function TATTabs.GetRectOfButtonIndex(AIndex: integer; AtLeft: boolean): TRect;
+var
+  NPos, i: integer;
 begin
   if AtLeft then
   begin
-    Result.Left:= AIndex*FOptButtonSize
-      +IfThen(FOptPosition=atpLeft, FOptSpacer)
-      +IfThen(FOptPosition=atpRight, FOptSpacer2)
-      +FOptSpaceInitial;
-    Result.Right:= Result.Left+FOptButtonSize;
+    NPos:= 0
+      + IfThen(FOptPosition=atpLeft, FOptSpacer)
+      + IfThen(FOptPosition=atpRight, FOptSpacer2)
+      + FOptSpaceInitial;
+    for i:= 0 to AIndex do
+    begin
+      Result.Left:= NPos;
+      Result.Right:= Result.Left+FButtonsLeft[i].Size;
+      NPos:= Result.Right;
+    end;
   end
   else
   begin
-    Result.Right:= ClientWidth-AIndex*FOptButtonSize
+    NPos:= ClientWidth
       -IfThen(FOptPosition=atpLeft, FOptSpacer2)
       -IfThen(FOptPosition=atpRight, FOptSpacer)
       -1;
-    Result.Left:= Result.Right-FOptButtonSize;
+    for i:= 0 to AIndex do
+    begin
+      Result.Right:= NPos;
+      Result.Left:= Result.Right-FButtonsRight[i].Size;
+      NPos:= Result.Left;
+    end;
   end;
 
   if FOptPosition in [atpTop, atpBottom] then
@@ -3552,16 +3584,18 @@ procedure TATTabs.ApplyButtonLayout;
     FillChar(Side, SizeOf(Side), 0);
     for i:= 1 to Length(S) do
       case S[i] of
-        '<': begin Side[N]:= atbScrollLeft; Inc(N) end;
-        '>': begin Side[N]:= atbScrollRight; Inc(N) end;
-        'v': begin Side[N]:= atbDropdownMenu; Inc(N) end;
-        '+': begin Side[N]:= atbPlus; Inc(N) end;
-        'x': begin Side[N]:= atbClose; Inc(N) end;
-        '0': begin Side[N]:= atbUser0; Inc(N) end;
-        '1': begin Side[N]:= atbUser1; Inc(N) end;
-        '2': begin Side[N]:= atbUser2; Inc(N) end;
-        '3': begin Side[N]:= atbUser3; Inc(N) end;
-        '4': begin Side[N]:= atbUser4; Inc(N) end;
+        '<': begin Side[N].Id:= atbScrollLeft;   Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '>': begin Side[N].Id:= atbScrollRight;  Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        'v': begin Side[N].Id:= atbDropdownMenu; Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '+': begin Side[N].Id:= atbPlus;         Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        'x': begin Side[N].Id:= atbClose;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '0': begin Side[N].Id:= atbUser0;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '1': begin Side[N].Id:= atbUser1;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '2': begin Side[N].Id:= atbUser2;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '3': begin Side[N].Id:= atbUser3;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '4': begin Side[N].Id:= atbUser4;        Side[N].Size:= FOptButtonSize;          Inc(N) end;
+        '_': begin Side[N].Id:= atbSpace;        Side[N].Size:= FOptButtonSizeSpace;     Inc(N) end;
+        '|': begin Side[N].Id:= atbSeparator;    Side[N].Size:= FOptButtonSizeSeparator; Inc(N) end;
       end;
   end;
   //
@@ -3585,32 +3619,62 @@ begin
     FOnTabClickUserButton(Self, AIndex);
 end;
 
-procedure TATTabs.DoPaintUserButtons(C: TCanvas);
+procedure TATTabs.DoPaintSeparator(C: TCanvas; const R: TRect);
+const
+  cSpace=2;
+begin
+  DoPaintBgTo(C, R);
+  C.Pen.Color:= FColorSeparator;
+  C.MoveTo((R.Left+R.Right) div 2, R.Top+cSpace);
+  C.LineTo((R.Left+R.Right) div 2, R.Bottom-1-cSpace);
+end;
+
+function TATTabs.ConvertButtonIdToTabIndex(Id: TATTabButton): integer;
+begin
+  case Id of
+    atbUser0: Result:= cTabIndexUser0;
+    atbUser1: Result:= cTabIndexUser1;
+    atbUser2: Result:= cTabIndexUser2;
+    atbUser3: Result:= cTabIndexUser3;
+    atbUser4: Result:= cTabIndexUser4;
+  end;
+end;
+
+procedure TATTabs.DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons);
 var
   ElemType: TATTabElemType;
   R: TRect;
   NIndex, i: integer;
+  AtLeft: boolean;
 begin
-  for i:= 0 to 4 do
+  for i:= 0 to High(AButtons) do
   begin
-    case i of
-      0: begin NIndex:= cTabIndexUser0; R:= FRectButtonUser0; end;
-      1: begin NIndex:= cTabIndexUser1; R:= FRectButtonUser1; end;
-      2: begin NIndex:= cTabIndexUser2; R:= FRectButtonUser2; end;
-      3: begin NIndex:= cTabIndexUser3; R:= FRectButtonUser3; end;
-      4: begin NIndex:= cTabIndexUser4; R:= FRectButtonUser4; end;
-      else Break;
+    if AButtons[i].Id=atbNone then Break;
+    AtLeft:= @AButtons=@FButtonsLeft;
+    R:= GetRectOfButtonIndex(i, AtLeft);
+
+    case AButtons[i].Id of
+      atbUser0..atbUser4:
+        begin
+          NIndex:= ConvertButtonIdToTabIndex(AButtons[i].Id);
+
+          if FTabIndexOver=NIndex then
+            ElemType:= aeButtonUserOver
+          else
+            ElemType:= aeButtonUser;
+
+          DoPaintBgTo(C, R);
+          DoPaintAfter(ElemType, Abs(NIndex)-Abs(cTabIndexUser0), C, R);
+        end;
+      atbSpace:
+        begin
+          DoPaintBgTo(C, R);
+        end;
+      atbSeparator:
+        begin
+          DoPaintSeparator(C, R);
+        end
     end;
-
-    if R.Right=0 then Continue;
-    DoPaintBgTo(C, R);
-
-    if FTabIndexOver=NIndex then
-      ElemType:= aeButtonUserOver
-    else
-      ElemType:= aeButtonUser;
-
-    DoPaintAfter(ElemType, i, C, R);
   end;
 end;
 
@@ -3633,8 +3697,8 @@ end;
 function TATTabs.GetButtonsEmpty: boolean;
 begin
   Result:=
-    (FButtonsLeft[0]=atbNone) and
-    (FButtonsRight[0]=atbNone);
+    (FButtonsLeft[0].Id=atbNone) and
+    (FButtonsRight[0].Id=atbNone);
 end;
 
 function TATTabs.GetInitialVerticalIndent: integer;

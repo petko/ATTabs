@@ -196,10 +196,8 @@ object Form1: TForm1
       '<>v,'
       ',<>v'
       ',<>v+'
-      '<,>'
       '<,>v'
-      'v<,>'
-      '20,<>+x13'
+      '||0_2||4,|<>+_x|13'
     )
     OnChange = comboLayoutChange
     Style = csDropDownList

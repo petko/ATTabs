@@ -1,4 +1,9 @@
 
+2019.06.14
++ add: OptButtonSizeSpace
++ add: OptButtonSizeSeparator
++ add: OptButtonLayout allows chars "|" (separator) and "_" (space)
+
 2019.06.07
 + add: ParentColor
 
