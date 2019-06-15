@@ -3659,7 +3659,7 @@ procedure TATTabs.DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; 
 var
   BtnId: TATTabButton;
   ElemType: TATTabElemType;
-  NIndex, i: integer;
+  NIndex, i, FTabHeight: integer;
   R: TRect;
 begin
   for i:= 0 to Length(AButtons)-1 do
@@ -3669,7 +3669,11 @@ begin
     //in that small area before the first userbutton:
     if FOptPosition in [atpTop, atpBottom] then
     begin
-      R:=Rect(0,0,OptSpaceInitial,ClientHeight);
+      FTabHeight := ClientHeight;
+      if FOptMultiline then
+        FTabHeight:= R.Bottom+FOptSpacer2;
+
+      R:=Rect(0,0,OptSpaceInitial, FTabHeight);
       DoPaintBgTo(C, R);
     end;
 
