@@ -530,11 +530,11 @@ type
       AIndex: integer; ACanvas: TCanvas; const ARect: TRect): boolean;
     procedure TabMenuClick(Sender: TObject);
     function GetTabWidth_Plus_Raw: integer; inline;
-    procedure DoUpdateTabWidths;
-    procedure DoUpdateTabRects(C: TCanvas);
-    procedure DoUpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
-    procedure DoUpdateCanvasAntialiasMode(C: TCanvas); inline;
-    procedure DoUpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
+    procedure UpdateTabWidths;
+    procedure UpdateTabRects(C: TCanvas);
+    procedure UpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
+    procedure UpdateCanvasAntialiasMode(C: TCanvas); inline;
+    procedure UpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
       out ALineHeight: integer; out ATextSize: TSize);
     procedure DoTabDrop;
     procedure DoTabDropToOtherControl(ATarget: TControl; const APnt: TPoint);
@@ -1398,7 +1398,7 @@ begin
     TempCaption:= ACaption;
     if ATabModified then
       TempCaption:= FOptShowModifiedText+TempCaption;
-    DoUpdateCaptionProps(C, TempCaption, NLineHeight, Extent);
+    UpdateCaptionProps(C, TempCaption, NLineHeight, Extent);
 
     NIndentTop:= (RectText.Bottom-RectText.Top-Extent.cy) div 2 + 1;
 
@@ -1494,7 +1494,7 @@ begin
       end;
   end;
 
-  DoUpdateCanvasAntialiasMode(C);
+  UpdateCanvasAntialiasMode(C);
   
   //angled tabs
   if FOptShowAngled and not FOptShowFlat then
@@ -1713,7 +1713,7 @@ begin
   end;
 end;
 
-procedure TATTabs.DoUpdateTabRects(C: TCanvas);
+procedure TATTabs.UpdateTabRects(C: TCanvas);
 var
   TempCaption: TATTabString;
   Data: TATTabData;
@@ -1744,7 +1744,7 @@ begin
       else
       if FOptVarWidth then
       begin
-        DoUpdateCaptionProps(C, Data.TabCaption, NLineHeight, Extent);
+        UpdateCaptionProps(C, Data.TabCaption, NLineHeight, Extent);
         NLineHeight:= 2*FOptSpaceBeforeText + Extent.CY;
       end
       else
@@ -1800,7 +1800,7 @@ begin
         FOptShowModifiedText +
         Data.TabCaption;
 
-      DoUpdateCaptionProps(C, TempCaption, NLineHeight, Extent);
+      UpdateCaptionProps(C, TempCaption, NLineHeight, Extent);
       FTabWidth:= Extent.CX + 2*FOptSpaceBeforeText;
 
       if not Assigned(FImages) then //no imagelist
@@ -1831,7 +1831,7 @@ begin
         R.Bottom:= R.Top+FOptTabHeight;
 
         if FOptFillWidth then
-          DoUpdateTabRectsToFillLine(NIndexLineStart, i-1, false);
+          UpdateTabRectsToFillLine(NIndexLineStart, i-1, false);
         NIndexLineStart:= i;
       end;
 
@@ -1840,7 +1840,7 @@ begin
   end;
 
   if FOptFillWidth and FOptFillWidthLastToo then
-    DoUpdateTabRectsToFillLine(NIndexLineStart, TabCount-1, true);
+    UpdateTabRectsToFillLine(NIndexLineStart, TabCount-1, true);
 
   if FOptMultiline then
     Height:= R.Bottom+FOptSpacer2;
@@ -2020,8 +2020,8 @@ begin
     FScrollPos:= 0;
 
   C.Font.Assign(Self.Font);
-  DoUpdateTabWidths;
-  DoUpdateTabRects(C);
+  UpdateTabWidths;
+  UpdateTabRects(C);
 
   //paint spacer rect
   if not FOptShowFlat then
@@ -3065,7 +3065,7 @@ begin
   SetTabIndex((Sender as TComponent).Tag);
 end;
 
-procedure TATTabs.DoUpdateTabWidths;
+procedure TATTabs.UpdateTabWidths;
 var
   Value, Count: integer;
 begin
@@ -3582,7 +3582,7 @@ end;
 
 procedure TATTabs.ApplyButtonLayout;
   //
-  procedure ApplySide(var Btns: TATTabButtons; const S: string);
+  procedure UpdateBtns(var Btns: TATTabButtons; const S: string);
   var
     i: integer;
   begin
@@ -3614,8 +3614,8 @@ begin
   SLeft:= Copy(S, 1, N-1);
   SRight:= Copy(S, N+1, MaxInt);
 
-  ApplySide(FButtonsLeft, SLeft);
-  ApplySide(FButtonsRight, SwapString(SRight));
+  UpdateBtns(FButtonsLeft, SLeft);
+  UpdateBtns(FButtonsRight, SwapString(SRight));
 end;
 
 procedure TATTabs.DoClickUser(AIndex: integer);
@@ -3759,7 +3759,7 @@ begin
     end;
 end;
 
-procedure TATTabs.DoUpdateCanvasAntialiasMode(C: TCanvas);
+procedure TATTabs.UpdateCanvasAntialiasMode(C: TCanvas);
 {$ifdef fpc}
 begin
   C.AntialiasingMode:= amOn;
@@ -3774,7 +3774,7 @@ begin
 end;
 {$endif}
 
-procedure TATTabs.DoUpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
+procedure TATTabs.UpdateTabRectsToFillLine(AIndexFrom, AIndexTo: integer; ALastLine: boolean);
 var
   NDelta, NWidthOfPlus, i: integer;
   D: TATTabData;
@@ -3808,7 +3808,7 @@ begin
   end;
 end;
 
-procedure TATTabs.DoUpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
+procedure TATTabs.UpdateCaptionProps(C: TCanvas; const ACaption: TATTabString;
   out ALineHeight: integer; out ATextSize: TSize);
 var
   {$ifdef WIDE}
@@ -3871,7 +3871,7 @@ var
   R: TRect;
 begin
   //sometimes new tab has not updated Data.TabRect
-  DoUpdateTabRects(FBitmap.Canvas);
+  UpdateTabRects(FBitmap.Canvas);
 
   if not IsScrollMarkNeeded then exit;
 
