@@ -22,7 +22,7 @@ uses
   Windows,
   {$endif}
   Classes, Types, Graphics,
-  Controls, Messages, UITypes, //ImgList, ImgList is deprecated, suppress compiler warning and may need compile conditional here
+  Controls, Messages, ImgList,
   {$ifdef FPC}
   InterfaceBase,
   LCLIntf,
@@ -2183,7 +2183,7 @@ begin
     RRect:= GetTabRect(i);
     GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
 
-    //bMouseOver:= i=FTabIndexOver;
+    bMouseOver:= i=FTabIndexOver;
     bShowX:= IsShowX(i);
 
     if IsPaintNeeded(aeTabActive, i, C, RRect) then
