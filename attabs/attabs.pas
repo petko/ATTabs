@@ -1767,6 +1767,8 @@ begin
   NWidthSaved:= FTabWidth;
 
   R.Left:= FRealIndentLeft;
+  if FOptShowAngled then
+    Inc(R.Left, FAngleSide);
   R.Right:= R.Left;
   R.Top:= FOptSpacer;
   R.Bottom:= R.Top+FOptTabHeight;
