@@ -3662,17 +3662,17 @@ var
   NIndex, i: integer;
   R: TRect;
 begin
-  for i:= 0 to Length(AButtons)-1 do
-  begin
-
-    //If we have an OptSpaceInitial > 0 then this "hides" scrolled buttons
-    //in that small area before the first userbutton:
-    if FOptPosition in [atpTop, atpBottom] then
+  //If we have an OptSpaceInitial > 0 then this "hides" scrolled buttons
+  //in that small area before the first userbutton:
+  if FOptPosition in [atpTop, atpBottom] then
+    if FOptSpaceInitial>0 then
     begin
-      R:=Rect(0,0,OptSpaceInitial, FOptTabHeight);
+      R:= Rect(0, 0, FOptSpaceInitial, FOptTabHeight+FOptSpacer);
       DoPaintBgTo(C, R);
     end;
 
+  for i:= 0 to Length(AButtons)-1 do
+  begin
     BtnId:= AButtons[i].Id;
     R:= GetRectOfButtonIndex(i, AtLeft);
 
