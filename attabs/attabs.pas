@@ -22,7 +22,7 @@ uses
   Windows,
   {$endif}
   Classes, Types, Graphics,
-  Controls, Messages, ImgList,
+  Controls, Messages, UITypes, //ImgList, ImgList is deprecated, suppress compiler warning and may need compile conditional here
   {$ifdef FPC}
   InterfaceBase,
   LCLIntf,
@@ -2183,7 +2183,7 @@ begin
     RRect:= GetTabRect(i);
     GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
 
-    bMouseOver:= i=FTabIndexOver;
+    //bMouseOver:= i=FTabIndexOver;
     bShowX:= IsShowX(i);
 
     if IsPaintNeeded(aeTabActive, i, C, RRect) then
@@ -2687,7 +2687,13 @@ var
   Data: TATTabData;
 begin
   inherited;
-  if TabCount=0 then exit;
+
+  if TabCount=0 then
+  begin
+    Invalidate; //cleans up <> v and x highlights if no tabs
+    exit;
+  end;
+
   FTabIndexOver:= GetTabAt(X, Y, IsX);
   FTabIndexDrop:= FTabIndexOver;
   Data:= nil;
@@ -3524,7 +3530,7 @@ var
   ElemType: TATTabElemType;
   R: TRect;
 begin
-  bOver:= FTabIndexOver=cTabIndexArrowScrollLeft;
+  bOver:= (TabCount > 0) and (FTabIndexOver=cTabIndexArrowScrollLeft);
   if bOver then
     ElemType:= aeArrowScrollLeftOver
   else
@@ -3552,7 +3558,7 @@ var
   ElemType: TATTabElemType;
   R: TRect;
 begin
-  bOver:= FTabIndexOver=cTabIndexArrowScrollRight;
+  bOver:= (TabCount > 0) and (FTabIndexOver=cTabIndexArrowScrollRight);
   if bOver then
     ElemType:= aeArrowScrollRightOver
   else
@@ -3658,6 +3664,15 @@ var
 begin
   for i:= 0 to Length(AButtons)-1 do
   begin
+
+    //If we have an OptSpaceInitial > 0 then this "hides" scrolled buttons
+    //in that small area before the first userbutton:
+    if FOptPosition in [atpTop, atpBottom] then
+    begin
+      R:=Rect(0,0,OptSpaceInitial,ClientHeight);
+      DoPaintBgTo(C, R);
+    end;
+
     BtnId:= AButtons[i].Id;
     R:= GetRectOfButtonIndex(i, AtLeft);
 
