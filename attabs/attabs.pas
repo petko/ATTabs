@@ -2964,16 +2964,25 @@ end;
 function TATTabs.GetButtonsEdgeCoord(AtLeft: boolean): integer;
 begin
   if AtLeft then
-    Result:=
-      + IfThen(FOptPosition=atpLeft, FOptSpacer)
-      + IfThen(FOptPosition=atpRight, FOptSpacer2)
-      + FOptSpaceInitial
+  begin
+    Result:= FOptSpaceInitial;
+    case FOptPosition of
+      atpLeft:
+        Inc(Result, FOptSpacer);
+      atpRight:
+        Inc(Result, FOptSpacer2);
+    end;
+  end
   else
-    Result:=
-      ClientWidth
-      -IfThen(FOptPosition=atpLeft, FOptSpacer2)
-      -IfThen(FOptPosition=atpRight, FOptSpacer)
-      ;
+  begin
+    Result:= ClientWidth;
+    case FOptPosition of
+      atpLeft:
+        Dec(Result, FOptSpacer2);
+      atpRight:
+        Dec(Result, FOptSpacer);
+    end;
+  end;
 end;
 
 function TATTabs.GetRectOfButtonIndex(AIndex: integer; AtLeft: boolean): TRect;
