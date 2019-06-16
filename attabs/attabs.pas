@@ -1350,16 +1350,17 @@ begin
   if FOptShowEntireColor and (AColorHilite<>clNone) then
     AColorBg:= AColorHilite;
 
-  C.Pen.Color:= AColorBg;
-  C.Brush.Color:= AColorBg;
+  if not FThemed then
+  begin
+    C.Pen.Color:= AColorBg;
+    C.Brush.Color:= AColorBg;
+    C.FillRect(ARect);
+  end;
 
   PL1:= Point(ARect.Left, ARect.Top);
   PL2:= Point(ARect.Left, ARect.Bottom-1);
   PR1:= Point(ARect.Right-1, ARect.Top);
   PR2:= Point(ARect.Right-1, ARect.Bottom-1);
-
-  if not FThemed then
-    C.FillRect(ARect);
 
   //center shape
   DoPaintTabShape_C(C, ATabActive,
