@@ -198,6 +198,8 @@ type
     FileName_LeftActive: string;
     FileName_RightActive: string;
     FileName_CenterActive: string;
+    FileName_X: string;
+    FileName_XActive: string;
     SpaceBetweenInPercentsOfSide: integer;
   end;
 
@@ -465,13 +467,15 @@ type
     FHintForUser3: string;
     FHintForUser4: string;
 
+    FThemed: boolean;
     FPic_L: TATTabsPicture;
     FPic_R: TATTabsPicture;
     FPic_C: TATTabsPicture;
     FPic_L_a: TATTabsPicture;
     FPic_R_a: TATTabsPicture;
     FPic_C_a: TATTabsPicture;
-    FThemed: boolean;
+    FPic_X: TATTabsPicture;
+    FPic_X_a: TATTabsPicture;
 
     //events    
     FOnTabClick: TNotifyEvent;
@@ -524,8 +528,8 @@ type
       AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
-    procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabBg, ATabCloseBg,
-      ATabCloseBorder, ATabCloseXMark: TColor);
+    procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
+      ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
     function GetButtonsEdgeCoord(AtLeft: boolean): integer;
@@ -1307,6 +1311,8 @@ begin
   if Assigned(FPic_L_a) then FreeAndNil(FPic_L_a);
   if Assigned(FPic_R_a) then FreeAndNil(FPic_R_a);
   if Assigned(FPic_C_a) then FreeAndNil(FPic_C_a);
+  if Assigned(FPic_X) then FreeAndNil(FPic_X);
+  if Assigned(FPic_X_a) then FreeAndNil(FPic_X_a);
 
   Clear;
   FreeAndNil(FCaptionList);
@@ -1697,17 +1703,29 @@ begin
 
   if IsPaintNeeded(ElemType, -1, C, ARectX) then
   begin
-    DoPaintXTo(C, ARectX, AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark);
+    DoPaintXTo(C, ARectX, AMouseOverX, AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark);
     DoPaintAfter(ElemType, -1, C, ARectX);
   end;
 end;
 
 procedure TATTabs.DoPaintXTo(C: TCanvas; const R: TRect;
+  AActive: boolean;
   ATabBg, ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor);
 var
   PX1, PX2, PX3, PX4, PXX1, PXX2: TPoint;
   RectRound, RectBitmap: TRect;
+  Pic: TATTabsPicture;
 begin
+  if FThemed then
+  begin
+    if AActive then
+      Pic:= FPic_X_a
+    else
+      Pic:= FPic_X;
+    Pic.Draw(C, R.Left, R.Top);
+    exit;
+  end;
+
   if FOptShowXRounded then
   begin
     if ATabCloseBg<>clNone then
@@ -4190,12 +4208,14 @@ begin
   Result:= false;
   FThemed:= false;
 
-  if not FileExists(Data.FileName_Left) then exit;
-  if not FileExists(Data.FileName_Right) then exit;
-  if not FileExists(Data.FileName_Center) then exit;
-  if not FileExists(Data.FileName_LeftActive) then exit;
-  if not FileExists(Data.FileName_RightActive) then exit;
-  if not FileExists(Data.FileName_CenterActive) then exit;
+  if not FileExists(Data.FileName_Left) then raise Exception.Create('File not found: '+Data.FileName_Left);
+  if not FileExists(Data.FileName_Right) then raise Exception.Create('File not found: '+Data.FileName_Right);
+  if not FileExists(Data.FileName_Center) then raise Exception.Create('File not found: '+Data.FileName_Center);
+  if not FileExists(Data.FileName_LeftActive) then raise Exception.Create('File not found: '+Data.FileName_LeftActive);
+  if not FileExists(Data.FileName_RightActive) then raise Exception.Create('File not found: '+Data.FileName_RightActive);
+  if not FileExists(Data.FileName_CenterActive) then raise Exception.Create('File not found: '+Data.FileName_CenterActive);
+  if not FileExists(Data.FileName_X) then raise Exception.Create('File not found: '+Data.FileName_X);
+  if not FileExists(Data.FileName_XActive) then raise Exception.Create('File not found: '+Data.FileName_XActive);
 
   if FPic_L=nil then FPic_L:= TATTabsPicture.Create;
   if FPic_R=nil then FPic_R:= TATTabsPicture.Create;
@@ -4203,6 +4223,8 @@ begin
   if FPic_L_a=nil then FPic_L_a:= TATTabsPicture.Create;
   if FPic_R_a=nil then FPic_R_a:= TATTabsPicture.Create;
   if FPic_C_a=nil then FPic_C_a:= TATTabsPicture.Create;
+  if FPic_X=nil then FPic_X:= TATTabsPicture.Create;
+  if FPic_X_a=nil then FPic_X_a:= TATTabsPicture.Create;
 
   FPic_L.LoadFromFile(Data.FileName_Left);
   FPic_R.LoadFromFile(Data.FileName_Right);
@@ -4210,6 +4232,8 @@ begin
   FPic_L_a.LoadFromFile(Data.FileName_LeftActive);
   FPic_R_a.LoadFromFile(Data.FileName_RightActive);
   FPic_C_a.LoadFromFile(Data.FileName_CenterActive);
+  FPic_X.LoadFromFile(Data.FileName_X);
+  FPic_X_a.LoadFromFile(Data.FileName_XActive);
 
   if not (
     (FPic_L.Width=FPic_R.Width) and
@@ -4219,9 +4243,12 @@ begin
     (FPic_L.Height=FPic_C.Height) and
     (FPic_L.Height=FPic_L_a.Height) and
     (FPic_L.Height=FPic_R_a.Height) and
-    (FPic_L.Height=FPic_C_a.Height)
+    (FPic_L.Height=FPic_C_a.Height) and
+    (FPic_X.Width=FPic_X.Height) and
+    (FPic_X.Width=FPic_X_a.Width) and
+    (FPic_X.Width=FPic_X_a.Height)
     ) then
-    raise Exception.Create('Incorrect sizes of pictures of tabs theme');
+    raise Exception.Create('Incorrect picture sizes in tab-theme');
 
   Result:= true;
   FThemed:= true;
@@ -4231,6 +4258,8 @@ begin
   FOptShowAngled:= true;
   FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptShowXRounded:= false;
+  FOptSpaceXSize:= FPic_X.Width;
+  FOptSpaceXRight:= FOptSpaceXSize div 2;
   Height:= FOptTabHeight+FOptSpacer;
 end;
 
