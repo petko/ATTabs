@@ -1469,6 +1469,11 @@ begin
   end;
 
   //borders
+  if FThemed then
+  begin
+    FPic_C.DrawSized(C, PL1.X, PL1.Y, PR1.X-PL1.X);
+  end
+  else
   if FOptShowFlat then
   begin
     if ATabActive then
@@ -1526,6 +1531,13 @@ begin
     case FOptPosition of
       atpTop:
         begin
+         if FThemed then
+         begin
+           FPic_L.Draw(C, ARect.Left-FAngleSide, ARect.Top);
+           FPic_R.Draw(C, ARect.Right, ARect.Top);
+         end
+         else
+         begin
           DrawTriangleRectFramed(C,
             ARect.Left-FAngleSide+1,
             ARect.Top,
@@ -1546,6 +1558,7 @@ begin
             AColorBg,
             AColorBorder,
             FBitmapAngle);
+         end;
         end;
       atpBottom:
         begin
@@ -4125,7 +4138,8 @@ begin
   FOptTabHeight:= FPic_L.Height;
   FAngleSide:= FPic_L.Width;
   FOptShowAngled:= true;
-  FOptSpaceBetweenTabs:= FAngleSide;
+  FOptSpaceBetweenTabs:= FAngleSide*2;
+  Height:= FOptTabHeight+FOptSpacer;
 end;
 
 
