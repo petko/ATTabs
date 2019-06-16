@@ -18,6 +18,7 @@ type
     btnToggleSpecial: TButton;
     btnThemeBlue1: TButton;
     btnThemeBlack1: TButton;
+    btnThemeChrome: TButton;
     chkAngled: TCheckBox;
     chkNewNearCurrent: TCheckBox;
     chkFill: TCheckBox;
@@ -51,6 +52,7 @@ type
     procedure btnStressClick(Sender: TObject);
     procedure btnThemeBlack1Click(Sender: TObject);
     procedure btnThemeBlue1Click(Sender: TObject);
+    procedure btnThemeChromeClick(Sender: TObject);
     procedure btnToggleSpecialClick(Sender: TObject);
     procedure chkAngledChange(Sender: TObject);
     procedure chkCenterCaptionChange(Sender: TObject);
@@ -230,6 +232,11 @@ end;
 procedure TForm1.btnThemeBlue1Click(Sender: TObject);
 begin
   SetTheme('blue_simple');
+end;
+
+procedure TForm1.btnThemeChromeClick(Sender: TObject);
+begin
+  SetTheme('chrome');
 end;
 
 procedure TForm1.SetTheme(const SName: string);

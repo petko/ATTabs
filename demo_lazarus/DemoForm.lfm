@@ -365,30 +365,39 @@ object Form1: TForm1
     ParentColor = False
   end
   object btnThemeBlue1: TButton
-    Left = 360
+    Left = 784
     Height = 25
-    Top = 271
+    Top = 192
     Width = 75
     Caption = 'blue1'
     OnClick = btnThemeBlue1Click
     TabOrder = 26
   end
   object Label9: TLabel
-    Left = 301
+    Left = 784
     Height = 16
-    Top = 272
+    Top = 144
     Width = 48
     Caption = 'Themes:'
     ParentColor = False
   end
   object btnThemeBlack1: TButton
-    Left = 439
+    Left = 784
     Height = 25
-    Top = 271
+    Top = 168
     Width = 75
     Caption = 'black1'
     OnClick = btnThemeBlack1Click
     TabOrder = 27
+  end
+  object btnThemeChrome: TButton
+    Left = 784
+    Height = 25
+    Top = 216
+    Width = 75
+    Caption = 'chrome'
+    OnClick = btnThemeChromeClick
+    TabOrder = 28
   end
   object ImageList1: TImageList
     Left = 568
