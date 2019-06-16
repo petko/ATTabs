@@ -497,6 +497,10 @@ type
     procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
       AColor: TColor; APos: TATTabPosition);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
+    procedure DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
+      ATabActive: boolean; AColorBg, AColorBorder: TColor);
+    procedure DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
+      ATabActive: boolean; AColorBg, AColorBorder: TColor);
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
@@ -1527,63 +1531,11 @@ begin
   UpdateCanvasAntialiasMode(C);
   
   //angled tabs
-  if FOptShowAngled and not FOptShowFlat then
-    case FOptPosition of
-      atpTop:
-        begin
-         if FThemed then
-         begin
-           FPic_L.Draw(C, ARect.Left-FAngleSide, ARect.Top);
-           FPic_R.Draw(C, ARect.Right, ARect.Top);
-         end
-         else
-         begin
-          DrawTriangleRectFramed(C,
-            ARect.Left-FAngleSide+1,
-            ARect.Top,
-            FAngleSide,
-            FOptTabHeight+IfThen(ATabActive, 1),
-            cSmoothScale,
-            ampnTopLeft,
-            AColorBg,
-            AColorBorder,
-            FBitmapAngle);
-          DrawTriangleRectFramed(C,
-            ARect.Right-1,
-            ARect.Top,
-            FAngleSide,
-            FOptTabHeight+IfThen(ATabActive, 1),
-            cSmoothScale,
-            ampnTopRight,
-            AColorBg,
-            AColorBorder,
-            FBitmapAngle);
-         end;
-        end;
-      atpBottom:
-        begin
-          DrawTriangleRectFramed(C,
-            ARect.Left-FAngleSide+1,
-            ARect.Top+IfThen(not ATabActive, 1),
-            FAngleSide,
-            FOptTabHeight,
-            cSmoothScale,
-            ampnBottomLeft,
-            AColorBg,
-            AColorBorder,
-            FBitmapAngle);
-          DrawTriangleRectFramed(C,
-            ARect.Right-1,
-            ARect.Top+IfThen(not ATabActive, 1),
-            FAngleSide,
-            FOptTabHeight,
-            cSmoothScale,
-            ampnBottomRight,
-            AColorBg,
-            AColorBorder,
-            FBitmapAngle);
-        end;
-    end;
+  if FOptShowAngled then
+  begin
+    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
+    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
+  end;
 
   //colored band
   if not FOptShowEntireColor then
@@ -1604,6 +1556,85 @@ begin
       DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
     end;
 end;
+
+procedure TATTabs.DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
+  ATabActive: boolean; AColorBg, AColorBorder: TColor);
+begin
+  if FThemed then
+  begin
+    FPic_L.Draw(C, ARect.Left-FAngleSide, ARect.Top);
+  end
+  else
+  if not FOptShowFlat then
+    case FOptPosition of
+      atpTop:
+        begin
+          DrawTriangleRectFramed(C,
+            ARect.Left-FAngleSide+1,
+            ARect.Top,
+            FAngleSide,
+            FOptTabHeight+IfThen(ATabActive, 1),
+            cSmoothScale,
+            ampnTopLeft,
+            AColorBg,
+            AColorBorder,
+            FBitmapAngle);
+        end;
+      atpBottom:
+        begin
+          DrawTriangleRectFramed(C,
+            ARect.Left-FAngleSide+1,
+            ARect.Top+IfThen(not ATabActive, 1),
+            FAngleSide,
+            FOptTabHeight,
+            cSmoothScale,
+            ampnBottomLeft,
+            AColorBg,
+            AColorBorder,
+            FBitmapAngle);
+        end;
+    end;
+end;
+
+procedure TATTabs.DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
+  ATabActive: boolean; AColorBg, AColorBorder: TColor);
+begin
+  if FThemed then
+  begin
+    FPic_R.Draw(C, ARect.Right, ARect.Top);
+  end
+  else
+  if not FOptShowFlat then
+    case FOptPosition of
+      atpTop:
+        begin
+          DrawTriangleRectFramed(C,
+            ARect.Right-1,
+            ARect.Top,
+            FAngleSide,
+            FOptTabHeight+IfThen(ATabActive, 1),
+            cSmoothScale,
+            ampnTopRight,
+            AColorBg,
+            AColorBorder,
+            FBitmapAngle);
+        end;
+      atpBottom:
+        begin
+          DrawTriangleRectFramed(C,
+            ARect.Right-1,
+            ARect.Top+IfThen(not ATabActive, 1),
+            FAngleSide,
+            FOptTabHeight,
+            cSmoothScale,
+            ampnBottomRight,
+            AColorBg,
+            AColorBorder,
+            FBitmapAngle);
+        end;
+    end;
+end;
+
 
 procedure TATTabs.DoPaintX(C: TCanvas;
   const ARectX: TRect; AMouseOverX: boolean;
