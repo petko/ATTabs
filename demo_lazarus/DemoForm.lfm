@@ -39,9 +39,9 @@ object Form1: TForm1
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 624
+    Left = 632
     Height = 16
-    Top = 88
+    Top = 144
     Width = 77
     Caption = 'bottom tabs:'
     ParentColor = False
@@ -112,9 +112,9 @@ object Form1: TForm1
     TabOrder = 0
   end
   object chkNums_Bottom: TCheckBox
-    Left = 624
+    Left = 632
     Height = 24
-    Top = 104
+    Top = 160
     Width = 111
     Caption = 'show numbers'
     OnChange = chkNums_BottomChange
@@ -149,9 +149,9 @@ object Form1: TForm1
     TabOrder = 19
   end
   object Label4: TLabel
-    Left = 464
+    Left = 472
     Height = 16
-    Top = 112
+    Top = 107
     Width = 50
     Caption = '"x" icons'
     ParentColor = False
@@ -159,7 +159,7 @@ object Form1: TForm1
   object comboShowX: TComboBox
     Left = 301
     Height = 26
-    Top = 107
+    Top = 104
     Width = 160
     ItemHeight = 0
     Items.Strings = (
@@ -174,7 +174,7 @@ object Form1: TForm1
     TabOrder = 12
   end
   object Label5: TLabel
-    Left = 464
+    Left = 472
     Height = 16
     Top = 136
     Width = 80
@@ -221,7 +221,7 @@ object Form1: TForm1
     TabOrder = 3
   end
   object Label6: TLabel
-    Left = 464
+    Left = 472
     Height = 16
     Top = 168
     Width = 70
@@ -278,9 +278,9 @@ object Form1: TForm1
     TabOrder = 5
   end
   object chkMultiline_Bottom: TCheckBox
-    Left = 624
+    Left = 632
     Height = 23
-    Top = 152
+    Top = 208
     Width = 145
     AutoSize = False
     Caption = 'multi-line'
@@ -288,9 +288,9 @@ object Form1: TForm1
     TabOrder = 11
   end
   object chkVarSize_Bottom: TCheckBox
-    Left = 624
+    Left = 632
     Height = 23
-    Top = 129
+    Top = 185
     Width = 145
     AutoSize = False
     Caption = 'var width'
@@ -315,7 +315,7 @@ object Form1: TForm1
     TabOrder = 7
   end
   object Label7: TLabel
-    Left = 464
+    Left = 472
     Height = 16
     Top = 200
     Width = 132
@@ -359,7 +359,7 @@ object Form1: TForm1
   object Label8: TLabel
     Left = 363
     Height = 16
-    Top = 232
+    Top = 234
     Width = 72
     Caption = 'initial indent'
     ParentColor = False
@@ -369,7 +369,7 @@ object Form1: TForm1
     Height = 25
     Top = 271
     Width = 75
-    Caption = 'blue_simple'
+    Caption = 'blue1'
     OnClick = btnThemeBlue1Click
     TabOrder = 26
   end
@@ -386,7 +386,7 @@ object Form1: TForm1
     Height = 25
     Top = 271
     Width = 75
-    Caption = 'black_side'
+    Caption = 'black1'
     OnClick = btnThemeBlack1Click
     TabOrder = 27
   end
