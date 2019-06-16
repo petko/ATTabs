@@ -39,7 +39,7 @@ object Form1: TForm1
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 304
+    Left = 624
     Height = 16
     Top = 88
     Width = 77
@@ -112,7 +112,7 @@ object Form1: TForm1
     TabOrder = 0
   end
   object chkNums_Bottom: TCheckBox
-    Left = 304
+    Left = 624
     Height = 24
     Top = 104
     Width = 111
@@ -149,17 +149,17 @@ object Form1: TForm1
     TabOrder = 19
   end
   object Label4: TLabel
-    Left = 456
+    Left = 464
     Height = 16
-    Top = 88
-    Width = 109
-    Caption = 'top tabs: "x" icons:'
+    Top = 112
+    Width = 50
+    Caption = '"x" icons'
     ParentColor = False
   end
   object comboShowX: TComboBox
-    Left = 456
+    Left = 301
     Height = 26
-    Top = 104
+    Top = 107
     Width = 160
     ItemHeight = 0
     Items.Strings = (
@@ -174,17 +174,17 @@ object Form1: TForm1
     TabOrder = 12
   end
   object Label5: TLabel
-    Left = 456
+    Left = 464
     Height = 16
     Top = 136
-    Width = 83
-    Caption = 'button layout:'
+    Width = 80
+    Caption = 'button layout'
     ParentColor = False
   end
   object comboLayout: TComboBox
-    Left = 456
+    Left = 301
     Height = 26
-    Top = 152
+    Top = 136
     Width = 160
     DropDownCount = 20
     ItemHeight = 0
@@ -221,17 +221,17 @@ object Form1: TForm1
     TabOrder = 3
   end
   object Label6: TLabel
-    Left = 456
+    Left = 464
     Height = 16
-    Top = 184
-    Width = 73
-    Caption = 'icons layout:'
+    Top = 168
+    Width = 70
+    Caption = 'icons layout'
     ParentColor = False
   end
   object comboIconPos: TComboBox
-    Left = 456
+    Left = 301
     Height = 26
-    Top = 200
+    Top = 168
     Width = 160
     DropDownCount = 20
     ItemHeight = 0
@@ -278,7 +278,7 @@ object Form1: TForm1
     TabOrder = 5
   end
   object chkMultiline_Bottom: TCheckBox
-    Left = 304
+    Left = 624
     Height = 23
     Top = 152
     Width = 145
@@ -288,7 +288,7 @@ object Form1: TForm1
     TabOrder = 11
   end
   object chkVarSize_Bottom: TCheckBox
-    Left = 304
+    Left = 624
     Height = 23
     Top = 129
     Width = 145
@@ -315,17 +315,17 @@ object Form1: TForm1
     TabOrder = 7
   end
   object Label7: TLabel
-    Left = 456
+    Left = 464
     Height = 16
-    Top = 232
-    Width = 135
-    Caption = 'truncate long captions:'
+    Top = 200
+    Width = 132
+    Caption = 'truncate long captions'
     ParentColor = False
   end
   object comboTruncate: TComboBox
-    Left = 456
+    Left = 301
     Height = 26
-    Top = 248
+    Top = 200
     Width = 160
     DropDownCount = 20
     ItemHeight = 0
@@ -349,41 +349,41 @@ object Form1: TForm1
     TabOrder = 8
   end
   object edInitial: TSpinEdit
-    Left = 304
+    Left = 301
     Height = 26
-    Top = 176
+    Top = 232
     Width = 56
     OnChange = edInitialChange
     TabOrder = 25
   end
   object Label8: TLabel
-    Left = 370
+    Left = 363
     Height = 16
-    Top = 179
+    Top = 232
     Width = 72
     Caption = 'initial indent'
     ParentColor = False
   end
   object btnThemeBlue1: TButton
-    Left = 632
+    Left = 360
     Height = 25
-    Top = 105
+    Top = 271
     Width = 75
     Caption = 'blue1'
     OnClick = btnThemeBlue1Click
     TabOrder = 26
   end
   object Label9: TLabel
-    Left = 632
+    Left = 301
     Height = 16
-    Top = 88
+    Top = 272
     Width = 48
     Caption = 'Themes:'
     ParentColor = False
   end
   object ImageList1: TImageList
-    Left = 640
-    Top = 232
+    Left = 568
+    Top = 392
     Bitmap = {
       4C69030000001000000010000000FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
