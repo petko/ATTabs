@@ -4196,7 +4196,7 @@ begin
   FAngleSide:= FPic_L.Width;
   FOptShowFlat:= false;
   FOptShowAngled:= true;
-  FOptSpaceBetweenTabs:= FAngleSide*2;
+  FOptSpaceBetweenTabs:= FAngleSide*3 div 2;
   FOptShowXRounded:= false;
   Height:= FOptTabHeight+FOptSpacer;
 end;
