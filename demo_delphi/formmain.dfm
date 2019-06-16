@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 195
   Top = 260
-  Width = 805
-  Height = 469
   Caption = 'ATTabs demo'
+  ClientHeight = 430
+  ClientWidth = 789
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,6 +21,13 @@ object Form1: TForm1
     Width = 46
     Height = 14
     Caption = 'position:'
+  end
+  object Label2: TLabel
+    Left = 208
+    Top = 288
+    Width = 40
+    Height = 14
+    Caption = 'theme:'
   end
   object chkFlat: TCheckBox
     Left = 208
@@ -124,6 +131,24 @@ object Form1: TForm1
     Caption = 'center captions'
     TabOrder = 10
     OnClick = chkCenterCaptionClick
+  end
+  object btnThemeBlue1: TButton
+    Left = 264
+    Top = 284
+    Width = 75
+    Height = 25
+    Caption = 'btnThemeBlue1'
+    TabOrder = 11
+    OnClick = btnThemeBlue1Click
+  end
+  object btnThemeBlack1: TButton
+    Left = 345
+    Top = 284
+    Width = 75
+    Height = 25
+    Caption = 'btnThemeBlack1'
+    TabOrder = 12
+    OnClick = btnThemeBlack1Click
   end
   object XPManifest1: TXPManifest
     Left = 712

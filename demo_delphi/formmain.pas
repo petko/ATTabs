@@ -21,6 +21,9 @@ type
     chkPosRight: TRadioButton;
     chkCenterCaption: TCheckBox;
     XPManifest1: TXPManifest;
+    Label2: TLabel;
+    btnThemeBlue1: TButton;
+    btnThemeBlack1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure chkFlatClick(Sender: TObject);
     procedure chkShowPlusClick(Sender: TObject);
@@ -33,8 +36,11 @@ type
     procedure chkPosBtmClick(Sender: TObject);
     procedure chkPosLeftClick(Sender: TObject);
     procedure chkPosRightClick(Sender: TObject);
+    procedure btnThemeBlue1Click(Sender: TObject);
+    procedure btnThemeBlack1Click(Sender: TObject);
   private
     { Private declarations }
+    procedure SetTheme(const SName: string);
   public
     { Public declarations }
     t: TATTabs;
@@ -66,6 +72,28 @@ begin
   t.Invalidate;
 end;
 
+procedure TForm1.SetTheme(const SName: string);
+var
+  dir: string;
+  Data: TATTabTheme;
+begin
+  dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
+    '\'+'img_themes'+
+    '\'+SName;
+
+  if not DirectoryExists(dir) then
+  begin
+    ShowMessage('Theme folder not found:'#10+dir);
+    exit;
+  end;
+
+  Data.FileName_Left:= dir+'\'+'l.png';
+  Data.FileName_Right:= dir+'\'+'r.png';
+  Data.FileName_Center:= dir+'\'+'c.png';
+  t.SetTheme(Data);
+  t.Invalidate;
+end;
+
 procedure TForm1.TabPlusClick(Sender: TObject);
 begin
   t.AddTab(-1, 'tab'+IntToStr(t.TabCount));
@@ -82,6 +110,11 @@ procedure TForm1.chkShowPlusClick(Sender: TObject);
 begin
   t.OptShowPlusTab:= chkShowPlus.Checked;
   t.Invalidate;
+end;
+
+procedure TForm1.btnThemeBlue1Click(Sender: TObject);
+begin
+  SetTheme('blue_simple');
 end;
 
 procedure TForm1.chkAngledClick(Sender: TObject);
@@ -107,6 +140,11 @@ procedure TForm1.chkMultilineClick(Sender: TObject);
 begin
   t.OptMultiline:= chkMultiline.Checked;
   t.Invalidate;
+end;
+
+procedure TForm1.btnThemeBlack1Click(Sender: TObject);
+begin
+  SetTheme('black_wide');
 end;
 
 procedure TForm1.chkCenterCaptionClick(Sender: TObject);
