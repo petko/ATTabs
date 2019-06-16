@@ -3727,6 +3727,7 @@ function SwapString(const S: string): string;
 var
   i: integer;
 begin
+  Result:= '';
   SetLength(Result, Length(S));
   for i:= 1 to Length(S) do
     Result[Length(S)+1-i]:= S[i];
@@ -3780,8 +3781,8 @@ procedure TATTabs.DoPaintSeparator(C: TCanvas; const R: TRect);
 begin
   DoPaintBgTo(C, R);
   C.Pen.Color:= FColorSeparator;
-  C.MoveTo((R.Left+R.Right) div 2, R.Top+FOptSpaceSeparator);
-  C.LineTo((R.Left+R.Right) div 2, R.Bottom-FOptSpaceSeparator);
+  C.MoveTo(R.Left, R.Top+FOptSpaceSeparator);
+  C.LineTo(R.Left, R.Bottom-FOptSpaceSeparator);
 end;
 
 

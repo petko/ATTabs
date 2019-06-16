@@ -27,7 +27,7 @@ etc.
 ATGroups: several page-controls (up to 6), based on ATTabs, groups auto-arranged, with commands to move tabs between groups.
 "/>
     <License Value="MPL 2.0, LGPL"/>
-    <Version Major="1" Minor="7"/>
+    <Version Major="1" Minor="8"/>
     <Files Count="4">
       <Item1>
         <Filename Value="attabs_register.pas"/>
