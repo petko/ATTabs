@@ -1353,13 +1353,35 @@ begin
   C.Pen.Color:= AColorBg;
   C.Brush.Color:= AColorBg;
 
+  PL1:= Point(ARect.Left, ARect.Top);
+  PL2:= Point(ARect.Left, ARect.Bottom-1);
+  PR1:= Point(ARect.Right-1, ARect.Top);
+  PR2:= Point(ARect.Right-1, ARect.Bottom-1);
+
+  if not FThemed then
+    C.FillRect(ARect);
+
+  //center shape
+  DoPaintTabShape_C(C, ATabActive,
+    ARect,
+    PL1, PL2, PR1, PR2,
+    AColorBg, AColorBorder, AColorBorderLow);
+
+  //left/right edges
+  if FOptShowAngled then
+  begin
+    UpdateCanvasAntialiasMode(C);
+    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
+    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
+  end;
+
   RectText:= Rect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
   bNeedMoreSpace:= (RectText.Right-RectText.Left<=30) and (ACaption<>'');
   NIndentL:= IfThen(not bNeedMoreSpace, FOptSpaceBeforeText, 2);
   NIndentR:= NIndentL+IfThen(AShowCloseBtn, FOptSpaceXRight);
-  C.FillRect(RectText);
   RectText:= Rect(ARect.Left+NIndentL, ARect.Top, ARect.Right-NIndentR, ARect.Bottom);
 
+  if not FThemed then
   if FOptShowFlat and FOptShowFlatSepar then
   begin
     i:= ARect.Left - FOptSpaceBetweenTabs div 2;
@@ -1415,12 +1437,8 @@ begin
       end;
     end;
 
-  PL1:= Point(ARect.Left, ARect.Top);
-  PL2:= Point(ARect.Left, ARect.Bottom-1);
-  PR1:= Point(ARect.Right-1, ARect.Top);
-  PR2:= Point(ARect.Right-1, ARect.Bottom-1);
-
   //caption
+  C.Brush.Style:= bsClear;
   if RectText.Right-RectText.Left>=8 then
   begin
     C.Font.Assign(Self.Font);
@@ -1473,20 +1491,6 @@ begin
         _ShortenStringEx(C, FCaptionList[i], FOptTruncateCaption, RectText.Right-RectText.Left)
         );
     end;
-  end;
-
-  //borders
-  DoPaintTabShape_C(C, ATabActive,
-    ARect,
-    PL1, PL2, PR1, PR2,
-    AColorBg, AColorBorder, AColorBorderLow);
-
-  //angled tabs
-  if FOptShowAngled then
-  begin
-    UpdateCanvasAntialiasMode(C);
-    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
-    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
   end;
 
   //colored band
@@ -1580,8 +1584,9 @@ begin
   if FThemed then
   begin
     FPic_L.Draw(C, ARect.Left-FAngleSide, ARect.Top);
-  end
-  else
+    exit;
+  end;
+
   if not FOptShowFlat then
     case FOptPosition of
       atpTop:
@@ -1618,9 +1623,10 @@ procedure TATTabs.DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
 begin
   if FThemed then
   begin
-    FPic_R.Draw(C, ARect.Right, ARect.Top);
-  end
-  else
+    FPic_R.Draw(C, ARect.Right-1, ARect.Top);
+    exit;
+  end;
+
   if not FOptShowFlat then
     case FOptPosition of
       atpTop:
@@ -4174,20 +4180,21 @@ begin
   FPic_R.LoadFromFile(Data.FileName_Right);
   FPic_C.LoadFromFile(Data.FileName_Center);
 
-  if (FPic_L.Width=FPic_R.Width) and
+  if not (
+    (FPic_L.Width=FPic_R.Width) and
     (FPic_L.Height=FPic_R.Height) and
-    (FPic_L.Height=FPic_C.Height) then
-  begin
-    FThemed:= true;
-    Result:= true;
-  end
-  else
-  raise Exception.Create('Incorrect sizes of pictures of tabs theme');
+    (FPic_L.Height=FPic_C.Height)
+    ) then
+    raise Exception.Create('Incorrect sizes of pictures of tabs theme');
 
+  Result:= true;
+  FThemed:= true;
   FOptTabHeight:= FPic_L.Height;
   FAngleSide:= FPic_L.Width;
+  FOptShowFlat:= false;
   FOptShowAngled:= true;
   FOptSpaceBetweenTabs:= FAngleSide*2;
+  FOptShowXRounded:= false;
   Height:= FOptTabHeight+FOptSpacer;
 end;
 

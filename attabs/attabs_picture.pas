@@ -68,7 +68,7 @@ begin
 
   if NMod>0 then
     C.StretchDraw(
-      Rect(X+NDiv*FWidth, Y, X+AWidth+1, Y+FHeight),
+      Rect(X+NDiv*FWidth, Y, X+AWidth, Y+FHeight),
       FPic);
 end;
 
