@@ -17,6 +17,7 @@ type
     btnStress: TButton;
     btnToggleSpecial: TButton;
     btnThemeBlue1: TButton;
+    btnThemeBlack1: TButton;
     chkAngled: TCheckBox;
     chkNewNearCurrent: TCheckBox;
     chkFill: TCheckBox;
@@ -48,6 +49,7 @@ type
     Label3: TLabel;
     edInitial: TSpinEdit;
     procedure btnStressClick(Sender: TObject);
+    procedure btnThemeBlack1Click(Sender: TObject);
     procedure btnThemeBlue1Click(Sender: TObject);
     procedure btnToggleSpecialClick(Sender: TObject);
     procedure chkAngledChange(Sender: TObject);
@@ -78,6 +80,7 @@ type
   private
     { Private declarations }
     LockEdit: boolean;
+    procedure SetTheme(const SName: string);
     procedure TabClickUserButton(Sender: TObject; AIndex: integer);
     procedure TabCloseEvent(Sender: TObject; ATabIndex: Integer; var ACanClose,
       ACanContinue: boolean);
@@ -219,19 +222,31 @@ begin
     t_top.AddTab(-1, IntToStr(i));
 end;
 
+procedure TForm1.btnThemeBlack1Click(Sender: TObject);
+begin
+  SetTheme('black_wide');
+end;
+
 procedure TForm1.btnThemeBlue1Click(Sender: TObject);
+begin
+  SetTheme('blue_simple');
+end;
+
+procedure TForm1.SetTheme(const SName: string);
 var
   dir: string;
   Data: TATTabTheme;
 begin
   dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
     DirectorySeparator+'img_themes'+
-    DirectorySeparator+'blue_simple';
+    DirectorySeparator+SName;
+
   if not DirectoryExists(dir) then
   begin
-    ShowMessage('Theme dir is wrong:'#10+dir);
+    ShowMessage('Theme folder not found:'#10+dir);
     exit;
   end;
+
   Data.FileName_Left:= dir+DirectorySeparator+'l.png';
   Data.FileName_Right:= dir+DirectorySeparator+'r.png';
   Data.FileName_Center:= dir+DirectorySeparator+'c.png';

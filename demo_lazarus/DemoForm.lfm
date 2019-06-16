@@ -369,7 +369,7 @@ object Form1: TForm1
     Height = 25
     Top = 271
     Width = 75
-    Caption = 'blue1'
+    Caption = 'blue_simple'
     OnClick = btnThemeBlue1Click
     TabOrder = 26
   end
@@ -380,6 +380,15 @@ object Form1: TForm1
     Width = 48
     Caption = 'Themes:'
     ParentColor = False
+  end
+  object btnThemeBlack1: TButton
+    Left = 439
+    Height = 25
+    Top = 271
+    Width = 75
+    Caption = 'black_side'
+    OnClick = btnThemeBlack1Click
+    TabOrder = 27
   end
   object ImageList1: TImageList
     Left = 568
