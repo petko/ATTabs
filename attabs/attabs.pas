@@ -201,7 +201,7 @@ type
     FileName_X: string;
     FileName_XActive: string;
     SpaceBetweenInPercentsOfSide: integer;
-    IndentOfXInPercents: integer;
+    IndentOfX: integer;
   end;
 
 //int constants for GetTabAt
@@ -4260,7 +4260,7 @@ begin
   FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptShowXRounded:= false;
   FOptSpaceXSize:= FPic_X.Width;
-  FOptSpaceXRight:= FOptSpaceXSize * Data.IndentOfXInPercents div 100;
+  FOptSpaceXRight:= FAngleSide div 2 + Data.IndentOfX;
   Height:= FOptTabHeight+FOptSpacer;
 end;
 

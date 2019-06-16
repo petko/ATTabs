@@ -264,7 +264,7 @@ begin
   Data.FileName_XActive:= dir+DirectorySeparator+'x_a.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
-  Data.IndentOfXInPercents:= 70;
+  Data.IndentOfX:= 1;
 
   t_top.SetTheme(Data);
   t_top.Invalidate;
