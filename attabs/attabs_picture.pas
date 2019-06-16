@@ -1,18 +1,32 @@
-unit ATTabs_Picture_fpc;
+unit ATTabs_Picture;
 
+{$ifdef fpc}
 {$mode objfpc}{$H+}
+{$endif}
 
 interface
 
 uses
-  Classes, SysUtils, Graphics;
+  Classes, SysUtils,
+  {$ifndef fpc}
+  PngImage,
+  {$endif} 
+  Graphics;
+
+type
+  TPngPic =
+    {$ifdef fpc} 
+    TPortableNetworkGraphic;
+    {$else}
+    TPngImage;
+    {$endif}
 
 type
   { TATTabsPicture }
 
   TATTabsPicture = class
   private
-    FPic: TPortableNetworkGraphic;
+    FPic: TPngPic;
     FFileName: string;
     FWidth: integer;
     FHeight: integer;
@@ -32,7 +46,7 @@ implementation
 
 constructor TATTabsPicture.Create;
 begin
-  FPic:= TPortableNetworkGraphic.Create;
+  FPic:= TPngPic.Create;
 end;
 
 destructor TATTabsPicture.Destroy;

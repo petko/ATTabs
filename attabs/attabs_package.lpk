@@ -28,7 +28,7 @@ ATGroups: several page-controls (up to 6), based on ATTabs, groups auto-arranged
 "/>
     <License Value="MPL 2.0, LGPL"/>
     <Version Major="1" Minor="7"/>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="attabs_register.pas"/>
         <HasRegisterProc Value="True"/>
@@ -42,6 +42,10 @@ ATGroups: several page-controls (up to 6), based on ATTabs, groups auto-arranged
         <Filename Value="atgroups.pas"/>
         <UnitName Value="ATGroups"/>
       </Item3>
+      <Item4>
+        <Filename Value="attabs_picture.pas"/>
+        <UnitName Value="ATTabs_Picture"/>
+      </Item4>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

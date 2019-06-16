@@ -28,10 +28,8 @@ uses
   LCLIntf,
   LCLType,
   LCLProc,
-  ATTabs_Picture_fpc,
-  {$else}
-  ATTabs_Picture_delphi,
   {$endif}
+  ATTabs_Picture,
   Menus;
 
 type

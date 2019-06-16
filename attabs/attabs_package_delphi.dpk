@@ -35,6 +35,7 @@ requires
 
 contains
   attabs_register_delphi in 'attabs_register_delphi.pas',
-  attabs in 'attabs.pas';
+  attabs in 'attabs.pas',
+  attabs_picture in 'attabs_picture.pas';
 
 end.
