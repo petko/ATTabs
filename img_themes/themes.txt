@@ -1,1 +1,1 @@
-Temp pictures for tab themes.
+Graphics for tabs themes (used by demos).
