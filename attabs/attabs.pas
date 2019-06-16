@@ -198,6 +198,7 @@ type
     FileName_LeftActive: string;
     FileName_RightActive: string;
     FileName_CenterActive: string;
+    SpaceBetweenInPercentsOfSide: integer;
   end;
 
 //int constants for GetTabAt
@@ -4228,7 +4229,7 @@ begin
   FAngleSide:= FPic_L.Width;
   FOptShowFlat:= false;
   FOptShowAngled:= true;
-  FOptSpaceBetweenTabs:= FAngleSide*3 div 2;
+  FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptShowXRounded:= false;
   Height:= FOptTabHeight+FOptSpacer;
 end;

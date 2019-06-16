@@ -253,6 +253,7 @@ begin
   Data.FileName_LeftActive:= dir+DirectorySeparator+'l_a.png';
   Data.FileName_RightActive:= dir+DirectorySeparator+'r_a.png';
   Data.FileName_CenterActive:= dir+DirectorySeparator+'c_a.png';
+  Data.SpaceBetweenInPercentsOfSide:= 150;
 
   t_top.SetTheme(Data);
   t_top.Invalidate;
