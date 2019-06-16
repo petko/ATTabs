@@ -16,6 +16,7 @@ type
     btnRight: TButton;
     btnStress: TButton;
     btnToggleSpecial: TButton;
+    btnThemeBlue1: TButton;
     chkAngled: TCheckBox;
     chkNewNearCurrent: TCheckBox;
     chkFill: TCheckBox;
@@ -39,6 +40,7 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     labStatus: TLabel;
     btnModify: TButton;
     Label2: TLabel;
@@ -46,6 +48,7 @@ type
     Label3: TLabel;
     edInitial: TSpinEdit;
     procedure btnStressClick(Sender: TObject);
+    procedure btnThemeBlue1Click(Sender: TObject);
     procedure btnToggleSpecialClick(Sender: TObject);
     procedure chkAngledChange(Sender: TObject);
     procedure chkCenterCaptionChange(Sender: TObject);
@@ -214,6 +217,26 @@ begin
     t_top.DeleteTab(i, false, false);
   for i:= 1 to 300 do
     t_top.AddTab(-1, IntToStr(i));
+end;
+
+procedure TForm1.btnThemeBlue1Click(Sender: TObject);
+var
+  dir: string;
+  Data: TATTabTheme;
+begin
+  dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
+    DirectorySeparator+'img_themes'+
+    DirectorySeparator+'blue_simple';
+  if not DirectoryExists(dir) then
+  begin
+    ShowMessage('Theme dir is wrong:'#10+dir);
+    exit;
+  end;
+  Data.FileName_Left:= dir+DirectorySeparator+'l.png';
+  Data.FileName_Right:= dir+DirectorySeparator+'r.png';
+  Data.FileName_Center:= dir+DirectorySeparator+'c.png';
+  t_top.SetTheme(Data);
+  t_top.Invalidate;
 end;
 
 procedure TForm1.btnToggleSpecialClick(Sender: TObject);

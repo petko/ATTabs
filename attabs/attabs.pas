@@ -29,6 +29,7 @@ uses
   LCLType,
   LCLProc,
   {$endif}
+  ATTabs_Picture,
   Menus;
 
 type
@@ -189,6 +190,12 @@ type
     atbxShowMouseOver,
     atbxShowActiveAndMouseOver
     );
+
+  TATTabTheme = record
+    FileName_Left: string;
+    FileName_Right: string;
+    FileName_Center: string;
+  end;
 
 //int constants for GetTabAt
 const
@@ -454,6 +461,11 @@ type
     FHintForUser3: string;
     FHintForUser4: string;
 
+    FPic_L: TATTabsPicture;
+    FPic_R: TATTabsPicture;
+    FPic_C: TATTabsPicture;
+    FThemed: boolean;
+
     //events    
     FOnTabClick: TNotifyEvent;
     FOnTabPlusClick: TNotifyEvent;
@@ -583,6 +595,7 @@ type
     procedure DoScrollAnimation(APosTo: integer);
     function GetMaxScrollPos: integer;
     property ScrollPos: integer read FScrollPos write SetScrollPos;
+    function SetTheme(const Data: TATTabTheme): boolean;
 
   protected
     procedure Paint; override;
@@ -1273,6 +1286,14 @@ end;
 
 destructor TATTabs.Destroy;
 begin
+  FThemed:= false;
+  if Assigned(FPic_L) then
+    FreeAndNil(FPic_L);
+  if Assigned(FPic_R) then
+    FreeAndNil(FPic_R);
+  if Assigned(FPic_C) then
+    FreeAndNil(FPic_C);
+
   Clear;
   FreeAndNil(FCaptionList);
   FreeAndNil(FTabList);
@@ -1996,7 +2017,8 @@ begin
   with ScreenToClient(Mouse.CursorPos) do
     FTabIndexOver:= GetTabAt(X, Y, bMouseOverX);
 
-  FAngleSide:= Trunc(FOptTabHeight/FAngleTangent);
+  if not FThemed then
+    FAngleSide:= Trunc(FOptTabHeight/FAngleTangent);
 
   FRealIndentLeft:= FOptSpaceInitial + GetButtonsWidth(FButtonsLeft);
   FRealIndentRight:= FOptSpaceInitial + GetButtonsWidth(FButtonsRight);
@@ -4069,6 +4091,43 @@ begin
       raise Exception.Create('Unknown tab pos');
   end;
 end;
+
+function TATTabs.SetTheme(const Data: TATTabTheme): boolean;
+begin
+  Result:= false;
+  FThemed:= false;
+
+  if not FileExists(Data.FileName_Left) then exit;
+  if not FileExists(Data.FileName_Right) then exit;
+  if not FileExists(Data.FileName_Center) then exit;
+
+  if not Assigned(FPic_L) then
+    FPic_L:= TATTabsPicture.Create;
+  if not Assigned(FPic_R) then
+    FPic_R:= TATTabsPicture.Create;
+  if not Assigned(FPic_C) then
+    FPic_C:= TATTabsPicture.Create;
+
+  FPic_L.LoadFromFile(Data.FileName_Left);
+  FPic_R.LoadFromFile(Data.FileName_Right);
+  FPic_C.LoadFromFile(Data.FileName_Center);
+
+  if (FPic_L.Width=FPic_R.Width) and
+    (FPic_L.Height=FPic_R.Height) and
+    (FPic_L.Height=FPic_C.Height) then
+  begin
+    FThemed:= true;
+    Result:= true;
+  end
+  else
+  raise Exception.Create('Incorrect sizes of pictures of tabs theme');
+
+  FOptTabHeight:= FPic_L.Height;
+  FAngleSide:= FPic_L.Width;
+  FOptShowAngled:= true;
+  FOptSpaceBetweenTabs:= FAngleSide;
+end;
+
 
 end.
 
