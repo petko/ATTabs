@@ -250,6 +250,10 @@ begin
   Data.FileName_Left:= dir+DirectorySeparator+'l.png';
   Data.FileName_Right:= dir+DirectorySeparator+'r.png';
   Data.FileName_Center:= dir+DirectorySeparator+'c.png';
+  Data.FileName_LeftActive:= dir+DirectorySeparator+'l_a.png';
+  Data.FileName_RightActive:= dir+DirectorySeparator+'r_a.png';
+  Data.FileName_CenterActive:= dir+DirectorySeparator+'c_a.png';
+
   t_top.SetTheme(Data);
   t_top.Invalidate;
 end;

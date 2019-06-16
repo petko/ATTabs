@@ -195,6 +195,9 @@ type
     FileName_Left: string;
     FileName_Right: string;
     FileName_Center: string;
+    FileName_LeftActive: string;
+    FileName_RightActive: string;
+    FileName_CenterActive: string;
   end;
 
 //int constants for GetTabAt
@@ -464,6 +467,9 @@ type
     FPic_L: TATTabsPicture;
     FPic_R: TATTabsPicture;
     FPic_C: TATTabsPicture;
+    FPic_L_a: TATTabsPicture;
+    FPic_R_a: TATTabsPicture;
+    FPic_C_a: TATTabsPicture;
     FThemed: boolean;
 
     //events    
@@ -1294,12 +1300,12 @@ end;
 destructor TATTabs.Destroy;
 begin
   FThemed:= false;
-  if Assigned(FPic_L) then
-    FreeAndNil(FPic_L);
-  if Assigned(FPic_R) then
-    FreeAndNil(FPic_R);
-  if Assigned(FPic_C) then
-    FreeAndNil(FPic_C);
+  if Assigned(FPic_L) then FreeAndNil(FPic_L);
+  if Assigned(FPic_R) then FreeAndNil(FPic_R);
+  if Assigned(FPic_C) then FreeAndNil(FPic_C);
+  if Assigned(FPic_L_a) then FreeAndNil(FPic_L_a);
+  if Assigned(FPic_R_a) then FreeAndNil(FPic_R_a);
+  if Assigned(FPic_C_a) then FreeAndNil(FPic_C_a);
 
   Clear;
   FreeAndNil(FCaptionList);
@@ -1521,10 +1527,15 @@ procedure TATTabs.DoPaintTabShape_C(C: TCanvas;
   AColorBg, AColorBorder, AColorBorderLow: TColor);
 var
   ColorPos: TATTabPosition;
+  Pic: TATTabsPicture;
 begin
   if FThemed then
   begin
-    FPic_C.DrawSized(C, PL1.X, PL1.Y, PR1.X-PL1.X);
+    if ATabActive then
+      Pic:= FPic_C_a
+    else
+      Pic:= FPic_C;
+    Pic.DrawSized(C, PL1.X, PL1.Y, PR1.X-PL1.X);
     exit;
   end;
 
@@ -1581,10 +1592,16 @@ end;
 
 procedure TATTabs.DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
   ATabActive: boolean; AColorBg, AColorBorder: TColor);
+var
+  Pic: TATTabsPicture;
 begin
   if FThemed then
   begin
-    FPic_L.Draw(C, ARect.Left-FAngleSide, ARect.Top);
+    if ATabActive then
+      Pic:= FPic_L_a
+    else
+      Pic:= FPic_L;
+    Pic.Draw(C, ARect.Left-FAngleSide, ARect.Top);
     exit;
   end;
 
@@ -1621,10 +1638,16 @@ end;
 
 procedure TATTabs.DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
   ATabActive: boolean; AColorBg, AColorBorder: TColor);
+var
+  Pic: TATTabsPicture;
 begin
   if FThemed then
   begin
-    FPic_R.Draw(C, ARect.Right-1, ARect.Top);
+    if ATabActive then
+      Pic:= FPic_R_a
+    else
+      Pic:= FPic_R;
+    Pic.Draw(C, ARect.Right-1, ARect.Top);
     exit;
   end;
 
@@ -4169,22 +4192,33 @@ begin
   if not FileExists(Data.FileName_Left) then exit;
   if not FileExists(Data.FileName_Right) then exit;
   if not FileExists(Data.FileName_Center) then exit;
+  if not FileExists(Data.FileName_LeftActive) then exit;
+  if not FileExists(Data.FileName_RightActive) then exit;
+  if not FileExists(Data.FileName_CenterActive) then exit;
 
-  if not Assigned(FPic_L) then
-    FPic_L:= TATTabsPicture.Create;
-  if not Assigned(FPic_R) then
-    FPic_R:= TATTabsPicture.Create;
-  if not Assigned(FPic_C) then
-    FPic_C:= TATTabsPicture.Create;
+  if FPic_L=nil then FPic_L:= TATTabsPicture.Create;
+  if FPic_R=nil then FPic_R:= TATTabsPicture.Create;
+  if FPic_C=nil then FPic_C:= TATTabsPicture.Create;
+  if FPic_L_a=nil then FPic_L_a:= TATTabsPicture.Create;
+  if FPic_R_a=nil then FPic_R_a:= TATTabsPicture.Create;
+  if FPic_C_a=nil then FPic_C_a:= TATTabsPicture.Create;
 
   FPic_L.LoadFromFile(Data.FileName_Left);
   FPic_R.LoadFromFile(Data.FileName_Right);
   FPic_C.LoadFromFile(Data.FileName_Center);
+  FPic_L_a.LoadFromFile(Data.FileName_LeftActive);
+  FPic_R_a.LoadFromFile(Data.FileName_RightActive);
+  FPic_C_a.LoadFromFile(Data.FileName_CenterActive);
 
   if not (
     (FPic_L.Width=FPic_R.Width) and
+    (FPic_L.Width=FPic_L_a.Width) and
+    (FPic_L.Width=FPic_R_a.Width) and
     (FPic_L.Height=FPic_R.Height) and
-    (FPic_L.Height=FPic_C.Height)
+    (FPic_L.Height=FPic_C.Height) and
+    (FPic_L.Height=FPic_L_a.Height) and
+    (FPic_L.Height=FPic_R_a.Height) and
+    (FPic_L.Height=FPic_C_a.Height)
     ) then
     raise Exception.Create('Incorrect sizes of pictures of tabs theme');
 
