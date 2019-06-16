@@ -497,6 +497,9 @@ type
     procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
       AColor: TColor; APos: TATTabPosition);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
+    procedure DoPaintTabShape_C(C: TCanvas; ATabActive: boolean;
+      const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg,
+  AColorBorder, AColorBorderLow: TColor);
     procedure DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
       ATabActive: boolean; AColorBg, AColorBorder: TColor);
     procedure DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
@@ -1473,11 +1476,53 @@ begin
   end;
 
   //borders
+  DoPaintTabShape_C(C, ATabActive,
+    ARect,
+    PL1, PL2, PR1, PR2,
+    AColorBg, AColorBorder, AColorBorderLow);
+
+  //angled tabs
+  if FOptShowAngled then
+  begin
+    UpdateCanvasAntialiasMode(C);
+    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
+    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
+  end;
+
+  //colored band
+  if not FOptShowEntireColor then
+    if AColorHilite<>clNone then
+    begin
+      case FOptPosition of
+        atpTop:
+          ColorPos:= FOptColoredBandForTop;
+        atpBottom:
+          ColorPos:= FOptColoredBandForBottom;
+        atpLeft:
+          ColorPos:= FOptColoredBandForLeft;
+        atpRight:
+          ColorPos:= FOptColoredBandForRight;
+        else
+          raise Exception.Create('Unknown tab pos');
+      end;
+      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
+    end;
+end;
+
+procedure TATTabs.DoPaintTabShape_C(C: TCanvas;
+  ATabActive: boolean;
+  const ARect: TRect;
+  const PL1, PL2, PR1, PR2: TPoint;
+  AColorBg, AColorBorder, AColorBorderLow: TColor);
+var
+  ColorPos: TATTabPosition;
+begin
   if FThemed then
   begin
     FPic_C.DrawSized(C, PL1.X, PL1.Y, PR1.X-PL1.X);
-  end
-  else
+    exit;
+  end;
+
   if FOptShowFlat then
   begin
     if ATabActive then
@@ -1527,34 +1572,6 @@ begin
         DrawLine(C, PR1.X, PR1.Y, PR2.X, PR2.Y, AColorBorder);
       end;
   end;
-
-  UpdateCanvasAntialiasMode(C);
-  
-  //angled tabs
-  if FOptShowAngled then
-  begin
-    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
-    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
-  end;
-
-  //colored band
-  if not FOptShowEntireColor then
-    if AColorHilite<>clNone then
-    begin
-      case FOptPosition of
-        atpTop:
-          ColorPos:= FOptColoredBandForTop;
-        atpBottom:
-          ColorPos:= FOptColoredBandForBottom;
-        atpLeft:
-          ColorPos:= FOptColoredBandForLeft;
-        atpRight:
-          ColorPos:= FOptColoredBandForRight;
-        else
-          raise Exception.Create('Unknown tab pos');
-      end;
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
-    end;
 end;
 
 procedure TATTabs.DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
@@ -3716,6 +3733,7 @@ begin
   C.MoveTo((R.Left+R.Right) div 2, R.Top+FOptSpaceSeparator);
   C.LineTo((R.Left+R.Right) div 2, R.Bottom-FOptSpaceSeparator);
 end;
+
 
 function TATTabs.ConvertButtonIdToTabIndex(Id: TATTabButton): integer;
 begin
