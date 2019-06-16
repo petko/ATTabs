@@ -1,4 +1,4 @@
-unit ATTabs_Picture;
+unit ATTabs_Picture_fpc;
 
 {$mode objfpc}{$H+}
 
