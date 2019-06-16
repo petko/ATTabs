@@ -93,7 +93,12 @@ begin
   Data.FileName_LeftActive:= dir+'\'+'l_a.png';
   Data.FileName_RightActive:= dir+'\'+'r_a.png';
   Data.FileName_CenterActive:= dir+'\'+'c_a.png';
+  Data.FileName_CenterActive:= dir+'\'+'c_a.png';
+  Data.FileName_X:= dir+'\'+'x.png';
+  Data.FileName_XActive:= dir+'\'+'x_a.png';
+
   Data.SpaceBetweenInPercentsOfSide:= 150;
+  Data.IndentOfX:= 2;
     
   t.SetTheme(Data);
   t.Invalidate;
