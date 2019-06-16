@@ -137,7 +137,7 @@ object Form1: TForm1
     Top = 284
     Width = 75
     Height = 25
-    Caption = 'btnThemeBlue1'
+    Caption = 'blue'
     TabOrder = 11
     OnClick = btnThemeBlue1Click
   end
@@ -146,7 +146,7 @@ object Form1: TForm1
     Top = 284
     Width = 75
     Height = 25
-    Caption = 'btnThemeBlack1'
+    Caption = 'black'
     TabOrder = 12
     OnClick = btnThemeBlack1Click
   end
