@@ -2973,7 +2973,7 @@ begin
       ClientWidth
       -IfThen(FOptPosition=atpLeft, FOptSpacer2)
       -IfThen(FOptPosition=atpRight, FOptSpacer)
-      -1;
+      ;
 end;
 
 function TATTabs.GetRectOfButtonIndex(AIndex: integer; AtLeft: boolean): TRect;
