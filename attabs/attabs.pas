@@ -1599,8 +1599,8 @@ begin
       else
         Pic:= FPic_Plus;
       Pic.Draw(C,
-        (ARect.Left+ARect.Right-FPic_Plus.Width) div 2,
-        (ARect.Top+ARect.Bottom-FPic_Plus.Height) div 2
+        (ARect.Left+ARect.Right-Pic.Width) div 2,
+        (ARect.Top+ARect.Bottom-Pic.Height) div 2
         );
       exit;
     end
@@ -4317,8 +4317,6 @@ begin
     (FPic_X.Width=FPic_X.Height) and
     (FPic_X.Width=FPic_X_a.Width) and
     (FPic_X.Width=FPic_X_a.Height)
-    //(FPic_Plus.Width=FPic_Plus_a.Width) and
-    //(FPic_Plus.Height=FPic_Plus_a.Height)
     ) then
     raise Exception.Create('Incorrect picture sizes in tab-theme');
 
