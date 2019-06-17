@@ -24,6 +24,7 @@ type
     Label2: TLabel;
     btnThemeBlue1: TButton;
     btnThemeBlack1: TButton;
+    cbThemeList: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure chkFlatClick(Sender: TObject);
     procedure chkShowPlusClick(Sender: TObject);
@@ -38,6 +39,7 @@ type
     procedure chkPosRightClick(Sender: TObject);
     procedure btnThemeBlue1Click(Sender: TObject);
     procedure btnThemeBlack1Click(Sender: TObject);
+    procedure cbThemeListClick(Sender: TObject);
   private
     { Private declarations }
     procedure SetTheme(const SName: string);
@@ -55,6 +57,9 @@ implementation
 {$R *.dfm}
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  dir: string;
+  sr: TSearchRec;
 begin
   t:= TATTabs.Create(Self);
   t.Parent:= Self;
@@ -70,6 +75,20 @@ begin
   t.ColorBg:= clWhite;
   t.OptMouseDragEnabled:= true;
   t.Invalidate;
+
+  dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
+    '\'+'img_themes\';
+
+  cbThemeList.Items.Clear;
+  if FindFirst(dir + '*',faDirectory,sr)=0 then
+    repeat
+      if ((sr.Attr and faDirectory) = faDirectory) and
+        (sr.Name <> '.') and
+        (sr.Name <> '..') then
+          cbThemeList.Items.Add(sr.Name);
+    until FindNext(sr)<>0;
+  FindClose(sr);
+
 end;
 
 procedure TForm1.SetTheme(const SName: string);
@@ -125,6 +144,20 @@ end;
 procedure TForm1.btnThemeBlue1Click(Sender: TObject);
 begin
   SetTheme('blue_simple');
+end;
+
+procedure TForm1.cbThemeListClick(Sender: TObject);
+var
+  dir, themefolder: string;
+begin
+
+  dir := ExtractFileDir(ExtractFileDir(Application.ExeName))+
+    '\'+'img_themes\';
+  themefolder := cbThemeList.Items[cbThemeList.ItemIndex];
+
+  if DirectoryExists(dir + themefolder) then
+    SetTheme(themefolder);
+
 end;
 
 procedure TForm1.chkAngledClick(Sender: TObject);

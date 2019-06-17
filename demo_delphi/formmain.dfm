@@ -150,6 +150,15 @@ object Form1: TForm1
     TabOrder = 12
     OnClick = btnThemeBlack1Click
   end
+  object cbThemeList: TComboBox
+    Left = 432
+    Top = 286
+    Width = 145
+    Height = 22
+    Style = csDropDownList
+    TabOrder = 13
+    OnClick = cbThemeListClick
+  end
   object XPManifest1: TXPManifest
     Left = 712
     Top = 104
