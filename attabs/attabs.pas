@@ -637,7 +637,7 @@ type
     function GetMaxScrollPos: integer;
     property ScrollPos: integer read FScrollPos write SetScrollPos;
     procedure SetTheme(const Data: TATTabTheme);
-    property IsThemed: boolean read FThemed;
+    property IsThemed: boolean read FThemed write FThemed;
 
   protected
     procedure Paint; override;
