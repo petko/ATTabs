@@ -104,11 +104,16 @@ begin
   Data.FileName_LeftActive:= SName+'\'+'l_a.png';
   Data.FileName_RightActive:= SName+'\'+'r_a.png';
   Data.FileName_CenterActive:= SName+'\'+'c_a.png';
-  Data.FileName_CenterActive:= SName+'\'+'c_a.png';
   Data.FileName_X:= SName+'\'+'x.png';
   Data.FileName_XActive:= SName+'\'+'x_a.png';
   Data.FileName_Plus:= SName+'\'+'pl.png';
   Data.FileName_PlusActive:= SName+'\'+'pl_a.png';
+  Data.FileName_ArrowLeft:= SName+'\'+'ar_l.png';
+  Data.FileName_ArrowLeftActive:= SName+'\'+'ar_l_a.png';
+  Data.FileName_ArrowRight:= SName+'\'+'ar_r.png';
+  Data.FileName_ArrowRightActive:= SName+'\'+'ar_r_a.png';
+  Data.FileName_ArrowDown:= SName+'\'+'ar_d.png';
+  Data.FileName_ArrowDownActive:= SName+'\'+'ar_d_a.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
   Data.IndentOfX:= 2;
