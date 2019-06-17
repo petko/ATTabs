@@ -132,31 +132,13 @@ object Form1: TForm1
     TabOrder = 10
     OnClick = chkCenterCaptionClick
   end
-  object btnThemeBlue1: TButton
-    Left = 264
-    Top = 284
-    Width = 75
-    Height = 25
-    Caption = 'blue'
-    TabOrder = 11
-    OnClick = btnThemeBlue1Click
-  end
-  object btnThemeBlack1: TButton
-    Left = 345
-    Top = 284
-    Width = 75
-    Height = 25
-    Caption = 'black'
-    TabOrder = 12
-    OnClick = btnThemeBlack1Click
-  end
   object cbThemeList: TComboBox
-    Left = 432
+    Left = 264
     Top = 286
-    Width = 145
+    Width = 146
     Height = 22
     Style = csDropDownList
-    TabOrder = 13
+    TabOrder = 11
     OnClick = cbThemeListClick
   end
   object XPManifest1: TXPManifest

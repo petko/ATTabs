@@ -22,8 +22,6 @@ type
     chkCenterCaption: TCheckBox;
     XPManifest1: TXPManifest;
     Label2: TLabel;
-    btnThemeBlue1: TButton;
-    btnThemeBlack1: TButton;
     cbThemeList: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure chkFlatClick(Sender: TObject);
@@ -37,8 +35,6 @@ type
     procedure chkPosBtmClick(Sender: TObject);
     procedure chkPosLeftClick(Sender: TObject);
     procedure chkPosRightClick(Sender: TObject);
-    procedure btnThemeBlue1Click(Sender: TObject);
-    procedure btnThemeBlack1Click(Sender: TObject);
     procedure cbThemeListClick(Sender: TObject);
   private
     { Private declarations }
@@ -93,28 +89,24 @@ end;
 
 procedure TForm1.SetTheme(const SName: string);
 var
-  dir: string;
   Data: TATTabTheme;
 begin
-  dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
-    '\'+'img_themes'+
-    '\'+SName;
 
-  if not DirectoryExists(dir) then
+  if not DirectoryExists(SName) then
   begin
-    ShowMessage('Theme folder not found:'#10+dir);
+    ShowMessage('Theme folder not found:'#10+SName);
     exit;
   end;
 
-  Data.FileName_Left:= dir+'\'+'l.png';
-  Data.FileName_Right:= dir+'\'+'r.png';
-  Data.FileName_Center:= dir+'\'+'c.png';
-  Data.FileName_LeftActive:= dir+'\'+'l_a.png';
-  Data.FileName_RightActive:= dir+'\'+'r_a.png';
-  Data.FileName_CenterActive:= dir+'\'+'c_a.png';
-  Data.FileName_CenterActive:= dir+'\'+'c_a.png';
-  Data.FileName_X:= dir+'\'+'x.png';
-  Data.FileName_XActive:= dir+'\'+'x_a.png';
+  Data.FileName_Left:= SName+'\'+'l.png';
+  Data.FileName_Right:= SName+'\'+'r.png';
+  Data.FileName_Center:= SName+'\'+'c.png';
+  Data.FileName_LeftActive:= SName+'\'+'l_a.png';
+  Data.FileName_RightActive:= SName+'\'+'r_a.png';
+  Data.FileName_CenterActive:= SName+'\'+'c_a.png';
+  Data.FileName_CenterActive:= SName+'\'+'c_a.png';
+  Data.FileName_X:= SName+'\'+'x.png';
+  Data.FileName_XActive:= SName+'\'+'x_a.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
   Data.IndentOfX:= 2;
@@ -141,11 +133,6 @@ begin
   t.Invalidate;
 end;
 
-procedure TForm1.btnThemeBlue1Click(Sender: TObject);
-begin
-  SetTheme('blue_simple');
-end;
-
 procedure TForm1.cbThemeListClick(Sender: TObject);
 var
   dir, themefolder: string;
@@ -156,7 +143,7 @@ begin
   themefolder := cbThemeList.Items[cbThemeList.ItemIndex];
 
   if DirectoryExists(dir + themefolder) then
-    SetTheme(themefolder);
+    SetTheme(dir + themefolder);
 
 end;
 
@@ -183,11 +170,6 @@ procedure TForm1.chkMultilineClick(Sender: TObject);
 begin
   t.OptMultiline:= chkMultiline.Checked;
   t.Invalidate;
-end;
-
-procedure TForm1.btnThemeBlack1Click(Sender: TObject);
-begin
-  SetTheme('black_wide');
 end;
 
 procedure TForm1.chkCenterCaptionClick(Sender: TObject);
