@@ -482,12 +482,12 @@ type
     FHintForUser4: string;
 
     FThemed: boolean;
-    FPic_L: TATTabsPicture;
-    FPic_R: TATTabsPicture;
-    FPic_C: TATTabsPicture;
-    FPic_L_a: TATTabsPicture;
-    FPic_R_a: TATTabsPicture;
-    FPic_C_a: TATTabsPicture;
+    FPic_Side_L: TATTabsPicture;
+    FPic_Side_L_a: TATTabsPicture;
+    FPic_Side_R: TATTabsPicture;
+    FPic_Side_R_a: TATTabsPicture;
+    FPic_Side_C: TATTabsPicture;
+    FPic_Side_C_a: TATTabsPicture;
     FPic_X: TATTabsPicture;
     FPic_X_a: TATTabsPicture;
     FPic_Plus: TATTabsPicture;
@@ -1335,12 +1335,12 @@ begin
   if FThemed then
   begin
     FThemed:= false;
-    FreeAndNil(FPic_L);
-    FreeAndNil(FPic_L_a);
-    FreeAndNil(FPic_R);
-    FreeAndNil(FPic_R_a);
-    FreeAndNil(FPic_C);
-    FreeAndNil(FPic_C_a);
+    FreeAndNil(FPic_Side_L);
+    FreeAndNil(FPic_Side_L_a);
+    FreeAndNil(FPic_Side_R);
+    FreeAndNil(FPic_Side_R_a);
+    FreeAndNil(FPic_Side_C);
+    FreeAndNil(FPic_Side_C_a);
     FreeAndNil(FPic_X);
     FreeAndNil(FPic_X_a);
     FreeAndNil(FPic_Plus);
@@ -1645,9 +1645,9 @@ begin
   if FThemed then
   begin
     if ATabActive then
-      Pic:= FPic_C_a
+      Pic:= FPic_Side_C_a
     else
-      Pic:= FPic_C;
+      Pic:= FPic_Side_C;
     Pic.DrawSized(C, PL1.X, PL1.Y, PR1.X-PL1.X);
     exit;
   end;
@@ -1711,9 +1711,9 @@ begin
   if FThemed then
   begin
     if ATabActive then
-      Pic:= FPic_L_a
+      Pic:= FPic_Side_L_a
     else
-      Pic:= FPic_L;
+      Pic:= FPic_Side_L;
     Pic.Draw(C, ARect.Left-FAngleSide, ARect.Top);
     exit;
   end;
@@ -1757,9 +1757,9 @@ begin
   if FThemed then
   begin
     if ATabActive then
-      Pic:= FPic_R_a
+      Pic:= FPic_Side_R_a
     else
-      Pic:= FPic_R;
+      Pic:= FPic_Side_R;
     Pic.Draw(C, ARect.Right-1, ARect.Top);
     exit;
   end;
@@ -4325,12 +4325,12 @@ begin
   if not FileExists(Data.FileName_ArrowDown) then raise Exception.Create('File not found: '+Data.FileName_ArrowDown);
   if not FileExists(Data.FileName_ArrowDownActive) then raise Exception.Create('File not found: '+Data.FileName_ArrowDownActive);
 
-  if FPic_L=nil then FPic_L:= TATTabsPicture.Create;
-  if FPic_R=nil then FPic_R:= TATTabsPicture.Create;
-  if FPic_C=nil then FPic_C:= TATTabsPicture.Create;
-  if FPic_L_a=nil then FPic_L_a:= TATTabsPicture.Create;
-  if FPic_R_a=nil then FPic_R_a:= TATTabsPicture.Create;
-  if FPic_C_a=nil then FPic_C_a:= TATTabsPicture.Create;
+  if FPic_Side_L=nil then FPic_Side_L:= TATTabsPicture.Create;
+  if FPic_Side_R=nil then FPic_Side_R:= TATTabsPicture.Create;
+  if FPic_Side_C=nil then FPic_Side_C:= TATTabsPicture.Create;
+  if FPic_Side_L_a=nil then FPic_Side_L_a:= TATTabsPicture.Create;
+  if FPic_Side_R_a=nil then FPic_Side_R_a:= TATTabsPicture.Create;
+  if FPic_Side_C_a=nil then FPic_Side_C_a:= TATTabsPicture.Create;
   if FPic_X=nil then FPic_X:= TATTabsPicture.Create;
   if FPic_X_a=nil then FPic_X_a:= TATTabsPicture.Create;
   if FPic_Plus=nil then FPic_Plus:= TATTabsPicture.Create;
@@ -4342,12 +4342,12 @@ begin
   if FPic_Arrow_D=nil then FPic_Arrow_D:= TATTabsPicture.Create;
   if FPic_Arrow_D_a=nil then FPic_Arrow_D_a:= TATTabsPicture.Create;
 
-  FPic_L.LoadFromFile(Data.FileName_Left);
-  FPic_R.LoadFromFile(Data.FileName_Right);
-  FPic_C.LoadFromFile(Data.FileName_Center);
-  FPic_L_a.LoadFromFile(Data.FileName_LeftActive);
-  FPic_R_a.LoadFromFile(Data.FileName_RightActive);
-  FPic_C_a.LoadFromFile(Data.FileName_CenterActive);
+  FPic_Side_L.LoadFromFile(Data.FileName_Left);
+  FPic_Side_R.LoadFromFile(Data.FileName_Right);
+  FPic_Side_C.LoadFromFile(Data.FileName_Center);
+  FPic_Side_L_a.LoadFromFile(Data.FileName_LeftActive);
+  FPic_Side_R_a.LoadFromFile(Data.FileName_RightActive);
+  FPic_Side_C_a.LoadFromFile(Data.FileName_CenterActive);
   FPic_X.LoadFromFile(Data.FileName_X);
   FPic_X_a.LoadFromFile(Data.FileName_XActive);
   FPic_Plus.LoadFromFile(Data.FileName_Plus);
@@ -4360,14 +4360,14 @@ begin
   FPic_Arrow_D_a.LoadFromFile(Data.FileName_ArrowDownActive);
 
   if not (
-    (FPic_L.Width=FPic_R.Width) and
-    (FPic_L.Width=FPic_L_a.Width) and
-    (FPic_L.Width=FPic_R_a.Width) and
-    (FPic_L.Height=FPic_R.Height) and
-    (FPic_L.Height=FPic_C.Height) and
-    (FPic_L.Height=FPic_L_a.Height) and
-    (FPic_L.Height=FPic_R_a.Height) and
-    (FPic_L.Height=FPic_C_a.Height) and
+    (FPic_Side_L.Width=FPic_Side_R.Width) and
+    (FPic_Side_L.Width=FPic_Side_L_a.Width) and
+    (FPic_Side_L.Width=FPic_Side_R_a.Width) and
+    (FPic_Side_L.Height=FPic_Side_R.Height) and
+    (FPic_Side_L.Height=FPic_Side_C.Height) and
+    (FPic_Side_L.Height=FPic_Side_L_a.Height) and
+    (FPic_Side_L.Height=FPic_Side_R_a.Height) and
+    (FPic_Side_L.Height=FPic_Side_C_a.Height) and
     (FPic_X.Width=FPic_X.Height) and
     (FPic_X.Width=FPic_X_a.Width) and
     (FPic_X.Width=FPic_X_a.Height)
@@ -4375,8 +4375,8 @@ begin
     raise Exception.Create('Incorrect picture sizes in tab-theme');
 
   FThemed:= true;
-  FOptTabHeight:= FPic_L.Height;
-  FAngleSide:= FPic_L.Width;
+  FOptTabHeight:= FPic_Side_L.Height;
+  FAngleSide:= FPic_Side_L.Width;
   FOptShowFlat:= false;
   FOptShowAngled:= true;
   FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
