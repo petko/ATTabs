@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, LCLProc, LCLType, Spin, attabs;
+  Dialogs, ExtCtrls, StdCtrls, LCLProc, LCLType, Spin, FileUtil, attabs;
 
 type
   { TForm1 }
@@ -16,9 +16,6 @@ type
     btnRight: TButton;
     btnStress: TButton;
     btnToggleSpecial: TButton;
-    btnThemeBlue1: TButton;
-    btnThemeBlack1: TButton;
-    btnThemeChrome: TButton;
     chkAngled: TCheckBox;
     chkNewNearCurrent: TCheckBox;
     chkFill: TCheckBox;
@@ -28,6 +25,7 @@ type
     chkVarSize: TCheckBox;
     chkCenterCaption: TCheckBox;
     chkShowFlat: TCheckBox;
+    comboThemes: TComboBox;
     comboTruncate: TComboBox;
     comboLayout: TComboBox;
     comboIconPos: TComboBox;
@@ -65,6 +63,7 @@ type
     procedure chkShowPlusChange(Sender: TObject);
     procedure chkVarSizeChange(Sender: TObject);
     procedure chkVarSize_BottomChange(Sender: TObject);
+    procedure comboThemesChange(Sender: TObject);
     procedure comboIconPosChange(Sender: TObject);
     procedure comboLayoutChange(Sender: TObject);
     procedure comboShowXChange(Sender: TObject);
@@ -82,6 +81,8 @@ type
   private
     { Private declarations }
     LockEdit: boolean;
+    DirThemes: string;
+
     procedure SetTheme(const SName: string);
     procedure TabClickUserButton(Sender: TObject; AIndex: integer);
     procedure TabCloseEvent(Sender: TObject; ATabIndex: Integer; var ACanClose,
@@ -118,6 +119,9 @@ uses
 {$R *.lfm}
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  List: TStringList;
+  S: string;
 begin
   //avoid drag on click arrows
   Mouse.DragImmediate:= false;
@@ -212,6 +216,13 @@ begin
   t_fox.AddTab(-1, 'Firefox');
   t_fox.AddTab(-1, 'A tab _____________________________________________________', nil, false, clGreen);
   t_fox.AddTab(-1, 'Tab middle len', nil, false, clBlue);
+
+  DirThemes:= ExtractFileDir(ExtractFileDir(Application.ExeName))+DirectorySeparator+'img_themes';
+
+  List:= TStringList.Create;
+  FindAllDirectories(List, DirThemes);
+  for S in List do
+    comboThemes.Items.Add(ExtractFileName(S));
 end;
 
 procedure TForm1.btnStressClick(Sender: TObject);
@@ -244,10 +255,7 @@ var
   dir: string;
   Data: TATTabTheme;
 begin
-  dir:= ExtractFileDir(ExtractFileDir(Application.ExeName))+
-    DirectorySeparator+'img_themes'+
-    DirectorySeparator+SName;
-
+  dir:= DirThemes+DirectorySeparator+SName;
   if not DirectoryExists(dir) then
   begin
     ShowMessage('Theme folder not found:'#10+dir);
@@ -361,6 +369,11 @@ procedure TForm1.chkVarSize_BottomChange(Sender: TObject);
 begin
   t_cust.OptVarWidth:= chkVarSize_Bottom.Checked;
   t_cust.Invalidate;
+end;
+
+procedure TForm1.comboThemesChange(Sender: TObject);
+begin
+  SetTheme(comboThemes.Text);
 end;
 
 procedure TForm1.comboIconPosChange(Sender: TObject);
