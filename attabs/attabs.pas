@@ -624,7 +624,8 @@ type
     procedure DoScrollAnimation(APosTo: integer);
     function GetMaxScrollPos: integer;
     property ScrollPos: integer read FScrollPos write SetScrollPos;
-    function SetTheme(const Data: TATTabTheme): boolean;
+    procedure SetTheme(const Data: TATTabTheme);
+    property IsThemed: boolean read FThemed;
 
   protected
     procedure Paint; override;
@@ -4267,9 +4268,8 @@ begin
   end;
 end;
 
-function TATTabs.SetTheme(const Data: TATTabTheme): boolean;
+procedure TATTabs.SetTheme(const Data: TATTabTheme);
 begin
-  Result:= false;
   FThemed:= false;
 
   if not FileExists(Data.FileName_Left) then raise Exception.Create('File not found: '+Data.FileName_Left);
@@ -4320,14 +4320,12 @@ begin
     ) then
     raise Exception.Create('Incorrect picture sizes in tab-theme');
 
-  Result:= true;
   FThemed:= true;
   FOptTabHeight:= FPic_L.Height;
   FAngleSide:= FPic_L.Width;
   FOptShowFlat:= false;
   FOptShowAngled:= true;
   FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
-  FOptShowXRounded:= false;
   FOptSpaceXSize:= FPic_X.Width;
   FOptSpaceXRight:= FAngleSide div 2 + Data.IndentOfX;
   Height:= FOptTabHeight+FOptSpacer;
