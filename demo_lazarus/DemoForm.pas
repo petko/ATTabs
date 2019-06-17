@@ -131,7 +131,7 @@ begin
   t_top.Parent:= Self;
   t_top.ParentColor:= false;
   t_top.Align:= alTop;
-  t_top.ColorBg:= $408040;
+  t_top.ColorBg:= $a0e0a0;
   t_top.ColorFont:= $E0E0E0;
   t_top.OnTabClick:= TabClick;
   t_top.OnTabPlusClick:= TabPlusClick;

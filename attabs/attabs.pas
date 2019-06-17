@@ -549,7 +549,7 @@ type
       ATabModified, ATabActive: boolean;
       AImageIndex: TImageIndex;
       AFontStyle: TFontStyles);
-    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AColorArr: TColor);
+    procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
       ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor);
@@ -3162,9 +3162,38 @@ end;
 {$endif}
 
 procedure TATTabs.DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect;
-  AColorArr: TColor);
+  AActive: boolean);
+var
+  Pic: TATTabsPicture;
+  NColor: TColor;
 begin
-  DrawTriangleType(C, ATyp, ARect, AColorArr, FOptArrowSize div 2);
+  if FThemed then
+  begin
+    if AActive then
+      case ATyp of
+        atriLeft: Pic:= FPic_Arrow_L_a;
+        atriRight: Pic:= FPic_Arrow_R_a;
+        atriDown: Pic:= FPic_Arrow_D_a;
+      end
+    else
+      case ATyp of
+        atriLeft: Pic:= FPic_Arrow_L;
+        atriRight: Pic:= FPic_Arrow_R;
+        atriDown: Pic:= FPic_Arrow_D;
+      end;
+    Pic.Draw(C,
+      (ARect.Left+ARect.Right-Pic.Width) div 2,
+      (ARect.Top+ARect.Bottom-Pic.Height) div 2
+      );
+    exit;
+  end;
+
+  if AActive and not _IsDrag then
+    NColor:= FColorArrowOver
+  else
+    NColor:= FColorArrow;
+
+  DrawTriangleType(C, ATyp, ARect, NColor, FOptArrowSize div 2);
 end;
 
 
@@ -3739,13 +3768,7 @@ begin
   if IsPaintNeeded(ElemType, -1, C, FRectArrowDown) then
     begin
       DoPaintBgTo(C, FRectArrowDown);
-      DoPaintArrowTo(C,
-        atriDown,
-        FRectArrowDown,
-        IfThen(bOver and not _IsDrag,
-          FColorArrowOver,
-          FColorArrow)
-        );
+      DoPaintArrowTo(C, atriDown, FRectArrowDown, bOver);
       DoPaintAfter(ElemType, -1, C, FRectArrowDown);
     end;
 end;
@@ -3769,11 +3792,7 @@ begin
         R.Left:= (R.Left+R.Right) div 2;
 
       DoPaintBgTo(C, FRectArrowLeft);
-      DoPaintArrowTo(C,
-        atriLeft,
-        R,
-        IfThen(bOver, FColorArrowOver, FColorArrow)
-        );
+      DoPaintArrowTo(C, atriLeft, R, bOver);
       DoPaintAfter(ElemType, -1, C, FRectArrowLeft);
     end;
 end;
@@ -3797,11 +3816,7 @@ begin
         R.Right:= (R.Left+R.Right) div 2;
 
       DoPaintBgTo(C, FRectArrowRight);
-      DoPaintArrowTo(C,
-        atriRight,
-        R,
-        IfThen(bOver, FColorArrowOver, FColorArrow)
-        );
+      DoPaintArrowTo(C, atriRight, R, bOver);
       DoPaintAfter(ElemType, -1, C, FRectArrowRight);
     end;
 end;
@@ -4367,6 +4382,7 @@ begin
   FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptSpaceXSize:= FPic_X.Width;
   FOptSpaceXRight:= FAngleSide div 2 + Data.IndentOfX;
+  FOptShowArrowsNear:= false;
   Height:= FOptTabHeight+FOptSpacer;
 end;
 
