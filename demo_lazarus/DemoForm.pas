@@ -270,6 +270,7 @@ begin
   Data.FileName_CenterActive:= dir+DirectorySeparator+'c_a.png';
   Data.FileName_X:= dir+DirectorySeparator+'x.png';
   Data.FileName_XActive:= dir+DirectorySeparator+'x_a.png';
+  Data.FileName_Plus:= dir+DirectorySeparator+'pl.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
   Data.IndentOfX:= 1;

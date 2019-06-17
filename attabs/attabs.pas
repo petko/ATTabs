@@ -202,6 +202,7 @@ type
     FileName_CenterActive: string;
     FileName_X: string;
     FileName_XActive: string;
+    FileName_Plus: string;
     SpaceBetweenInPercentsOfSide: integer;
     IndentOfX: integer;
   end;
@@ -482,6 +483,7 @@ type
     FPic_C_a: TATTabsPicture;
     FPic_X: TATTabsPicture;
     FPic_X_a: TATTabsPicture;
+    FPic_Plus: TATTabsPicture;
 
     //events    
     FOnTabClick: TNotifyEvent;
@@ -513,6 +515,7 @@ type
     procedure DoPaintButtonsBG(C: TCanvas);
     procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
       AColor: TColor; APos: TATTabPosition);
+    procedure DoPaintPlus(C: TCanvas; const ARect: TRect);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
     procedure DoPaintTabShape_C(C: TCanvas; ATabActive: boolean;
       const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg,
@@ -1323,6 +1326,7 @@ begin
   if Assigned(FPic_C_a) then FreeAndNil(FPic_C_a);
   if Assigned(FPic_X) then FreeAndNil(FPic_X);
   if Assigned(FPic_X_a) then FreeAndNil(FPic_X_a);
+  if Assigned(FPic_Plus) then FreeAndNil(FPic_Plus);
 
   Clear;
   FreeAndNil(FCaptionList);
@@ -1543,6 +1547,58 @@ begin
       end;
       DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
     end;
+end;
+
+procedure TATTabs.DoPaintPlus(C: TCanvas; const ARect: TRect);
+var
+  NColorXBg,
+  NColorXBorder,
+  NColorXMark,
+  NColorFont: TColor;
+  ElemType: TATTabElemType;
+begin
+  if FTabIndexOver=cTabIndexPlus then
+    ElemType:= aeTabPlusOver
+  else
+    ElemType:= aeTabPlus;
+
+  if IsPaintNeeded(ElemType, -1, C, ARect) then
+  begin
+    NColorXBg:= clNone;
+    NColorXBorder:= clNone;
+    NColorXMark:= clWhite;
+    NColorFont:= FColorFont;
+
+    DoPaintTabTo(C, ARect,
+      '',
+      GetTabBgColor_Plus,
+      FColorBorderPassive,
+      FColorBorderActive,
+      clNone,
+      NColorXBg,
+      NColorXBorder,
+      NColorXMark,
+      NColorFont,
+      false,
+      false,
+      false,
+      -1, //no icon
+      []
+      );
+
+    if FThemed then
+    begin
+      FPic_Plus.Draw(C,
+        (ARect.Left+ARect.Right-FPic_Plus.Width) div 2,
+        (ARect.Top+ARect.Bottom-FPic_Plus.Height) div 2
+        );
+      exit;
+    end
+    else
+      DrawPlusSign(C, ARect, FOptArrowSize, FColorFont);
+
+    DoPaintAfter(ElemType, -1, C, ARect);
+  end;
 end;
 
 procedure TATTabs.DoPaintTabShape_C(C: TCanvas;
@@ -2236,36 +2292,7 @@ begin
   //paint "plus" tab
   if FOptShowPlusTab then
   begin
-    RRect:= GetTabRect_Plus;
-    NColorXBg:= clNone;
-    NColorXBorder:= clNone;
-    NColorXMark:= clWhite;
-    NColorFont:= FColorFont;
-    if FTabIndexOver=cTabIndexPlus then
-      ElemType:= aeTabPlusOver
-    else
-      ElemType:= aeTabPlus;
-    if IsPaintNeeded(ElemType, -1, C, RRect) then
-    begin
-      DoPaintTabTo(C, RRect,
-        '',
-        GetTabBgColor_Plus,
-        FColorBorderPassive,
-        FColorBorderActive,
-        clNone,
-        NColorXBg,
-        NColorXBorder,
-        NColorXMark,
-        NColorFont,
-        false,
-        false,
-        false,
-        -1, //no icon
-        []
-        );
-      DrawPlusSign(C, RRect, FOptArrowSize, FColorFont);
-      DoPaintAfter(ElemType, -1, C, RRect);
-    end;    
+    DoPaintPlus(C, GetTabRect_Plus);
   end;
 
   //paint passive tabs
@@ -4252,6 +4279,7 @@ begin
   if FPic_C_a=nil then FPic_C_a:= TATTabsPicture.Create;
   if FPic_X=nil then FPic_X:= TATTabsPicture.Create;
   if FPic_X_a=nil then FPic_X_a:= TATTabsPicture.Create;
+  if FPic_Plus=nil then FPic_Plus:= TATTabsPicture.Create;
 
   FPic_L.LoadFromFile(Data.FileName_Left);
   FPic_R.LoadFromFile(Data.FileName_Right);
@@ -4261,6 +4289,7 @@ begin
   FPic_C_a.LoadFromFile(Data.FileName_CenterActive);
   FPic_X.LoadFromFile(Data.FileName_X);
   FPic_X_a.LoadFromFile(Data.FileName_XActive);
+  FPic_Plus.LoadFromFile(Data.FileName_Plus);
 
   if not (
     (FPic_L.Width=FPic_R.Width) and
