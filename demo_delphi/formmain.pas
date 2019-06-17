@@ -76,6 +76,7 @@ begin
     '\'+'img_themes\';
 
   cbThemeList.Items.Clear;
+  cbThemeList.Items.Add('No Theme');
   if FindFirst(dir + '*',faDirectory,sr)=0 then
     repeat
       if ((sr.Attr and faDirectory) = faDirectory) and
@@ -84,6 +85,7 @@ begin
           cbThemeList.Items.Add(sr.Name);
     until FindNext(sr)<>0;
   FindClose(sr);
+  cbThemeList.ItemIndex := 0;
 
 end;
 
@@ -150,7 +152,12 @@ begin
   themefolder := cbThemeList.Items[cbThemeList.ItemIndex];
 
   if DirectoryExists(dir + themefolder) then
-    SetTheme(dir + themefolder);
+    SetTheme(dir + themefolder)
+  else
+  begin
+    t.IsThemed := false;
+    t.Invalidate;
+  end;
 
 end;
 
