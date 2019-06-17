@@ -366,7 +366,7 @@ object Form1: TForm1
   end
   object comboThemes: TComboBox
     Left = 301
-    Height = 28
+    Height = 30
     Top = 264
     Width = 156
     ItemHeight = 0

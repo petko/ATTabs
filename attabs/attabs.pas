@@ -203,6 +203,7 @@ type
     FileName_X: string;
     FileName_XActive: string;
     FileName_Plus: string;
+    FileName_PlusActive: string;
     SpaceBetweenInPercentsOfSide: integer;
     IndentOfX: integer;
   end;
@@ -484,6 +485,7 @@ type
     FPic_X: TATTabsPicture;
     FPic_X_a: TATTabsPicture;
     FPic_Plus: TATTabsPicture;
+    FPic_Plus_a: TATTabsPicture;
 
     //events    
     FOnTabClick: TNotifyEvent;
@@ -1327,6 +1329,7 @@ begin
   if Assigned(FPic_X) then FreeAndNil(FPic_X);
   if Assigned(FPic_X_a) then FreeAndNil(FPic_X_a);
   if Assigned(FPic_Plus) then FreeAndNil(FPic_Plus);
+  if Assigned(FPic_Plus_a) then FreeAndNil(FPic_Plus_a);
 
   Clear;
   FreeAndNil(FCaptionList);
@@ -1556,8 +1559,11 @@ var
   NColorXMark,
   NColorFont: TColor;
   ElemType: TATTabElemType;
+  Pic: TATTabsPicture;
+  bActive: boolean;
 begin
-  if FTabIndexOver=cTabIndexPlus then
+  bActive:= FTabIndexOver=cTabIndexPlus;
+  if bActive then
     ElemType:= aeTabPlusOver
   else
     ElemType:= aeTabPlus;
@@ -1588,7 +1594,11 @@ begin
 
     if FThemed then
     begin
-      FPic_Plus.Draw(C,
+      if bActive then
+        Pic:= FPic_Plus_a
+      else
+        Pic:= FPic_Plus;
+      Pic.Draw(C,
         (ARect.Left+ARect.Right-FPic_Plus.Width) div 2,
         (ARect.Top+ARect.Bottom-FPic_Plus.Height) div 2
         );
@@ -4270,6 +4280,8 @@ begin
   if not FileExists(Data.FileName_CenterActive) then raise Exception.Create('File not found: '+Data.FileName_CenterActive);
   if not FileExists(Data.FileName_X) then raise Exception.Create('File not found: '+Data.FileName_X);
   if not FileExists(Data.FileName_XActive) then raise Exception.Create('File not found: '+Data.FileName_XActive);
+  if not FileExists(Data.FileName_Plus) then raise Exception.Create('File not found: '+Data.FileName_Plus);
+  if not FileExists(Data.FileName_PlusActive) then raise Exception.Create('File not found: '+Data.FileName_PlusActive);
 
   if FPic_L=nil then FPic_L:= TATTabsPicture.Create;
   if FPic_R=nil then FPic_R:= TATTabsPicture.Create;
@@ -4280,6 +4292,7 @@ begin
   if FPic_X=nil then FPic_X:= TATTabsPicture.Create;
   if FPic_X_a=nil then FPic_X_a:= TATTabsPicture.Create;
   if FPic_Plus=nil then FPic_Plus:= TATTabsPicture.Create;
+  if FPic_Plus_a=nil then FPic_Plus_a:= TATTabsPicture.Create;
 
   FPic_L.LoadFromFile(Data.FileName_Left);
   FPic_R.LoadFromFile(Data.FileName_Right);
@@ -4290,6 +4303,7 @@ begin
   FPic_X.LoadFromFile(Data.FileName_X);
   FPic_X_a.LoadFromFile(Data.FileName_XActive);
   FPic_Plus.LoadFromFile(Data.FileName_Plus);
+  FPic_Plus_a.LoadFromFile(Data.FileName_PlusActive);
 
   if not (
     (FPic_L.Width=FPic_R.Width) and
@@ -4303,6 +4317,8 @@ begin
     (FPic_X.Width=FPic_X.Height) and
     (FPic_X.Width=FPic_X_a.Width) and
     (FPic_X.Width=FPic_X_a.Height)
+    //(FPic_Plus.Width=FPic_Plus_a.Width) and
+    //(FPic_Plus.Height=FPic_Plus_a.Height)
     ) then
     raise Exception.Create('Incorrect picture sizes in tab-theme');
 
