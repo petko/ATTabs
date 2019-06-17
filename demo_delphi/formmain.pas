@@ -96,6 +96,8 @@ begin
   Data.FileName_CenterActive:= dir+'\'+'c_a.png';
   Data.FileName_X:= dir+'\'+'x.png';
   Data.FileName_XActive:= dir+'\'+'x_a.png';
+  Data.FileName_Plus:= dir+'\'+'pl.png';
+  Data.FileName_PlusActive:= dir+'\'+'pl_a.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
   Data.IndentOfX:= 2;
