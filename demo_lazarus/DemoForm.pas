@@ -274,6 +274,12 @@ begin
   Data.FileName_XActive:= dir+DirectorySeparator+'x_a.png';
   Data.FileName_Plus:= dir+DirectorySeparator+'pl.png';
   Data.FileName_PlusActive:= dir+DirectorySeparator+'pl_a.png';
+  Data.FileName_ArrowLeft:= dir+DirectorySeparator+'ar_l.png';
+  Data.FileName_ArrowLeftActive:= dir+DirectorySeparator+'ar_l_a.png';
+  Data.FileName_ArrowRight:= dir+DirectorySeparator+'ar_r.png';
+  Data.FileName_ArrowRightActive:= dir+DirectorySeparator+'ar_r_a.png';
+  Data.FileName_ArrowDown:= dir+DirectorySeparator+'ar_d.png';
+  Data.FileName_ArrowDownActive:= dir+DirectorySeparator+'ar_d_a.png';
 
   Data.SpaceBetweenInPercentsOfSide:= 150;
   Data.IndentOfX:= 1;

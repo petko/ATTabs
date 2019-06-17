@@ -204,6 +204,12 @@ type
     FileName_XActive: string;
     FileName_Plus: string;
     FileName_PlusActive: string;
+    FileName_ArrowLeft: string;
+    FileName_ArrowLeftActive: string;
+    FileName_ArrowRight: string;
+    FileName_ArrowRightActive: string;
+    FileName_ArrowDown: string;
+    FileName_ArrowDownActive: string;
     SpaceBetweenInPercentsOfSide: integer;
     IndentOfX: integer;
   end;
@@ -486,6 +492,12 @@ type
     FPic_X_a: TATTabsPicture;
     FPic_Plus: TATTabsPicture;
     FPic_Plus_a: TATTabsPicture;
+    FPic_Arrow_L: TATTabsPicture;
+    FPic_Arrow_L_a: TATTabsPicture;
+    FPic_Arrow_R: TATTabsPicture;
+    FPic_Arrow_R_a: TATTabsPicture;
+    FPic_Arrow_D: TATTabsPicture;
+    FPic_Arrow_D_a: TATTabsPicture;
 
     //events    
     FOnTabClick: TNotifyEvent;
@@ -1320,17 +1332,26 @@ end;
 
 destructor TATTabs.Destroy;
 begin
-  FThemed:= false;
-  if Assigned(FPic_L) then FreeAndNil(FPic_L);
-  if Assigned(FPic_R) then FreeAndNil(FPic_R);
-  if Assigned(FPic_C) then FreeAndNil(FPic_C);
-  if Assigned(FPic_L_a) then FreeAndNil(FPic_L_a);
-  if Assigned(FPic_R_a) then FreeAndNil(FPic_R_a);
-  if Assigned(FPic_C_a) then FreeAndNil(FPic_C_a);
-  if Assigned(FPic_X) then FreeAndNil(FPic_X);
-  if Assigned(FPic_X_a) then FreeAndNil(FPic_X_a);
-  if Assigned(FPic_Plus) then FreeAndNil(FPic_Plus);
-  if Assigned(FPic_Plus_a) then FreeAndNil(FPic_Plus_a);
+  if FThemed then
+  begin
+    FThemed:= false;
+    FreeAndNil(FPic_L);
+    FreeAndNil(FPic_L_a);
+    FreeAndNil(FPic_R);
+    FreeAndNil(FPic_R_a);
+    FreeAndNil(FPic_C);
+    FreeAndNil(FPic_C_a);
+    FreeAndNil(FPic_X);
+    FreeAndNil(FPic_X_a);
+    FreeAndNil(FPic_Plus);
+    FreeAndNil(FPic_Plus_a);
+    FreeAndNil(FPic_Arrow_L);
+    FreeAndNil(FPic_Arrow_L_a);
+    FreeAndNil(FPic_Arrow_R);
+    FreeAndNil(FPic_Arrow_R_a);
+    FreeAndNil(FPic_Arrow_D);
+    FreeAndNil(FPic_Arrow_D_a);
+  end;
 
   Clear;
   FreeAndNil(FCaptionList);
@@ -4282,6 +4303,12 @@ begin
   if not FileExists(Data.FileName_XActive) then raise Exception.Create('File not found: '+Data.FileName_XActive);
   if not FileExists(Data.FileName_Plus) then raise Exception.Create('File not found: '+Data.FileName_Plus);
   if not FileExists(Data.FileName_PlusActive) then raise Exception.Create('File not found: '+Data.FileName_PlusActive);
+  if not FileExists(Data.FileName_ArrowLeft) then raise Exception.Create('File not found: '+Data.FileName_ArrowLeft);
+  if not FileExists(Data.FileName_ArrowLeftActive) then raise Exception.Create('File not found: '+Data.FileName_ArrowLeftActive);
+  if not FileExists(Data.FileName_ArrowRight) then raise Exception.Create('File not found: '+Data.FileName_ArrowRight);
+  if not FileExists(Data.FileName_ArrowRightActive) then raise Exception.Create('File not found: '+Data.FileName_ArrowRightActive);
+  if not FileExists(Data.FileName_ArrowDown) then raise Exception.Create('File not found: '+Data.FileName_ArrowDown);
+  if not FileExists(Data.FileName_ArrowDownActive) then raise Exception.Create('File not found: '+Data.FileName_ArrowDownActive);
 
   if FPic_L=nil then FPic_L:= TATTabsPicture.Create;
   if FPic_R=nil then FPic_R:= TATTabsPicture.Create;
@@ -4293,6 +4320,12 @@ begin
   if FPic_X_a=nil then FPic_X_a:= TATTabsPicture.Create;
   if FPic_Plus=nil then FPic_Plus:= TATTabsPicture.Create;
   if FPic_Plus_a=nil then FPic_Plus_a:= TATTabsPicture.Create;
+  if FPic_Arrow_L=nil then FPic_Arrow_L:= TATTabsPicture.Create;
+  if FPic_Arrow_L_a=nil then FPic_Arrow_L_a:= TATTabsPicture.Create;
+  if FPic_Arrow_R=nil then FPic_Arrow_R:= TATTabsPicture.Create;
+  if FPic_Arrow_R_a=nil then FPic_Arrow_R_a:= TATTabsPicture.Create;
+  if FPic_Arrow_D=nil then FPic_Arrow_D:= TATTabsPicture.Create;
+  if FPic_Arrow_D_a=nil then FPic_Arrow_D_a:= TATTabsPicture.Create;
 
   FPic_L.LoadFromFile(Data.FileName_Left);
   FPic_R.LoadFromFile(Data.FileName_Right);
@@ -4304,6 +4337,12 @@ begin
   FPic_X_a.LoadFromFile(Data.FileName_XActive);
   FPic_Plus.LoadFromFile(Data.FileName_Plus);
   FPic_Plus_a.LoadFromFile(Data.FileName_PlusActive);
+  FPic_Arrow_L.LoadFromFile(Data.FileName_ArrowLeft);
+  FPic_Arrow_L_a.LoadFromFile(Data.FileName_ArrowLeftActive);
+  FPic_Arrow_R.LoadFromFile(Data.FileName_ArrowRight);
+  FPic_Arrow_R_a.LoadFromFile(Data.FileName_ArrowRightActive);
+  FPic_Arrow_D.LoadFromFile(Data.FileName_ArrowDown);
+  FPic_Arrow_D_a.LoadFromFile(Data.FileName_ArrowDownActive);
 
   if not (
     (FPic_L.Width=FPic_R.Width) and
