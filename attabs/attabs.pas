@@ -4,6 +4,8 @@ Copyright (c) Alexey Torgashin (UVviewsoft.com)
 License: MPL 2.0 or LGPL
 }
 
+//{$define tabs_paint_counter}
+
 unit attabs;
 
 {$ifdef FPC}
@@ -439,6 +441,9 @@ type
     FAngleTangent: single;
     FAngleSide: integer;
     FAnimationOffset: integer;
+    FPaintCount: integer;
+    FLastOverIndex: integer;
+    FLastOverX: boolean;
 
     FScrollPos: integer;
     FImages: TImageList;
@@ -1156,7 +1161,11 @@ begin
   FMouseDown:= false;
   FMouseDownPnt:= Point(0, 0);
   FMouseDownDbl:= false;
-  FMouseDownRightBtn:=false;
+  FMouseDownRightBtn:= false;
+
+  FPaintCount:= 0;
+  FLastOverIndex:= -100;
+  FLastOverX:= false;
 
   FColorBg:= _InitTabColorBg;
   FColorSeparator:= _InitTabColorArrow;
@@ -1335,7 +1344,15 @@ begin
     end;
   end
   else
+  begin
     DoPaintTo(Canvas);
+  end;
+
+  {$ifdef tabs_paint_counter}
+  Inc(FPaintCount);
+  Canvas.Font.Color:= clRed;
+  Canvas.TextOut(0, 0, IntToStr(FPaintCount));;
+  {$endif}
 end;
 
 procedure TATTabs.DoPaintTabTo(
@@ -2128,6 +2145,9 @@ begin
   with ScreenToClient(Mouse.CursorPos) do
     FTabIndexOver:= GetTabAt(X, Y, bMouseOverX);
 
+  FLastOverIndex:= FTabIndexOver;
+  FLastOverX:= bMouseOverX;
+
   if not FThemed then
     FAngleSide:= Trunc(FOptTabHeight/FAngleTangent);
 
@@ -2891,7 +2911,12 @@ begin
     if Assigned(FOnTabOver) then
       FOnTabOver(Self, FTabIndexOver);
 
-  Invalidate;
+  //repaint only if really needed
+  //use {$define tab_paint_counter} to debug it
+  if (FTabIndexOver<>FLastOverIndex) or (IsX<>FLastOverX) then
+  begin
+    Invalidate;
+  end;
 end;
 
 procedure TATTabs.Resize;
