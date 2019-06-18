@@ -142,6 +142,7 @@ begin
   t_top.OnTabClickUserButton:=TabClickUserButton;
   t_top.OptMouseDoubleClickPlus:= true;
   t_top.OptShowXButtons:= atbxShowAll;
+  t_top.OptSpaceBetweenTabs:= 10;
   t_top.Height:= 48;
   t_top.OptTabHeight:= 38;
   t_top.Images:= ImageList1;
@@ -171,7 +172,7 @@ begin
   t_cust.ColorBorderPassive:= clFuchsia;
 
   t_cust.OptButtonLayout:= '<,>';
-  t_cust.OptShowAngled:= true;
+  t_cust.OptSpaceSide:= 10;
   t_cust.OptShowArrowsNear:= false;
   t_cust.OptTabHeight:= 30;
   t_cust.OptTabWidthNormal:= 170;
@@ -198,7 +199,7 @@ begin
   t_fox.OptSpacer:= 4;
   t_fox.OptSpaceXSize:= 13;
   t_fox.OptMouseDragEnabled:= false;
-  t_fox.OptShowAngled:= true;
+  t_fox.OptSpaceSide:= 10;
   t_fox.OnTabPlusClick:= Tab2PlusClick;
 
   t_fox.ColorFont:= clBlack;
@@ -307,11 +308,8 @@ end;
 
 procedure TForm1.chkAngledChange(Sender: TObject);
 begin
-  t_top.OptShowAngled:= chkAngled.Checked;
-  if t_top.OptShowAngled then
-    t_top.OptSpaceBetweenTabs:= 15
-  else
-    t_top.OptSpaceBetweenTabs:= 0;
+  t_top.OptSpaceSide:= IfThen(chkAngled.Checked, 10, 0);
+  t_top.OptSpaceBetweenTabs:= IfThen(chkAngled.Checked, 10, 0);
   t_top.Invalidate;
 end;
 

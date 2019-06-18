@@ -307,7 +307,6 @@ const
   _InitOptShowModifiedText = '*';
   _InitOptShowBorderActiveLow = false;
   _InitOptShowEntireColor = false;
-  _InitOptShowAngled = false;
   _InitOptShowActiveMarkInverted = true;
   _InitRoundedBitmapSize = 60;
 
@@ -417,7 +416,6 @@ type
     FOptShowNumberPrefix: TATTabString;
     FOptShowScrollMark: boolean;
     FOptShowDropMark: boolean;
-    FOptShowAngled: boolean;
     FOptShowActiveMarkInverted: boolean;
     FOptActiveFontStyle: TFontStyles;
     FOptActiveFontStyleUsed: boolean;
@@ -772,7 +770,6 @@ type
     property OptIconPosition: TATTabIconPosition read FOptIconPosition write FOptIconPosition default aipIconLefterThanText;
     property OptWhichActivateOnClose: TATTabActionOnClose read FOptWhichActivateOnClose write FOptWhichActivateOnClose default aocRight;
     property OptCaptionAlignment: TAlignment read FOptCaptionAlignment write FOptCaptionAlignment default taLeftJustify;
-    property OptShowAngled: boolean read FOptShowAngled write FOptShowAngled default _InitOptShowAngled;
     property OptShowFlat: boolean read FOptShowFlat write FOptShowFlat default _InitOptShowFlat;
     property OptShowFlatMouseOver: boolean read FOptShowFlatMouseOver write FOptShowFlatMouseOver default _InitOptShowFlatMouseOver;
     property OptShowFlatSepar: boolean read FOptShowFlatSepar write FOptShowFlatSepar default _InitOptShowFlatSep;
@@ -1271,7 +1268,6 @@ begin
   FOptShowModifiedText:= _InitOptShowModifiedText;
   FOptShowBorderActiveLow:= _InitOptShowBorderActiveLow;
   FOptShowEntireColor:= _InitOptShowEntireColor;
-  FOptShowAngled:= _InitOptShowAngled;
   FOptShowActiveMarkInverted:= _InitOptShowActiveMarkInverted;
 
   FOptMouseMiddleClickClose:= _InitOptMouseMiddleClickClose;
@@ -1430,7 +1426,7 @@ begin
     AColorBg, AColorBorder, AColorBorderLow);
 
   //left/right edges
-  if FOptShowAngled then
+  if FOptSpaceSide>0 then
   begin
     DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
     DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
@@ -1666,14 +1662,14 @@ begin
   case FOptPosition of
     atpTop:
       begin
-        if not FOptShowAngled then
+        if FOptSpaceSide=0 then
           DrawLine(C, PL1.X, PL1.Y, PL2.X, PL2.Y+1, AColorBorder);
-        if not FOptShowAngled then
+        if FOptSpaceSide=0 then
           DrawLine(C, PR1.X, PR1.Y, PR2.X, PR2.Y+1, AColorBorder);
         DrawLine(C, PL1.X, PL1.Y, PR1.X, PL1.Y, AColorBorder);
         if AColorBorderLow<>clNone then
-          DrawLine(C, PL2.X-IfThen(FOptShowAngled, FOptSpaceSide), ARect.Bottom,
-                      PR2.X+IfThen(FOptShowAngled, FOptSpaceSide), ARect.Bottom, AColorBorderLow)
+          DrawLine(C, PL2.X-FOptSpaceSide, ARect.Bottom,
+                      PR2.X+FOptSpaceSide, ARect.Bottom, AColorBorderLow)
         else
           DrawLine(C, PL2.X+1, ARect.Bottom, PR2.X-1, ARect.Bottom, AColorBg);
       end;
@@ -1683,8 +1679,8 @@ begin
         DrawLine(C, PR1.X, PR1.Y, PR2.X, PR2.Y+1, AColorBorder);
         DrawLine(C, PL2.X, PL2.Y+1, PR2.X, PL2.Y+1, AColorBorder);
         if AColorBorderLow<>clNone then
-          DrawLine(C, PL1.X-IfThen(FOptShowAngled, FOptSpaceSide), ARect.Top,
-                      PR1.X+IfThen(FOptShowAngled, FOptSpaceSide), ARect.Top, AColorBorderLow)
+          DrawLine(C, PL1.X-FOptSpaceSide, ARect.Top,
+                      PR1.X+FOptSpaceSide, ARect.Top, AColorBorderLow)
       end;
     atpLeft:
       begin
@@ -2007,9 +2003,7 @@ begin
     FTabWidth:= FOptTabWidthNormal;
   NWidthSaved:= FTabWidth;
 
-  R.Left:= FRealIndentLeft;
-  if FOptShowAngled then
-    Inc(R.Left, FOptSpaceSide);
+  R.Left:= FRealIndentLeft+FOptSpaceSide;
   R.Right:= R.Left;
   R.Top:= FOptSpacer;
   R.Bottom:= R.Top+FOptTabHeight;
@@ -4375,7 +4369,6 @@ begin
   FOptTabHeight:= FPic_Side_L.Height;
   FOptSpaceSide:= FPic_Side_L.Width;
   FOptShowFlat:= false;
-  FOptShowAngled:= true;
   FOptSpaceBetweenTabs:= FOptSpaceSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptSpaceXSize:= FPic_X.Width;
   FOptSpaceXRight:= FOptSpaceSide div 2 + Data.IndentOfX;

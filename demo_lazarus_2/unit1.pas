@@ -68,6 +68,7 @@ begin
   t.Parent:= Self;
   t.Align:= alTop;
 
+  t.OptSpaceSide:= 0;
   t.OptAnimationEnabled:= true;
   t.OptMouseDragEnabled:= true;
   t.DragMode:= dmAutomatic;
@@ -125,8 +126,9 @@ end;
 
 procedure TForm1.chkAngledChange(Sender: TObject);
 begin
-  t.OptShowAngled:= chkAngled.Checked;
-  t.OptSpaceInitial:= IfThen(t.OptShowAngled, 10, 4);
+  t.OptSpaceSide:= IfThen(chkAngled.Checked, 12, 0);
+  t.OptSpaceInitial:= IfThen(chkAngled.Checked, 10, 4);
+  t.OptSpaceBetweenTabs:= IfThen(chkAngled.Checked, 10, 0);
   t.Invalidate;
 end;
 
@@ -152,7 +154,7 @@ end;
 
 procedure TForm1.chkBetweenChange(Sender: TObject);
 begin
-  t.OptSpaceBetweenTabs:= IfThen(chkBetween.Checked, 8, 0);
+  t.OptSpaceBetweenTabs:= IfThen(chkBetween.Checked, 10, 0);
   t.Invalidate;
 end;
 
