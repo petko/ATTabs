@@ -1,4 +1,8 @@
 
+2019.06.18
++ add: prop OptSpaceSide
+* removed: prop OptShowAngleTangent
+
 2019.06.17
 + add: method SetTheme - component will use fixed PNG images to paint tab shapes and "x" marks
 + add: folder "img_themes" with few sample themes

@@ -266,6 +266,7 @@ const
   _InitOptTabWidthMaximal = 300;
   _InitOptTabWidthNormal = 130;
   _InitOptTabWidthMinimalHidesX = 55;
+  _InitOptSpaceSide = 10;
   _InitOptSpaceInitial = 5;
   _InitOptSpaceBeforeText = 6;
   _InitOptSpaceBetweenTabs = 0;
@@ -307,7 +308,6 @@ const
   _InitOptShowBorderActiveLow = false;
   _InitOptShowEntireColor = false;
   _InitOptShowAngled = false;
-  _InitOptShowAngleTangent = 2.6;
   _InitOptShowActiveMarkInverted = true;
   _InitRoundedBitmapSize = 60;
 
@@ -446,8 +446,7 @@ type
 
     FRealIndentLeft: integer;
     FRealIndentRight: integer;
-    FAngleTangent: single;
-    FAngleSide: integer;
+    FOptSpaceSide: integer;
     FAnimationOffset: integer;
     FPaintCount: integer;
     FLastOverIndex: integer;
@@ -745,6 +744,7 @@ type
     property OptTabWidthMinimal: integer read FOptTabWidthMinimal write FOptTabWidthMinimal default _InitOptTabWidthMinimal;
     property OptTabWidthMaximal: integer read FOptTabWidthMaximal write FOptTabWidthMaximal default _InitOptTabWidthMaximal;
     property OptTabWidthMinimalHidesX: integer read FOptTabWidthMinimalHidesX write FOptTabWidthMinimalHidesX default _InitOptTabWidthMinimalHidesX;
+    property OptSpaceSide: integer read FOptSpaceSide write FOptSpaceSide default _InitOptSpaceSide;
     property OptSpaceBetweenTabs: integer read FOptSpaceBetweenTabs write FOptSpaceBetweenTabs default _InitOptSpaceBetweenTabs;
     property OptSpaceBetweenLines: integer read FOptSpaceBetweenLines write FOptSpaceBetweenLines default _InitOptSpaceBetweenLines;
     property OptSpaceBetweenIconCaption: integer read FOptSpaceBetweenIconCaption write FOptSpaceBetweenIconCaption default _InitOptSpaceBetweenIconCaption;
@@ -773,7 +773,6 @@ type
     property OptWhichActivateOnClose: TATTabActionOnClose read FOptWhichActivateOnClose write FOptWhichActivateOnClose default aocRight;
     property OptCaptionAlignment: TAlignment read FOptCaptionAlignment write FOptCaptionAlignment default taLeftJustify;
     property OptShowAngled: boolean read FOptShowAngled write FOptShowAngled default _InitOptShowAngled;
-    property OptShowAngleTangent: single read FAngleTangent write FAngleTangent {$ifdef fpc} default _InitOptShowAngleTangent {$endif};
     property OptShowFlat: boolean read FOptShowFlat write FOptShowFlat default _InitOptShowFlat;
     property OptShowFlatMouseOver: boolean read FOptShowFlatMouseOver write FOptShowFlatMouseOver default _InitOptShowFlatMouseOver;
     property OptShowFlatSepar: boolean read FOptShowFlatSepar write FOptShowFlatSepar default _InitOptShowFlatSep;
@@ -1230,6 +1229,7 @@ begin
   FOptTabWidthMaximal:= _InitOptTabWidthMaximal;
   FOptTabWidthNormal:= _InitOptTabWidthNormal;
   FOptTabWidthMinimalHidesX:= _InitOptTabWidthMinimalHidesX;
+  FOptSpaceSide:= _InitOptSpaceSide;
   FOptSpaceInitial:= _InitOptSpaceInitial;
   FOptSpaceBeforeText:= _InitOptSpaceBeforeText;
   FOptSpaceBetweenTabs:= _InitOptSpaceBetweenTabs;
@@ -1252,7 +1252,6 @@ begin
   FOptScrollMarkSizeX:= _InitOptScrollMarkSizeX;
   FOptScrollMarkSizeY:= _InitOptScrollMarkSizeY;
   FOptDropMarkSize:= _InitOptDropMarkSize;
-  FAngleTangent:= _InitOptShowAngleTangent;
   FOptActiveFontStyle:= _InitOptActiveFontStyle;
   FOptActiveFontStyleUsed:= _InitOptActiveFontStyleUsed;
   FOptHotFontStyle:= _InitOptHotFontStyle;
@@ -1673,8 +1672,8 @@ begin
           DrawLine(C, PR1.X, PR1.Y, PR2.X, PR2.Y+1, AColorBorder);
         DrawLine(C, PL1.X, PL1.Y, PR1.X, PL1.Y, AColorBorder);
         if AColorBorderLow<>clNone then
-          DrawLine(C, PL2.X-IfThen(FOptShowAngled, FAngleSide), ARect.Bottom,
-                      PR2.X+IfThen(FOptShowAngled, FAngleSide), ARect.Bottom, AColorBorderLow)
+          DrawLine(C, PL2.X-IfThen(FOptShowAngled, FOptSpaceSide), ARect.Bottom,
+                      PR2.X+IfThen(FOptShowAngled, FOptSpaceSide), ARect.Bottom, AColorBorderLow)
         else
           DrawLine(C, PL2.X+1, ARect.Bottom, PR2.X-1, ARect.Bottom, AColorBg);
       end;
@@ -1684,8 +1683,8 @@ begin
         DrawLine(C, PR1.X, PR1.Y, PR2.X, PR2.Y+1, AColorBorder);
         DrawLine(C, PL2.X, PL2.Y+1, PR2.X, PL2.Y+1, AColorBorder);
         if AColorBorderLow<>clNone then
-          DrawLine(C, PL1.X-IfThen(FOptShowAngled, FAngleSide), ARect.Top,
-                      PR1.X+IfThen(FOptShowAngled, FAngleSide), ARect.Top, AColorBorderLow)
+          DrawLine(C, PL1.X-IfThen(FOptShowAngled, FOptSpaceSide), ARect.Top,
+                      PR1.X+IfThen(FOptShowAngled, FOptSpaceSide), ARect.Top, AColorBorderLow)
       end;
     atpLeft:
       begin
@@ -1715,7 +1714,7 @@ begin
       Pic:= FPic_Side_L_a
     else
       Pic:= FPic_Side_L;
-    Pic.Draw(C, ARect.Left-FAngleSide, ARect.Top);
+    Pic.Draw(C, ARect.Left-FOptSpaceSide, ARect.Top);
     exit;
   end;
 
@@ -1724,9 +1723,9 @@ begin
       atpTop:
         begin
           DrawTriangleRectFramed(C,
-            ARect.Left-FAngleSide+1,
+            ARect.Left-FOptSpaceSide+1,
             ARect.Top,
-            FAngleSide,
+            FOptSpaceSide,
             FOptTabHeight+IfThen(ATabActive, 1),
             cSmoothScale,
             ampnTopLeft,
@@ -1737,9 +1736,9 @@ begin
       atpBottom:
         begin
           DrawTriangleRectFramed(C,
-            ARect.Left-FAngleSide+1,
+            ARect.Left-FOptSpaceSide+1,
             ARect.Top+IfThen(not ATabActive, 1),
-            FAngleSide,
+            FOptSpaceSide,
             FOptTabHeight,
             cSmoothScale,
             ampnBottomLeft,
@@ -1772,7 +1771,7 @@ begin
           DrawTriangleRectFramed(C,
             ARect.Right-1,
             ARect.Top,
-            FAngleSide,
+            FOptSpaceSide,
             FOptTabHeight+IfThen(ATabActive, 1),
             cSmoothScale,
             ampnTopRight,
@@ -1785,7 +1784,7 @@ begin
           DrawTriangleRectFramed(C,
             ARect.Right-1,
             ARect.Top+IfThen(not ATabActive, 1),
-            FAngleSide,
+            FOptSpaceSide,
             FOptTabHeight,
             cSmoothScale,
             ampnBottomRight,
@@ -2010,7 +2009,7 @@ begin
 
   R.Left:= FRealIndentLeft;
   if FOptShowAngled then
-    Inc(R.Left, FAngleSide);
+    Inc(R.Left, FOptSpaceSide);
   R.Right:= R.Left;
   R.Top:= FOptSpacer;
   R.Bottom:= R.Top+FOptTabHeight;
@@ -2236,9 +2235,6 @@ begin
 
   FLastOverIndex:= FTabIndexOver;
   FLastOverX:= bMouseOverX;
-
-  if not FThemed then
-    FAngleSide:= Trunc(FOptTabHeight/FAngleTangent);
 
   FRealIndentLeft:= FOptSpaceInitial + GetButtonsWidth(FButtonsLeft);
   FRealIndentRight:= FOptSpaceInitial + GetButtonsWidth(FButtonsRight);
@@ -4377,12 +4373,12 @@ begin
 
   FThemed:= true;
   FOptTabHeight:= FPic_Side_L.Height;
-  FAngleSide:= FPic_Side_L.Width;
+  FOptSpaceSide:= FPic_Side_L.Width;
   FOptShowFlat:= false;
   FOptShowAngled:= true;
-  FOptSpaceBetweenTabs:= FAngleSide * Data.SpaceBetweenInPercentsOfSide div 100;
+  FOptSpaceBetweenTabs:= FOptSpaceSide * Data.SpaceBetweenInPercentsOfSide div 100;
   FOptSpaceXSize:= FPic_X.Width;
-  FOptSpaceXRight:= FAngleSide div 2 + Data.IndentOfX;
+  FOptSpaceXRight:= FOptSpaceSide div 2 + Data.IndentOfX;
   FOptShowArrowsNear:= false;
   Height:= FOptTabHeight+FOptSpacer;
 end;
