@@ -17,14 +17,15 @@ type
     btnStress: TButton;
     btnToggleSpecial: TButton;
     chkAngled: TCheckBox;
+    chkMultiline_Bottom: TCheckBox;
     chkNewNearCurrent: TCheckBox;
     chkFill: TCheckBox;
     chkMultiline: TCheckBox;
-    chkMultiline_Bottom: TCheckBox;
-    chkVarSize_Bottom: TCheckBox;
+    chkNums_Bottom: TCheckBox;
     chkVarSize: TCheckBox;
     chkCenterCaption: TCheckBox;
     chkShowFlat: TCheckBox;
+    chkVarSize_Bottom: TCheckBox;
     comboThemes: TComboBox;
     comboTruncate: TComboBox;
     comboLayout: TComboBox;
@@ -32,9 +33,9 @@ type
     comboShowX: TComboBox;
     EditInfo: TEdit;
     chkShowPlus: TCheckBox;
+    GroupBox1: TGroupBox;
     ImageList1: TImageList;
     Label1: TLabel;
-    chkNums_Bottom: TCheckBox;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -45,7 +46,6 @@ type
     btnModify: TButton;
     Label2: TLabel;
     chkShowFullColor: TCheckBox;
-    Label3: TLabel;
     edInitial: TSpinEdit;
     procedure btnStressClick(Sender: TObject);
     procedure btnThemeBlack1Click(Sender: TObject);
@@ -223,6 +223,7 @@ begin
 
   List:= TStringList.Create;
   FindAllDirectories(List, DirThemes);
+  List.Sort;
   for S in List do
     comboThemes.Items.Add(ExtractFileName(S));
 end;
