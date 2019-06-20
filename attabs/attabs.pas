@@ -557,7 +557,6 @@ type
     function GetButtonsEmpty: boolean; inline;
     function GetTabBgColor_Passive(AIndex: integer): TColor;
     function GetTabBgColor_Active(AIndex: integer): TColor;
-    function GetTabBgColor_Plus: TColor;
     function GetTabFlatEffective(AIndex: integer): boolean; inline;
     function IsScrollMarkNeeded: boolean;
     function GetMaxEdgePos: integer;
@@ -1574,7 +1573,7 @@ begin
 
     DoPaintTabTo(C, ARect,
       '',
-      GetTabBgColor_Plus,
+      GetTabBgColor_Passive(cTabIndexPlus),
       clNone,
       NColorXBg,
       NColorXBorder,
@@ -4303,17 +4302,6 @@ end;
 function TATTabs.GetTabFlatEffective(AIndex: integer): boolean;
 begin
   Result:= FOptShowFlat and not (FOptShowFlatMouseOver and (FTabIndexOver=AIndex));
-end;
-
-function TATTabs.GetTabBgColor_Plus: TColor;
-begin
-  if GetTabFlatEffective(cTabIndexPlus) then
-    Result:= FColorBg
-  else
-  if (FTabIndexOver=cTabIndexPlus) and not _IsDrag then
-    Result:= FColorTabOver
-  else
-    Result:= FColorTabPassive;
 end;
 
 function TATTabs.GetTabBgColor_Passive(AIndex: integer): TColor;
