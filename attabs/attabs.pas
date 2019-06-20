@@ -540,9 +540,8 @@ type
     procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string); inline;
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
     procedure DoPaintTabTo(C: TCanvas; const ARect: TRect;
-      const ACaption: TATTabString; ATabIndex: integer; AColorCloseBg,
-  AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; ATabActive: boolean;
-  AFontStyle: TFontStyles);
+      const ACaption: TATTabString; ATabIndex: integer; AColorFont: TColor;
+  ATabActive, ATabMouseOver, ATabMouseOverX: boolean; AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
@@ -558,6 +557,8 @@ type
     function GetTabBgColor_Passive(AIndex: integer): TColor;
     function GetTabBgColor_Active(AIndex: integer): TColor;
     function GetTabFlatEffective(AIndex: integer): boolean; inline;
+    procedure GetTabXColors(AIndex: integer; AMouseOverX: boolean; out AColorXBg,
+      AColorXBorder, AColorXMark: TColor);
     function IsScrollMarkNeeded: boolean;
     function GetMaxEdgePos: integer;
     function GetRectOfButton(AButton: TATTabButton): TRect;
@@ -568,8 +569,8 @@ type
     procedure SetOptVarWidth(AValue: boolean);
     procedure SetScrollPos(AValue: integer);
     procedure SetTabIndex(AIndex: integer);
-    procedure GetTabXProps(AIndex: integer; const ARect: TRect; out AColorXBg,
-      AColorXBorder, AColorXMark: TColor; out AMouseOverX: boolean; out ARectX: TRect);
+    procedure GetTabXProps(AIndex: integer; const ARect: TRect; out
+      AMouseOverX: boolean; out ARectX: TRect);
     function IsIndexOk(AIndex: integer): boolean; inline;
     function IsShowX(AIndex: integer): boolean;
     function IsPaintNeeded(AElemType: TATTabElemType;
@@ -1376,8 +1377,8 @@ end;
 procedure TATTabs.DoPaintTabTo(
   C: TCanvas; const ARect: TRect; const ACaption: TATTabString;
   ATabIndex: integer;
-  AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
-  ATabActive: boolean;
+  AColorFont: TColor;
+  ATabActive, ATabMouseOver, ATabMouseOverX: boolean;
   AFontStyle: TFontStyles);
 const
   cIndentSep = 2;
@@ -1588,10 +1589,9 @@ begin
     DoPaintTabTo(C, ARect,
       '',
       cTabIndexPlus,
-      NColorXBg,
-      NColorXBorder,
-      NColorXMark,
       NColorFont,
+      false,
+      false,
       false,
       []
       );
@@ -2210,10 +2210,9 @@ begin
   Result:= Dragging and FMouseDragBegins;
 end;
 
-procedure TATTabs.GetTabXProps(AIndex: integer; const ARect: TRect;
-  out AColorXBg, AColorXBorder, AColorXMark: TColor;
-  out AMouseOverX: boolean;
-  out ARectX: TRect);
+procedure TATTabs.GetTabXColors(AIndex: integer;
+  AMouseOverX: boolean;
+  out AColorXBg, AColorXBorder, AColorXMark: TColor);
 begin
   if GetTabFlatEffective(AIndex) then
     AColorXBg:= FColorBg
@@ -2223,6 +2222,18 @@ begin
   AColorXBorder:= AColorXBg;
   AColorXMark:= FColorCloseX;
 
+  if AMouseOverX then
+  begin
+    AColorXBg:= FColorCloseBgOver;
+    AColorXBorder:= FColorCloseBorderOver;
+    AColorXMark:= FColorCloseXOver;
+  end;
+end;
+
+procedure TATTabs.GetTabXProps(AIndex: integer; const ARect: TRect;
+  out AMouseOverX: boolean;
+  out ARectX: TRect);
+begin
   AMouseOverX:= false;
   ARectX:= GetTabRect_X(ARect);
 
@@ -2232,12 +2243,6 @@ begin
     if AIndex=FTabIndexOver then
     begin
       AMouseOverX:= PtInRect(ARectX, ScreenToClient(Mouse.CursorPos));
-      if AMouseOverX then
-      begin
-        AColorXBg:= FColorCloseBgOver;
-        AColorXBorder:= FColorCloseBorderOver;
-        AColorXMark:= FColorCloseXOver;
-      end;
     end;
 end;
 
@@ -2277,11 +2282,12 @@ end;
 procedure TATTabs.DoPaintTo(C: TCanvas);
 var
   RRect, RBottom, RectX: TRect;
-  NColorXBg, NColorXBorder, NColorXMark, NColorFont: TColor;
+  NColorFont: TColor;
   NLineX1, NLineY1, NLineX2, NLineY2: integer;
   ElemType: TATTabElemType;
   Data: TATTabData;
   NFontStyle: TFontStyles;
+  NColorXBg, NColorXBorder, NColorXMark: TColor;
   bMouseOver, bMouseOverX: boolean;
   i: integer;
 begin
@@ -2388,7 +2394,7 @@ begin
     if i<>FTabIndex then
     begin
       RRect:= GetTabRect(i);
-      GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
+      GetTabXProps(i, RRect, bMouseOverX, RectX);
 
       bMouseOver:= i=FTabIndexOver;
 
@@ -2417,17 +2423,18 @@ begin
         DoPaintTabTo(C, RRect,
           Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
           i,
-          NColorXBg,
-          NColorXBorder,
-          NColorXMark,
           NColorFont,
           false,
+          bMouseOver,
+          bMouseOverX,
           NFontStyle
           );
         DoPaintAfter(ElemType, i, C, RRect);
       end;
 
       if IsShowX(i) then
+      begin
+        GetTabXColors(i, bMouseOverX, NColorXBg, NColorXBorder, NColorXMark);
         DoPaintX(C, RectX,
           bMouseOverX,
           GetTabBgColor_Passive(i),
@@ -2435,6 +2442,7 @@ begin
           NColorXBorder,
           NColorXMark
           );
+      end;
     end;
 
   //paint active tab
@@ -2442,7 +2450,7 @@ begin
   if IsIndexOk(i) then
   begin
     RRect:= GetTabRect(i);
-    GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
+    GetTabXProps(i, RRect, bMouseOverX, RectX);
 
     bMouseOver:= i=FTabIndexOver;
 
@@ -2466,17 +2474,18 @@ begin
       DoPaintTabTo(C, RRect,
         Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
         i,
-        NColorXBg,
-        NColorXBorder,
-        NColorXMark,
         NColorFont,
         true,
+        bMouseOver,
+        bMouseOverX,
         NFontStyle
         );
       DoPaintAfter(aeTabActive, i, C, RRect);
     end;
 
     if IsShowX(i) then
+    begin
+      GetTabXColors(i, bMouseOverX, NColorXBg, NColorXBorder, NColorXMark);
       DoPaintX(C, RectX,
         bMouseOverX,
         GetTabBgColor_Active(i),
@@ -2484,6 +2493,7 @@ begin
         NColorXBorder,
         NColorXMark
         );
+    end;
   end;
 
   //button back
