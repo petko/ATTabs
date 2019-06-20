@@ -1871,10 +1871,10 @@ end;
 procedure TATTabs.DoPaintXTo(C: TCanvas; const R: TRect;
   ATabIndex: integer; ATabActive, AMouseOverX: boolean);
 var
+  Pic: TATTabsPicture;
   PX1, PX2, PX3, PX4, PXX1, PXX2: TPoint;
   RectRound, RectBitmap: TRect;
-  Pic: TATTabsPicture;
-  ATabBg, ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor;
+  NColorBg, NColorXBg, NColorXBorder, NColorXMark: TColor;
 begin
   if FThemed then
   begin
@@ -1887,14 +1887,14 @@ begin
   end;
 
   if ATabActive then
-    ATabBg:= GetTabBgColor_Active(ATabIndex)
+    NColorBg:= GetTabBgColor_Active(ATabIndex)
   else
-    ATabBg:= GetTabBgColor_Passive(ATabIndex);
-  GetTabXColors(ATabIndex, AMouseOverX, ATabCloseBg, ATabCloseBorder, ATabCloseXMark);
+    NColorBg:= GetTabBgColor_Passive(ATabIndex);
+  GetTabXColors(ATabIndex, AMouseOverX, NColorXBg, NColorXBorder, NColorXMark);
 
   if FOptShowXRounded then
   begin
-    if ATabCloseBg<>clNone then
+    if NColorXBg<>clNone then
     begin
       RectRound:= R;
       InflateRect(RectRound, FOptSpaceXIncrementRound, FOptSpaceXIncrementRound);
@@ -1904,32 +1904,32 @@ begin
       RectBitmap.Right:= FBitmapRound.Width;
       RectBitmap.Bottom:= RectBitmap.Right;
 
-      FBitmapRound.Canvas.Brush.Color:= ATabBg;
+      FBitmapRound.Canvas.Brush.Color:= NColorBg;
       FBitmapRound.Canvas.FillRect(RectBitmap);
 
-      FBitmapRound.Canvas.Brush.Color:= ATabCloseBg;
-      FBitmapRound.Canvas.Pen.Color:= ATabCloseBorder;
+      FBitmapRound.Canvas.Brush.Color:= NColorXBg;
+      FBitmapRound.Canvas.Pen.Color:= NColorXBorder;
       FBitmapRound.Canvas.Ellipse(RectBitmap);
 
       CanvasStretchDraw(C, RectRound, FBitmapRound);
     end
     else
     begin
-      C.Brush.Color:= ATabBg;
+      C.Brush.Color:= NColorBg;
       C.FillRect(R);
     end;
   end
   else
   begin
-    C.Brush.Color:= IfThen(ATabCloseBg<>clNone, ATabCloseBg, ATabBg);
+    C.Brush.Color:= IfThen(NColorXBg<>clNone, NColorXBg, NColorBg);
     C.FillRect(R);
-    C.Pen.Color:= IfThen(ATabCloseBorder<>clNone, ATabCloseBorder, ATabBg);
+    C.Pen.Color:= IfThen(NColorXBorder<>clNone, NColorXBorder, NColorBg);
     C.Rectangle(R);
   end;
 
   //paint cross by 2 polygons, each has 6 points (3 points at line edge)
-  C.Brush.Color:= ATabCloseXMark;
-  C.Pen.Color:= ATabCloseXMark;
+  C.Brush.Color:= NColorXMark;
+  C.Pen.Color:= NColorXMark;
 
   PXX1:= Point(R.Left+FOptSpaceXInner, R.Top+FOptSpaceXInner);
   PXX2:= Point(R.Right-FOptSpaceXInner-1, R.Bottom-FOptSpaceXInner-1);
@@ -1947,7 +1947,7 @@ begin
   PX4:= Point(PXX2.X, PXX2.Y-1);
   C.Polygon([PX1, PXX1, PX2, PX3, PXX2, PX4]);
 
-  C.Brush.Color:= ATabBg;
+  C.Brush.Color:= NColorBg;
 end;
 
 function TATTabs.GetTabWidth_Plus_Raw: integer;
