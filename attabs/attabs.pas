@@ -522,30 +522,27 @@ type
     procedure DoPaintButtonClose(C: TCanvas);
     procedure DoPaintButtonPlus(C: TCanvas);
     procedure DoPaintButtonsBG(C: TCanvas);
-    procedure DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint;
-      AColor: TColor; APos: TATTabPosition);
+    procedure DoPaintColoredBand(C: TCanvas; const ARect: TRect; AColor: TColor;
+      APos: TATTabPosition);
     procedure DoPaintPlus(C: TCanvas; const ARect: TRect);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
     procedure DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
-      ATabActive: boolean; AColorBg, AColorBorder, AColorBorderLow: TColor);
+      ATabActive: boolean; AColorBg: TColor);
     procedure DoPaintTabShape_C(C: TCanvas; ATabActive: boolean;
-      const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg,
-  AColorBorder, AColorBorderLow: TColor);
+      const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg: TColor);
     procedure DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
-      ATabActive: boolean; AColorBg, AColorBorder: TColor);
+      ATabActive: boolean; AColorBg: TColor);
     procedure DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
-      ATabActive: boolean; AColorBg, AColorBorder: TColor);
+      ATabActive: boolean; AColorBg: TColor);
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
     procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string); inline;
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
     procedure DoPaintTabTo(C: TCanvas; ARect: TRect; const ACaption: TATTabString;
-      AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg,
-      AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; AShowCloseBtn,
-      ATabModified, ATabActive: boolean;
-      AImageIndex: TImageIndex;
-      AFontStyle: TFontStyles);
+      AColorBg, AColorHilite, AColorCloseBg, AColorCloseBorder,
+  AColorCloseXMark, AColorFont: TColor; AShowCloseBtn, ATabModified,
+  ATabActive: boolean; AImageIndex: TImageIndex; AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
@@ -1379,14 +1376,13 @@ end;
 
 procedure TATTabs.DoPaintTabTo(
   C: TCanvas; ARect: TRect; const ACaption: TATTabString;
-  AColorBg, AColorBorder, AColorBorderLow, AColorHilite, AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
+  AColorBg, AColorHilite, AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
   AShowCloseBtn, ATabModified, ATabActive: boolean;
   AImageIndex: TImageIndex;
   AFontStyle: TFontStyles);
 const
   cIndentSep = 2;
 var
-  PL1, PL2, PR1, PR2: TPoint;
   RectText: TRect;
   NIndentL, NIndentR, NIndentTop, NLineHeight, NLineWidth: integer;
   TempCaption: TATTabString;
@@ -1412,9 +1408,7 @@ begin
       ARect.Right+FOptSpaceSide,
       ARect.Bottom),
     ATabActive,
-    AColorBg,
-    AColorBorder,
-    AColorBorderLow
+    AColorBg
   );
 
   RectText:= Rect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
@@ -1551,7 +1545,7 @@ begin
         else
           raise Exception.Create('Unknown tab pos');
       end;
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, AColorHilite, ColorPos);
+      DoPaintColoredBand(C, ARect, AColorHilite, ColorPos);
     end;
 end;
 
@@ -1581,8 +1575,6 @@ begin
     DoPaintTabTo(C, ARect,
       '',
       GetTabBgColor_Plus,
-      FColorBorderPassive,
-      FColorBorderActive,
       clNone,
       NColorXBg,
       NColorXBorder,
@@ -1616,7 +1608,7 @@ end;
 
 
 procedure TATTabs.DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
-  ATabActive: boolean; AColorBg, AColorBorder, AColorBorderLow: TColor);
+  ATabActive: boolean; AColorBg: TColor);
 var
   PL1, PL2, PR1, PR2: TPoint;
   R: TRect;
@@ -1642,13 +1634,13 @@ begin
   DoPaintTabShape_C(C, ATabActive,
     R,
     PL1, PL2, PR1, PR2,
-    AColorBg, AColorBorder, AColorBorderLow);
+    AColorBg);
 
   //left/right edges
   if FOptSpaceSide>0 then
   begin
-    DoPaintTabShape_L(C, R, ATabActive, AColorBg, AColorBorder);
-    DoPaintTabShape_R(C, R, ATabActive, AColorBg, AColorBorder);
+    DoPaintTabShape_L(C, R, ATabActive, AColorBg);
+    DoPaintTabShape_R(C, R, ATabActive, AColorBg);
   end;
 end;
 
@@ -1656,10 +1648,11 @@ procedure TATTabs.DoPaintTabShape_C(C: TCanvas;
   ATabActive: boolean;
   const ARect: TRect;
   const PL1, PL2, PR1, PR2: TPoint;
-  AColorBg, AColorBorder, AColorBorderLow: TColor);
+  AColorBg: TColor);
 var
   ColorPos: TATTabPosition;
   Pic: TATTabsPicture;
+  AColorBorder, AColorBorderLow: TColor;
 begin
   if FThemed then
   begin
@@ -1671,6 +1664,17 @@ begin
     exit;
   end;
 
+  if ATabActive then
+  begin
+    AColorBorder:= FColorBorderActive;
+    AColorBorderLow:= clNone;
+  end
+  else
+  begin
+    AColorBorder:= FColorBorderPassive;
+    AColorBorderLow:= FColorBorderActive;
+  end;
+
   if FOptShowFlat then
   begin
     if ATabActive then
@@ -1678,7 +1682,7 @@ begin
       ColorPos:= FOptPosition;
       if FOptShowActiveMarkInverted then
         ColorPos:= GetPositionInverted(ColorPos);
-      DoPaintColoredBand(C, PL1, PL2, PR1, PR2, FColorActiveMark, ColorPos);
+      DoPaintColoredBand(C, ARect, FColorActiveMark, ColorPos);
     end;
   end
   else
@@ -1723,9 +1727,10 @@ begin
 end;
 
 procedure TATTabs.DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
-  ATabActive: boolean; AColorBg, AColorBorder: TColor);
+  ATabActive: boolean; AColorBg: TColor);
 var
   Pic: TATTabsPicture;
+  AColorBorder: TColor;
 begin
   if FThemed then
   begin
@@ -1736,6 +1741,11 @@ begin
     Pic.Draw(C, ARect.Left-FOptSpaceSide, ARect.Top);
     exit;
   end;
+
+  if ATabActive then
+    AColorBorder:= FColorBorderActive
+  else
+    AColorBorder:= FColorBorderPassive;
 
   if not FOptShowFlat then
     case FOptPosition of
@@ -1769,9 +1779,10 @@ begin
 end;
 
 procedure TATTabs.DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
-  ATabActive: boolean; AColorBg, AColorBorder: TColor);
+  ATabActive: boolean; AColorBg: TColor);
 var
   Pic: TATTabsPicture;
+  AColorBorder: TColor;
 begin
   if FThemed then
   begin
@@ -1782,6 +1793,11 @@ begin
     Pic.Draw(C, ARect.Right-1, ARect.Top);
     exit;
   end;
+
+  if ATabActive then
+    AColorBorder:= FColorBorderActive
+  else
+    AColorBorder:= FColorBorderPassive;
 
   if not FOptShowFlat then
     case FOptPosition of
@@ -2376,8 +2392,6 @@ begin
         DoPaintTabTo(C, RRect,
           Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
           GetTabBgColor_Passive(i),
-          FColorBorderPassive,
-          FColorBorderActive,
           Data.TabColor,
           NColorXBg,
           NColorXBorder,
@@ -2432,8 +2446,6 @@ begin
       DoPaintTabTo(C, RRect,
         Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
         GetTabBgColor_Active(i),
-        FColorBorderActive,
-        clNone,
         Data.TabColor,
         NColorXBg,
         NColorXBorder,
@@ -3998,25 +4010,46 @@ begin
     Result:= FOptTabHeight;
 end;
 
-procedure TATTabs.DoPaintColoredBand(C: TCanvas; PL1, PL2, PR1, PR2: TPoint; AColor: TColor;
+procedure TATTabs.DoPaintColoredBand(C: TCanvas; const ARect: TRect; AColor: TColor;
   APos: TATTabPosition);
 var
   NColor: TColor;
+  R: TRect;
 begin
-  NColor:= C.Brush.Color;
-  C.Brush.Color:= AColor;
-
   case APos of
     atpTop:
-      C.FillRect(Rect(PL1.X+1+Ord(FOptShowFlat), PL1.Y+1, PR1.X, PR1.Y+1+FOptColoredBandSize));
+      begin
+        R.Left:= ARect.Left+1{-Ord(FOptShowFlat)};
+        R.Right:= ARect.Right-1;
+        R.Top:= ARect.Top+1;
+        R.Bottom:= R.Top+FOptColoredBandSize;
+      end;
     atpBottom:
-      C.FillRect(Rect(PL2.X+1+Ord(FOptShowFlat), PL2.Y-3, PR2.X, PR2.Y-3+FOptColoredBandSize));
+      begin
+        R.Left:= ARect.Left+1{-Ord(FOptShowFlat)};
+        R.Right:= ARect.Right-1;
+        R.Bottom:= ARect.Bottom;
+        R.Top:= R.Bottom-FOptColoredBandSize;
+      end;
     atpLeft:
-      C.FillRect(Rect(PL1.X+1, PL1.Y+1, PL1.X+1+FOptColoredBandSize, PL2.Y));
+      begin
+        R.Left:= ARect.Left+1;
+        R.Right:= R.Left+FOptColoredBandSize;
+        R.Top:= ARect.Top+1;
+        R.Bottom:= ARect.Bottom-1;
+      end;
     atpRight:
-      C.FillRect(Rect(PR1.X-FOptColoredBandSize, PR1.Y+1, PR1.X, PR2.Y));
+      begin
+        R.Right:= ARect.Right-1;
+        R.Left:= R.Right-FOptColoredBandSize;
+        R.Top:= ARect.Top+1;
+        R.Bottom:= ARect.Bottom-1;
+      end;
   end;
 
+  NColor:= C.Brush.Color;
+  C.Brush.Color:= AColor;
+  C.FillRect(R);
   C.Brush.Color:= NColor;
 end;
 
