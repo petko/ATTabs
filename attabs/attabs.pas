@@ -535,8 +535,8 @@ type
     procedure DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
       ATabActive: boolean; ATabIndex: integer);
     procedure DoPaintTo(C: TCanvas);
-    procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
-      AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
+    procedure DoPaintX(C: TCanvas; const ARectX: TRect; ATabIndex: integer;
+      ATabActive, AMouseOverX: boolean);
     procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string); inline;
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
     procedure DoPaintTabTo(C: TCanvas; const ARect: TRect;
@@ -544,8 +544,8 @@ type
   ATabActive, ATabMouseOver, ATabMouseOverX: boolean; AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
-    procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
-      ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor);
+    procedure DoPaintXTo(C: TCanvas; const R: TRect; ATabIndex: integer;
+      ATabActive, AMouseOverX: boolean);
     procedure DoPaintDropMark(C: TCanvas);
     procedure DoPaintScrollMark(C: TCanvas);
     function GetButtonsEdgeCoord(AtLeft: boolean): integer;
@@ -1565,9 +1565,6 @@ end;
 
 procedure TATTabs.DoPaintPlus(C: TCanvas; const ARect: TRect);
 var
-  NColorXBg,
-  NColorXBorder,
-  NColorXMark,
   NColorFont: TColor;
   ElemType: TATTabElemType;
   Pic: TATTabsPicture;
@@ -1581,9 +1578,6 @@ begin
 
   if IsPaintNeeded(ElemType, -1, C, ARect) then
   begin
-    NColorXBg:= clNone;
-    NColorXBorder:= clNone;
-    NColorXMark:= clWhite;
     NColorFont:= FColorFont;
 
     DoPaintTabTo(C, ARect,
@@ -1857,9 +1851,8 @@ begin
 end;
 
 
-procedure TATTabs.DoPaintX(C: TCanvas;
-  const ARectX: TRect; AMouseOverX: boolean;
-  AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
+procedure TATTabs.DoPaintX(C: TCanvas; const ARectX: TRect;
+  ATabIndex: integer; ATabActive, AMouseOverX: boolean);
 var
   ElemType: TATTabElemType;
 begin
@@ -1870,28 +1863,34 @@ begin
 
   if IsPaintNeeded(ElemType, -1, C, ARectX) then
   begin
-    DoPaintXTo(C, ARectX, AMouseOverX, AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark);
+    DoPaintXTo(C, ARectX, ATabIndex, ATabActive, AMouseOverX);
     DoPaintAfter(ElemType, -1, C, ARectX);
   end;
 end;
 
 procedure TATTabs.DoPaintXTo(C: TCanvas; const R: TRect;
-  AActive: boolean;
-  ATabBg, ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor);
+  ATabIndex: integer; ATabActive, AMouseOverX: boolean);
 var
   PX1, PX2, PX3, PX4, PXX1, PXX2: TPoint;
   RectRound, RectBitmap: TRect;
   Pic: TATTabsPicture;
+  ATabBg, ATabCloseBg, ATabCloseBorder, ATabCloseXMark: TColor;
 begin
   if FThemed then
   begin
-    if AActive then
+    if AMouseOverX then
       Pic:= FPic_X_a
     else
       Pic:= FPic_X;
     Pic.Draw(C, R.Left, R.Top);
     exit;
   end;
+
+  if ATabActive then
+    ATabBg:= GetTabBgColor_Active(ATabIndex)
+  else
+    ATabBg:= GetTabBgColor_Passive(ATabIndex);
+  GetTabXColors(ATabIndex, AMouseOverX, ATabCloseBg, ATabCloseBorder, ATabCloseXMark);
 
   if FOptShowXRounded then
   begin
@@ -2287,7 +2286,6 @@ var
   ElemType: TATTabElemType;
   Data: TATTabData;
   NFontStyle: TFontStyles;
-  NColorXBg, NColorXBorder, NColorXMark: TColor;
   bMouseOver, bMouseOverX: boolean;
   i: integer;
 begin
@@ -2434,14 +2432,7 @@ begin
 
       if IsShowX(i) then
       begin
-        GetTabXColors(i, bMouseOverX, NColorXBg, NColorXBorder, NColorXMark);
-        DoPaintX(C, RectX,
-          bMouseOverX,
-          GetTabBgColor_Passive(i),
-          NColorXBg,
-          NColorXBorder,
-          NColorXMark
-          );
+        DoPaintX(C, RectX, i, false, bMouseOverX);
       end;
     end;
 
@@ -2485,14 +2476,7 @@ begin
 
     if IsShowX(i) then
     begin
-      GetTabXColors(i, bMouseOverX, NColorXBg, NColorXBorder, NColorXMark);
-      DoPaintX(C, RectX,
-        bMouseOverX,
-        GetTabBgColor_Active(i),
-        NColorXBg,
-        NColorXBorder,
-        NColorXMark
-        );
+      DoPaintX(C, RectX, i, true, bMouseOverX);
     end;
   end;
 
