@@ -528,6 +528,8 @@ type
       AColor: TColor; APos: TATTabPosition);
     procedure DoPaintPlus(C: TCanvas; const ARect: TRect);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
+    procedure DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
+      ATabActive: boolean; AColorBg, AColorBorder, AColorBorderLow: TColor);
     procedure DoPaintTabShape_C(C: TCanvas; ATabActive: boolean;
       const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg,
   AColorBorder, AColorBorderLow: TColor);
@@ -1402,35 +1404,22 @@ begin
   //skip tabs scrolled lefter
   if ARect.Right<=0 then exit;
 
+  UpdateCanvasAntialiasMode(C);
+
   if FOptShowEntireColor and (AColorHilite<>clNone) then
     AColorBg:= AColorHilite;
 
-  if not FThemed then
-  begin
-    C.Pen.Color:= AColorBg;
-    C.Brush.Color:= AColorBg;
-    C.FillRect(ARect);
-  end;
-
-  PL1:= Point(ARect.Left, ARect.Top);
-  PL2:= Point(ARect.Left, ARect.Bottom-1);
-  PR1:= Point(ARect.Right-1, ARect.Top);
-  PR2:= Point(ARect.Right-1, ARect.Bottom-1);
-
-  UpdateCanvasAntialiasMode(C);
-
-  //center shape
-  DoPaintTabShape_C(C, ATabActive,
-    ARect,
-    PL1, PL2, PR1, PR2,
-    AColorBg, AColorBorder, AColorBorderLow);
-
-  //left/right edges
-  if FOptSpaceSide>0 then
-  begin
-    DoPaintTabShape_L(C, ARect, ATabActive, AColorBg, AColorBorder);
-    DoPaintTabShape_R(C, ARect, ATabActive, AColorBg, AColorBorder);
-  end;
+  DoPaintTabShape(C,
+    Rect(
+      ARect.Left-FOptSpaceSide,
+      ARect.Top,
+      ARect.Right+FOptSpaceSide,
+      ARect.Bottom),
+    ATabActive,
+    AColorBg,
+    AColorBorder,
+    AColorBorderLow
+  );
 
   RectText:= Rect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
   bNeedMoreSpace:= (RectText.Right-RectText.Left<=30) and (ACaption<>'');
@@ -1626,6 +1615,44 @@ begin
       DrawPlusSign(C, ARect, FOptArrowSize, FColorFont);
 
     DoPaintAfter(ElemType, -1, C, ARect);
+  end;
+end;
+
+
+procedure TATTabs.DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
+  ATabActive: boolean; AColorBg, AColorBorder, AColorBorderLow: TColor);
+var
+  PL1, PL2, PR1, PR2: TPoint;
+  R: TRect;
+begin
+  R.Top:= ATabRect.Top;
+  R.Bottom:= ATabRect.Bottom;
+  R.Left:= ATabRect.Left+FOptSpaceSide;
+  R.Right:= ATabRect.Right-FOptSpaceSide;
+
+  if not FThemed then
+  begin
+    C.Pen.Color:= AColorBg;
+    C.Brush.Color:= AColorBg;
+    C.FillRect(R);
+  end;
+
+  PL1:= Point(R.Left, R.Top);
+  PL2:= Point(R.Left, R.Bottom-1);
+  PR1:= Point(R.Right-1, R.Top);
+  PR2:= Point(R.Right-1, R.Bottom-1);
+
+  //center shape
+  DoPaintTabShape_C(C, ATabActive,
+    R,
+    PL1, PL2, PR1, PR2,
+    AColorBg, AColorBorder, AColorBorderLow);
+
+  //left/right edges
+  if FOptSpaceSide>0 then
+  begin
+    DoPaintTabShape_L(C, R, ATabActive, AColorBg, AColorBorder);
+    DoPaintTabShape_R(C, R, ATabActive, AColorBg, AColorBorder);
   end;
 end;
 
