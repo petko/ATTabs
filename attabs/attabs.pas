@@ -4019,28 +4019,28 @@ begin
   case APos of
     atpTop:
       begin
-        R.Left:= ARect.Left+1{-Ord(FOptShowFlat)};
+        R.Left:= ARect.Left+1;
         R.Right:= ARect.Right-1;
-        R.Top:= ARect.Top+1;
+        R.Top:= ARect.Top+1-Ord(FOptShowFlat);
         R.Bottom:= R.Top+FOptColoredBandSize;
       end;
     atpBottom:
       begin
-        R.Left:= ARect.Left+1{-Ord(FOptShowFlat)};
+        R.Left:= ARect.Left+1;
         R.Right:= ARect.Right-1;
         R.Bottom:= ARect.Bottom;
         R.Top:= R.Bottom-FOptColoredBandSize;
       end;
     atpLeft:
       begin
-        R.Left:= ARect.Left+1;
+        R.Left:= ARect.Left+1-Ord(FOptShowFlat);
         R.Right:= R.Left+FOptColoredBandSize;
         R.Top:= ARect.Top+1;
         R.Bottom:= ARect.Bottom-1;
       end;
     atpRight:
       begin
-        R.Right:= ARect.Right-1;
+        R.Right:= ARect.Right-1+Ord(FOptShowFlat);
         R.Left:= R.Right-FOptColoredBandSize;
         R.Top:= ARect.Top+1;
         R.Bottom:= ARect.Bottom-1;
