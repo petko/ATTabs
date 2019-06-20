@@ -527,22 +527,23 @@ type
     procedure DoPaintPlus(C: TCanvas; const ARect: TRect);
     procedure DoPaintSeparator(C: TCanvas; const R: TRect);
     procedure DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
-      ATabActive: boolean; AColorBg: TColor);
+      ATabActive: boolean; ATabIndex: integer);
     procedure DoPaintTabShape_C(C: TCanvas; ATabActive: boolean;
-      const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint; AColorBg: TColor);
+      ATabIndex: integer; const ARect: TRect; const PL1, PL2, PR1, PR2: TPoint);
     procedure DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
-      ATabActive: boolean; AColorBg: TColor);
+      ATabActive: boolean; ATabIndex: integer);
     procedure DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
-      ATabActive: boolean; AColorBg: TColor);
+      ATabActive: boolean; ATabIndex: integer);
     procedure DoPaintTo(C: TCanvas);
     procedure DoPaintX(C: TCanvas; const ARectX: TRect; AMouseOverX: boolean;
       AColorBg, AColorCloseBg, AColorCloseBorder, AColorCloseXMark: TColor);
     procedure DoTextOut(C: TCanvas; AX, AY: integer; const AClipRect: TRect; const AText: string); inline;
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
-    procedure DoPaintTabTo(C: TCanvas; ARect: TRect; const ACaption: TATTabString;
-      AColorBg, AColorHilite, AColorCloseBg, AColorCloseBorder,
-  AColorCloseXMark, AColorFont: TColor; AShowCloseBtn, ATabModified,
-  ATabActive: boolean; AImageIndex: TImageIndex; AFontStyle: TFontStyles);
+    procedure DoPaintTabTo(C: TCanvas; const ARect: TRect;
+      const ACaption: TATTabString; ATabIndex: integer; AColorCloseBg,
+  AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; AShowCloseBtn,
+  ATabModified, ATabActive: boolean; AImageIndex: TImageIndex;
+  AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
@@ -1374,8 +1375,9 @@ begin
 end;
 
 procedure TATTabs.DoPaintTabTo(
-  C: TCanvas; ARect: TRect; const ACaption: TATTabString;
-  AColorBg, AColorHilite, AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
+  C: TCanvas; const ARect: TRect; const ACaption: TATTabString;
+  ATabIndex: integer;
+  AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
   AShowCloseBtn, ATabModified, ATabActive: boolean;
   AImageIndex: TImageIndex;
   AFontStyle: TFontStyles);
@@ -1388,6 +1390,7 @@ var
   Extent: TSize;
   bNeedMoreSpace: boolean;
   ColorPos: TATTabPosition;
+  Data: TATTabData;
   i: integer;
 begin
   //optimize for 200 tabs
@@ -1397,9 +1400,6 @@ begin
 
   UpdateCanvasAntialiasMode(C);
 
-  if FOptShowEntireColor and (AColorHilite<>clNone) then
-    AColorBg:= AColorHilite;
-
   DoPaintTabShape(C,
     Rect(
       ARect.Left-FOptSpaceSide,
@@ -1407,8 +1407,8 @@ begin
       ARect.Right+FOptSpaceSide,
       ARect.Bottom),
     ATabActive,
-    AColorBg
-  );
+    ATabIndex
+    );
 
   RectText:= Rect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
   bNeedMoreSpace:= (RectText.Right-RectText.Left<=30) and (ACaption<>'');
@@ -1530,7 +1530,9 @@ begin
 
   //colored band
   if not FOptShowEntireColor then
-    if AColorHilite<>clNone then
+  begin
+    Data:= GetTabData(ATabIndex);
+    if Assigned(Data) and (Data.TabColor<>clNone) then
     begin
       case FOptPosition of
         atpTop:
@@ -1544,8 +1546,9 @@ begin
         else
           raise Exception.Create('Unknown tab pos');
       end;
-      DoPaintColoredBand(C, ARect, AColorHilite, ColorPos);
+      DoPaintColoredBand(C, ARect, Data.TabColor, ColorPos);
     end;
+  end;
 end;
 
 procedure TATTabs.DoPaintPlus(C: TCanvas; const ARect: TRect);
@@ -1573,8 +1576,7 @@ begin
 
     DoPaintTabTo(C, ARect,
       '',
-      GetTabBgColor_Passive(cTabIndexPlus),
-      clNone,
+      cTabIndexPlus,
       NColorXBg,
       NColorXBorder,
       NColorXMark,
@@ -1607,8 +1609,9 @@ end;
 
 
 procedure TATTabs.DoPaintTabShape(C: TCanvas; const ATabRect: TRect;
-  ATabActive: boolean; AColorBg: TColor);
+  ATabActive: boolean; ATabIndex: integer);
 var
+  AColorBg: TColor;
   PL1, PL2, PR1, PR2: TPoint;
   R: TRect;
 begin
@@ -1619,6 +1622,11 @@ begin
 
   if not FThemed then
   begin
+    if ATabActive then
+      AColorBg:= GetTabBgColor_Active(ATabIndex)
+    else
+      AColorBg:= GetTabBgColor_Passive(ATabIndex);
+
     C.Pen.Color:= AColorBg;
     C.Brush.Color:= AColorBg;
     C.FillRect(R);
@@ -1630,28 +1638,25 @@ begin
   PR2:= Point(R.Right-1, R.Bottom-1);
 
   //center shape
-  DoPaintTabShape_C(C, ATabActive,
-    R,
-    PL1, PL2, PR1, PR2,
-    AColorBg);
+  DoPaintTabShape_C(C, ATabActive, ATabIndex, R, PL1, PL2, PR1, PR2);
 
   //left/right edges
   if FOptSpaceSide>0 then
   begin
-    DoPaintTabShape_L(C, R, ATabActive, AColorBg);
-    DoPaintTabShape_R(C, R, ATabActive, AColorBg);
+    DoPaintTabShape_L(C, R, ATabActive, ATabIndex);
+    DoPaintTabShape_R(C, R, ATabActive, ATabIndex);
   end;
 end;
 
 procedure TATTabs.DoPaintTabShape_C(C: TCanvas;
   ATabActive: boolean;
+  ATabIndex: integer;
   const ARect: TRect;
-  const PL1, PL2, PR1, PR2: TPoint;
-  AColorBg: TColor);
+  const PL1, PL2, PR1, PR2: TPoint);
 var
   ColorPos: TATTabPosition;
   Pic: TATTabsPicture;
-  AColorBorder, AColorBorderLow: TColor;
+  AColorBg, AColorBorder, AColorBorderLow: TColor;
 begin
   if FThemed then
   begin
@@ -1665,11 +1670,13 @@ begin
 
   if ATabActive then
   begin
+    AColorBg:= GetTabBgColor_Active(ATabIndex);
     AColorBorder:= FColorBorderActive;
     AColorBorderLow:= clNone;
   end
   else
   begin
+    AColorBg:= GetTabBgColor_Passive(ATabIndex);
     AColorBorder:= FColorBorderPassive;
     AColorBorderLow:= FColorBorderActive;
   end;
@@ -1726,10 +1733,10 @@ begin
 end;
 
 procedure TATTabs.DoPaintTabShape_L(C: TCanvas; const ARect: TRect;
-  ATabActive: boolean; AColorBg: TColor);
+  ATabActive: boolean; ATabIndex: integer);
 var
   Pic: TATTabsPicture;
-  AColorBorder: TColor;
+  AColorBg, AColorBorder: TColor;
 begin
   if FThemed then
   begin
@@ -1742,9 +1749,15 @@ begin
   end;
 
   if ATabActive then
+  begin
+    AColorBg:= GetTabBgColor_Active(ATabIndex);
     AColorBorder:= FColorBorderActive
+  end
   else
+  begin
+    AColorBg:= GetTabBgColor_Passive(ATabIndex);
     AColorBorder:= FColorBorderPassive;
+  end;
 
   if not FOptShowFlat then
     case FOptPosition of
@@ -1778,10 +1791,10 @@ begin
 end;
 
 procedure TATTabs.DoPaintTabShape_R(C: TCanvas; const ARect: TRect;
-  ATabActive: boolean; AColorBg: TColor);
+  ATabActive: boolean; ATabIndex: integer);
 var
   Pic: TATTabsPicture;
-  AColorBorder: TColor;
+  AColorBg, AColorBorder: TColor;
 begin
   if FThemed then
   begin
@@ -1794,9 +1807,15 @@ begin
   end;
 
   if ATabActive then
+  begin
+    AColorBg:= GetTabBgColor_Active(ATabIndex);
     AColorBorder:= FColorBorderActive
+  end
   else
+  begin
+    AColorBg:= GetTabBgColor_Passive(ATabIndex);
     AColorBorder:= FColorBorderPassive;
+  end;
 
   if not FOptShowFlat then
     case FOptPosition of
@@ -2390,8 +2409,7 @@ begin
 
         DoPaintTabTo(C, RRect,
           Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
-          GetTabBgColor_Passive(i),
-          Data.TabColor,
+          i,
           NColorXBg,
           NColorXBorder,
           NColorXMark,
@@ -2444,8 +2462,7 @@ begin
 
       DoPaintTabTo(C, RRect,
         Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
-        GetTabBgColor_Active(i),
-        Data.TabColor,
+        i,
         NColorXBg,
         NColorXBorder,
         NColorXMark,
@@ -4305,6 +4322,8 @@ begin
 end;
 
 function TATTabs.GetTabBgColor_Passive(AIndex: integer): TColor;
+var
+  Data: TATTabData;
 begin
   if GetTabFlatEffective(AIndex) then
     Result:= FColorBg
@@ -4313,14 +4332,30 @@ begin
     Result:= FColorTabOver
   else
     Result:= FColorTabPassive;
+
+  if FOptShowEntireColor then
+  begin
+    Data:= GetTabData(AIndex);
+    if Assigned(Data) and (Data.TabColor<>clNone) then
+      Result:= Data.TabColor;
+  end;
 end;
 
 function TATTabs.GetTabBgColor_Active(AIndex: integer): TColor;
+var
+  Data: TATTabData;
 begin
   if GetTabFlatEffective(AIndex) then
     Result:= FColorBg
   else
     Result:= FColorTabActive;
+
+  if FOptShowEntireColor then
+  begin
+    Data:= GetTabData(AIndex);
+    if Assigned(Data) and (Data.TabColor<>clNone) then
+      Result:= Data.TabColor;
+  end;
 end;
 
 function TATTabs.GetPositionInverted(APos: TATTabPosition): TATTabPosition;
