@@ -305,7 +305,6 @@ const
   _InitOptShowXButtons = atbxShowAll;
   _InitOptShowPlusTab = true;
   _InitOptShowModifiedText = '*';
-  _InitOptShowBorderActiveLow = false;
   _InitOptShowEntireColor = false;
   _InitOptShowActiveMarkInverted = true;
   _InitRoundedBitmapSize = 60;
@@ -411,7 +410,6 @@ type
     FOptShowArrowsNear: boolean;
     FOptShowPlusTab: boolean; //show "plus" tab
     FOptShowModifiedText: TATTabString;
-    FOptShowBorderActiveLow: boolean; //show border line below active tab (like Firefox)
     FOptShowEntireColor: boolean;
     FOptShowNumberPrefix: TATTabString;
     FOptShowScrollMark: boolean;
@@ -782,7 +780,6 @@ type
     property OptShowPlusTab: boolean read FOptShowPlusTab write SetOptShowPlusTab default _InitOptShowPlusTab;
     property OptShowArrowsNear: boolean read FOptShowArrowsNear write FOptShowArrowsNear default _InitOptShowArrowsNear;
     property OptShowModifiedText: TATTabString read FOptShowModifiedText write FOptShowModifiedText;
-    property OptShowBorderActiveLow: boolean read FOptShowBorderActiveLow write FOptShowBorderActiveLow default _InitOptShowBorderActiveLow;
     property OptShowEntireColor: boolean read FOptShowEntireColor write FOptShowEntireColor default _InitOptShowEntireColor;
     property OptShowNumberPrefix: TATTabString read FOptShowNumberPrefix write FOptShowNumberPrefix;
     property OptShowActiveMarkInverted: boolean read FOptShowActiveMarkInverted write FOptShowActiveMarkInverted default _InitOptShowActiveMarkInverted;
@@ -1268,7 +1265,6 @@ begin
   FOptShowPlusTab:= _InitOptShowPlusTab;
   FOptShowArrowsNear:= _InitOptShowArrowsNear;
   FOptShowModifiedText:= _InitOptShowModifiedText;
-  FOptShowBorderActiveLow:= _InitOptShowBorderActiveLow;
   FOptShowEntireColor:= _InitOptShowEntireColor;
   FOptShowActiveMarkInverted:= _InitOptShowActiveMarkInverted;
 
@@ -2437,7 +2433,7 @@ begin
         Format(FOptShowNumberPrefix, [i+1]) + Data.TabCaption,
         GetTabBgColor_Active(i),
         FColorBorderActive,
-        IfThen(FOptShowBorderActiveLow, FColorBorderActive, clNone),
+        clNone,
         Data.TabColor,
         NColorXBg,
         NColorXBorder,
