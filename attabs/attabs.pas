@@ -541,8 +541,8 @@ type
     procedure DoPaintBgTo(C: TCanvas; const ARect: TRect);
     procedure DoPaintTabTo(C: TCanvas; const ARect: TRect;
       const ACaption: TATTabString; ATabIndex: integer; AColorCloseBg,
-  AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; AShowCloseBtn,
-  ATabActive: boolean; AFontStyle: TFontStyles);
+  AColorCloseBorder, AColorCloseXMark, AColorFont: TColor; ATabActive: boolean;
+  AFontStyle: TFontStyles);
     procedure DoPaintArrowTo(C: TCanvas; ATyp: TATTabTriangle; ARect: TRect; AActive: boolean);
     procedure DoPaintUserButtons(C: TCanvas; const AButtons: TATTabButtons; AtLeft: boolean);
     procedure DoPaintXTo(C: TCanvas; const R: TRect; AActive: boolean; ATabBg,
@@ -1377,7 +1377,7 @@ procedure TATTabs.DoPaintTabTo(
   C: TCanvas; const ARect: TRect; const ACaption: TATTabString;
   ATabIndex: integer;
   AColorCloseBg, AColorCloseBorder, AColorCloseXMark, AColorFont: TColor;
-  AShowCloseBtn, ATabActive: boolean;
+  ATabActive: boolean;
   AFontStyle: TFontStyles);
 const
   cIndentSep = 2;
@@ -1425,7 +1425,7 @@ begin
   RectText:= Rect(ARect.Left, ARect.Top, ARect.Right, ARect.Bottom);
   bNeedMoreSpace:= (RectText.Right-RectText.Left<=30) and (ACaption<>'');
   NIndentL:= IfThen(not bNeedMoreSpace, FOptSpaceBeforeText, 2);
-  NIndentR:= NIndentL+IfThen(AShowCloseBtn, FOptSpaceXRight);
+  NIndentR:= NIndentL+IfThen(IsShowX(ATabIndex), FOptSpaceXRight);
   RectText:= Rect(ARect.Left+NIndentL, ARect.Top, ARect.Right-NIndentR, ARect.Bottom);
 
   if not FThemed then
@@ -1592,7 +1592,6 @@ begin
       NColorXBorder,
       NColorXMark,
       NColorFont,
-      false,
       false,
       []
       );
@@ -2283,7 +2282,7 @@ var
   ElemType: TATTabElemType;
   Data: TATTabData;
   NFontStyle: TFontStyles;
-  bShowX, bMouseOver, bMouseOverX: boolean;
+  bMouseOver, bMouseOverX: boolean;
   i: integer;
 begin
   ElemType:= aeBackground;
@@ -2392,7 +2391,6 @@ begin
       GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
 
       bMouseOver:= i=FTabIndexOver;
-      bShowX:= IsShowX(i);
 
       if bMouseOver then
         ElemType:= aeTabPassiveOver
@@ -2423,14 +2421,13 @@ begin
           NColorXBorder,
           NColorXMark,
           NColorFont,
-          bShowX,
           false,
           NFontStyle
           );
         DoPaintAfter(ElemType, i, C, RRect);
       end;
 
-      if bShowX then
+      if IsShowX(i) then
         DoPaintX(C, RectX,
           bMouseOverX,
           GetTabBgColor_Passive(i),
@@ -2448,7 +2445,6 @@ begin
     GetTabXProps(i, RRect, NColorXBg, NColorXBorder, NColorXMark, bMouseOverX, RectX);
 
     bMouseOver:= i=FTabIndexOver;
-    bShowX:= IsShowX(i);
 
     if IsPaintNeeded(aeTabActive, i, C, RRect) then
     begin
@@ -2474,14 +2470,13 @@ begin
         NColorXBorder,
         NColorXMark,
         NColorFont,
-        bShowX,
         true,
         NFontStyle
         );
       DoPaintAfter(aeTabActive, i, C, RRect);
     end;
 
-    if bShowX then
+    if IsShowX(i) then
       DoPaintX(C, RectX,
         bMouseOverX,
         GetTabBgColor_Active(i),
