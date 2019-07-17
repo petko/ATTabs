@@ -1,4 +1,7 @@
 
+2019.07.17
++ add: OptActiveVisibleOnResize
+
 2019.06.18
 + add: prop OptSpaceSide
 * removed: prop OptShowAngled (now use OptSpaceSide)
