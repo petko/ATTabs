@@ -248,8 +248,6 @@ procedure TForm1.BarScaleChange(Sender: TObject);
 begin
   t_top.OptScalePercents:= BarScale.Position;
   t_top.Height:= t_top.DoScale(tabTopHeight);
-  t_top.ApplyButtonLayout;
-  t_top.Invalidate;
 end;
 
 procedure TForm1.btnThemeBlack1Click(Sender: TObject);
