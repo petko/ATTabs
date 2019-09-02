@@ -4,7 +4,8 @@
 * change: removed Scale property from ATGroups; instead added tabOptionScalePercents
 + add: TATTabData has new props: TabColorActive, TabColorOver (patch by @petko)
 + add: OptSpaceBeforeTextForMinWidth
-+ add: published OnMouseDown
+- fix: published OnMouseDown
+- fix: OnDblClick was not fired
 
 2019.07.17
 + add: OptActiveVisibleOnResize

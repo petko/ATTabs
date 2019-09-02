@@ -3628,6 +3628,7 @@ end;
 
 procedure TATTabs.DblClick;
 begin
+  inherited;
   FMouseDownDbl:= true;
 end;
 
