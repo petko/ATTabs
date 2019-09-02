@@ -1776,7 +1776,7 @@ begin
             ARect.Left-DoScale(FOptSpaceSide)+1,
             ARect.Top,
             DoScale(FOptSpaceSide),
-            FOptTabHeight+IfThen(ATabActive, 1),
+            DoScale(FOptTabHeight)+IfThen(ATabActive, 1),
             cSmoothScale,
             ampnTopLeft,
             AColorBg,
@@ -1789,7 +1789,7 @@ begin
             ARect.Left-DoScale(FOptSpaceSide)+1,
             ARect.Top+IfThen(not ATabActive, 1),
             DoScale(FOptSpaceSide),
-            FOptTabHeight,
+            DoScale(FOptTabHeight),
             cSmoothScale,
             ampnBottomLeft,
             AColorBg,
@@ -1834,7 +1834,7 @@ begin
             ARect.Right-1,
             ARect.Top,
             DoScale(FOptSpaceSide),
-            FOptTabHeight+IfThen(ATabActive, 1),
+            DoScale(FOptTabHeight)+IfThen(ATabActive, 1),
             cSmoothScale,
             ampnTopRight,
             AColorBg,
@@ -1847,7 +1847,7 @@ begin
             ARect.Right-1,
             ARect.Top+IfThen(not ATabActive, 1),
             DoScale(FOptSpaceSide),
-            FOptTabHeight,
+            DoScale(FOptTabHeight),
             cSmoothScale,
             ampnBottomRight,
             AColorBg,
@@ -2056,7 +2056,7 @@ begin
         NLineHeight:= 2*DoScale(FOptSpaceBeforeText) + Extent.CY;
       end
       else
-        NLineHeight:= FOptTabHeight;
+        NLineHeight:= DoScale(FOptTabHeight);
 
       R.Bottom:= R.Top + NLineHeight;
       Data.TabRect:= R;
@@ -2077,7 +2077,7 @@ begin
   R.Left:= FRealIndentLeft+DoScale(FOptSpaceSide);
   R.Right:= R.Left;
   R.Top:= DoScale(FOptSpacer);
-  R.Bottom:= R.Top+FOptTabHeight;
+  R.Bottom:= R.Top+DoScale(FOptTabHeight);
   NIndexLineStart:= 0;
 
   for i:= 0 to TabCount-1 do
@@ -2134,7 +2134,7 @@ begin
 
         R.Left:= FRealIndentLeft;
         R.Top:= R.Bottom+DoScale(FOptSpaceBetweenLines);
-        R.Bottom:= R.Top+FOptTabHeight;
+        R.Bottom:= R.Top+DoScale(FOptTabHeight);
 
         if FOptFillWidth then
           UpdateTabRectsToFillLine(NIndexLineStart, i-1, false);
@@ -2171,7 +2171,7 @@ begin
         else
         begin
           Result.Top:= DoScale(FOptSpacer);
-          Result.Bottom:= Result.Top + FOptTabHeight;
+          Result.Bottom:= Result.Top + DoScale(FOptTabHeight);
           Result.Left:= FRealIndentLeft;
           Result.Right:= Result.Left + GetTabRectWidth(true);
         end;
@@ -2182,14 +2182,14 @@ begin
         begin
           Result:= GetTabRect(TabCount-1, AWithScroll, false);
           Result.Top:= Result.Bottom + DoScale(FOptSpaceBetweenTabs);
-          Result.Bottom:= Result.Top + FOptTabHeight;
+          Result.Bottom:= Result.Top + DoScale(FOptTabHeight);
         end
         else
         begin
           Result.Left:= IfThen(FOptPosition=atpLeft, DoScale(FOptSpacer), DoScale(FOptSpacer2));
           Result.Right:= IfThen(FOptPosition=atpLeft, ClientWidth-DoScale(FOptSpacer2), ClientWidth-DoScale(FOptSpacer));
           Result.Top:= GetInitialVerticalIndent;
-          Result.Bottom:= Result.Top + FOptTabHeight;
+          Result.Bottom:= Result.Top + DoScale(FOptTabHeight);
         end;
       end;
   end;
@@ -2345,7 +2345,7 @@ begin
           if FOptMultiline then
             RBottom:= Rect(0, ClientHeight-DoScale(FOptSpacer2), ClientWidth, ClientHeight)
           else
-            RBottom:= Rect(0, DoScale(FOptSpacer)+FOptTabHeight, ClientWidth, ClientHeight);
+            RBottom:= Rect(0, DoScale(FOptSpacer)+DoScale(FOptTabHeight), ClientWidth, ClientHeight);
           NLineX1:= RBottom.Left;
           NLineY1:= RBottom.Top;
           NLineX2:= RBottom.Right;
@@ -2600,7 +2600,7 @@ begin
 
         if NPos>0 then
         begin
-          R.Top:= IfThen(FOptPosition=atpBottom, FOptTabHeight + DoScale(FOptSpacer), 0);
+          R.Top:= IfThen(FOptPosition=atpBottom, DoScale(FOptTabHeight) + DoScale(FOptSpacer), 0);
           R.Bottom:= R.Top + FOptScrollMarkSizeY;
 
           R.Left:= FRealIndentLeft +
@@ -3308,7 +3308,7 @@ begin
   else
     Result.Top:= 0;
 
-  Result.Bottom:= Result.Top+FOptTabHeight;
+  Result.Bottom:= Result.Top+DoScale(FOptTabHeight);
 
   if FOptPosition=atpBottom then Inc(Result.Top);
 end;
@@ -3965,7 +3965,7 @@ begin
   if FOptPosition in [atpTop, atpBottom] then
     if FOptSpaceInitial>0 then
     begin
-      R:= Rect(0, 0, DoScale(FOptSpaceInitial), FOptTabHeight+DoScale(FOptSpacer));
+      R:= Rect(0, 0, DoScale(FOptSpaceInitial), DoScale(FOptTabHeight)+DoScale(FOptSpacer));
       DoPaintBgTo(C, R);
     end;
 
@@ -4036,7 +4036,7 @@ begin
   if GetButtonsEmpty then
     Result:= DoScale(FOptSpaceInitial)
   else
-    Result:= FOptTabHeight;
+    Result:= DoScale(FOptTabHeight);
 end;
 
 procedure TATTabs.DoPaintColoredBand(C: TCanvas; const ARect: TRect; AColor: TColor;
@@ -4091,7 +4091,7 @@ begin
     begin
       X1:= GetButtonsEdgeCoord(true);
       X2:= GetButtonsEdgeCoord(false);
-      DoPaintBgTo(C, Rect(X1, 0, X2, FOptTabHeight));
+      DoPaintBgTo(C, Rect(X1, 0, X2, DoScale(FOptTabHeight)));
     end;
 end;
 
@@ -4263,7 +4263,7 @@ begin
     atpTop,
     atpBottom:
       begin
-        for i:= 0 to FOptTabHeight div FOptAnimationStepV-1 do
+        for i:= 0 to DoScale(FOptTabHeight) div FOptAnimationStepV-1 do
         begin
           FAnimationOffset:= i*FOptAnimationStepV;
           Invalidate;
@@ -4305,7 +4305,7 @@ begin
     atpTop,
     atpBottom:
       begin
-        for i:= FOptTabHeight div FOptAnimationStepV-1 downto 0 do
+        for i:= DoScale(FOptTabHeight) div FOptAnimationStepV-1 downto 0 do
         begin
           FAnimationOffset:= i*FOptAnimationStepV;
           Invalidate;
