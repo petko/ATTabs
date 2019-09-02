@@ -30,6 +30,8 @@ uses
   LCLIntf,
   LCLType,
   LCLProc,
+  {$else}
+  System.UITypes,
   {$endif}
   ATTabs_Picture,
   Menus;
