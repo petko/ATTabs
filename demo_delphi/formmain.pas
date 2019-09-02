@@ -60,6 +60,7 @@ begin
   t:= TATTabs.Create(Self);
   t.Parent:= Self;
   t.Align:= alTop;
+  t.OptSpaceSide:= 0;
   t.OptTabHeight:= 40;
   t.Height:= 50;
 
@@ -163,7 +164,7 @@ end;
 
 procedure TForm1.chkAngledClick(Sender: TObject);
 begin
-  t.OptShowAngled:= chkAngled.Checked;
+  t.OptSpaceSide:= IfThen(chkAngled.Checked, 15, 0);
   t.OptSpaceInitial:= IfThen(chkAngled.Checked, 10, 4);
   t.Invalidate;
 end;
