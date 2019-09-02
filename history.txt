@@ -1,6 +1,7 @@
 
 2019.09.02
 + add: OptScalePercents, allows to scale UI elements (without control size) by a factor
+* change: removed Scale property from ATGroups; instead added tabOptionScalePercents
 
 2019.07.17
 + add: OptActiveVisibleOnResize
