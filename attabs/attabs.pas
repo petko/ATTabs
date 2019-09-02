@@ -69,6 +69,8 @@ type
     FTabHint: TATTabString;
     FTabObject: TObject;
     FTabColor: TColor;
+    FTabColorActive: TColor;
+    FTabColorOver: TColor;
     FTabModified: boolean;
     FTabSpecial: boolean;
     FTabSpecialWidth: integer;
@@ -83,6 +85,8 @@ type
     procedure SetTabImageIndex(const Value: TImageIndex);
     procedure SetTabCaption(const Value: TATTabString);
     procedure SetTabColor(const Value: TColor);
+    procedure SetTabColorActive(const Value: TColor);
+    procedure SetTabColorOver(const Value: TColor);
     procedure SetTabHideXButton(const Value: boolean);
   public
     constructor Create(ACollection: TCollection); override;
@@ -94,6 +98,8 @@ type
     property TabCaption: TATTabString read FTabCaption write SetTabCaption;
     property TabHint: TATTabString read FTabHint write FTabHint;
     property TabColor: TColor read FTabColor write SetTabColor default clNone;
+    property TabColorActive: TColor read FTabColorActive write SetTabColorActive default clNone;
+    property TabColorOver: TColor read FTabColorOver write SetTabColorOver default clNone;
     property TabModified: boolean read FTabModified write FTabModified default false;
     property TabImageIndex: TImageIndex read FTabImageIndex write SetTabImageIndex default -1;
     property TabFontStyle: TFontStyles read FTabFontStyle write FTabFontStyle default [];
@@ -612,7 +618,7 @@ type
     function GetTabAt(X, Y: integer; out APressedX: boolean): integer;
     function GetTabData(AIndex: integer): TATTabData;
     function TabCount: integer;
-    procedure AddTab(
+    function AddTab(
       AIndex: integer;
       const ACaption: TATTabString;
       AObject: TObject = nil;
@@ -621,7 +627,7 @@ type
       AImageIndex: TImageIndex = -1;
       APopupMenu: TPopupMenu = nil;
       AFontStyle: TFontStyles = [];
-      const AHint: TATTabString = '');
+      const AHint: TATTabString = ''): TATTabData;
     procedure Clear;
     function DeleteTab(AIndex: integer; AAllowEvent, AWithCancelBtn: boolean;
       AAction: TATTabActionOnClose=aocDefault): boolean;
@@ -880,6 +886,18 @@ end;
 procedure TATTabData.SetTabColor(const Value: TColor);
 begin
   FTabColor := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabData.SetTabColorActive(const Value: TColor);
+begin
+  FTabColorActive := Value;
+  UpdateTabSet;
+end;
+
+procedure TATTabData.SetTabColorOver(const Value: TColor);
+begin
+  FTabColorOver := Value;
   UpdateTabSet;
 end;
 
@@ -1142,6 +1160,8 @@ constructor TATTabData.Create(ACollection: TCollection);
 begin
   inherited;
   TabColor:= clNone;
+  TabColorActive:= clNone;
+  TabColorOver:= clNone;
   TabImageIndex:= -1;
   TabFontStyle:= [];
 end;
@@ -1400,6 +1420,7 @@ var
   TempCaption: TATTabString;
   Extent: TSize;
   bNeedMoreSpace: boolean;
+  Color: TColor;
   ColorPos: TATTabPosition;
   Data: TATTabData;
   i: integer;
@@ -1551,10 +1572,18 @@ begin
     end;
   end;
 
+  Color:= clNone;
+  if ATabMouseOver and not ATabActive and Assigned(Data) and (Data.TabColorOver<>clNone) then
+    Color:= Data.TabColorOver
+  else if ATabActive and Assigned(Data) and (Data.TabColorActive<>clNone) then
+    Color:= Data.TabColorActive
+  else if Assigned(Data) and (Data.TabColor<>clNone) then
+    Color:= Data.TabColor;
+
   //colored band
   if not FOptShowEntireColor then
   begin
-    if Assigned(Data) and (Data.TabColor<>clNone) then
+    if Color<>clNone then
     begin
       case FOptPosition of
         atpTop:
@@ -1568,7 +1597,7 @@ begin
         else
           raise Exception.Create('Unknown tab pos');
       end;
-      DoPaintColoredBand(C, ARect, Data.TabColor, ColorPos);
+      DoPaintColoredBand(C, ARect, Color, ColorPos);
     end;
   end;
 end;
@@ -3046,7 +3075,7 @@ begin
 end;
 
 
-procedure TATTabs.AddTab(
+function TATTabs.AddTab(
   AIndex: integer;
   const ACaption: TATTabString;
   AObject: TObject = nil;
@@ -3055,7 +3084,7 @@ procedure TATTabs.AddTab(
   AImageIndex: TImageIndex = -1;
   APopupMenu: TPopupMenu = nil;
   AFontStyle: TFontStyles = [];
-  const AHint: TATTabString = '');
+  const AHint: TATTabString = ''): TATTabData;
 var
   Data: TATTabData;
 begin
@@ -3080,6 +3109,8 @@ begin
 
   if Assigned(FOnTabMove) then
     FOnTabMove(Self, -1, AIndex);
+
+  Result:= Data;
 end;
 
 function TATTabs.DeleteTab(AIndex: integer;
@@ -4360,7 +4391,9 @@ begin
   if FOptShowEntireColor then
   begin
     Data:= GetTabData(AIndex);
-    if Assigned(Data) and (Data.TabColor<>clNone) then
+    if (FTabIndexOver=AIndex) and not _IsDrag and Assigned(Data) and (Data.TabColorOver<>clNone) then
+      Result:= Data.TabColorOver
+    else if Assigned(Data) and (Data.TabColor<>clNone) then
       Result:= Data.TabColor;
   end;
 end;
@@ -4377,7 +4410,9 @@ begin
   if FOptShowEntireColor then
   begin
     Data:= GetTabData(AIndex);
-    if Assigned(Data) and (Data.TabColor<>clNone) then
+    if Assigned(Data) and (Data.TabColorActive<>clNone) then
+      Result:= Data.TabColorActive
+    else if Assigned(Data) and (Data.TabColor<>clNone) then
       Result:= Data.TabColor;
   end;
 end;
