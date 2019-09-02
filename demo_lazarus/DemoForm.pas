@@ -3,8 +3,8 @@ unit DemoForm;
 interface
 
 uses
-  SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, LCLProc, LCLType, Spin, FileUtil, attabs;
+  SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, ExtCtrls,
+  StdCtrls, LCLProc, LCLType, Spin, ComCtrls, FileUtil, attabs;
 
 type
   { TForm1 }
@@ -36,6 +36,7 @@ type
     GroupBox1: TGroupBox;
     ImageList1: TImageList;
     Label1: TLabel;
+    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -47,6 +48,8 @@ type
     Label2: TLabel;
     chkShowFullColor: TCheckBox;
     edInitial: TSpinEdit;
+    BarScale: TTrackBar;
+    procedure BarScaleChange(Sender: TObject);
     procedure btnStressClick(Sender: TObject);
     procedure btnThemeBlack1Click(Sender: TObject);
     procedure btnThemeBlue1Click(Sender: TObject);
@@ -82,6 +85,7 @@ type
     { Private declarations }
     LockEdit: boolean;
     DirThemes: string;
+    tabTopHeight: integer;
 
     procedure SetTheme(const SName: string);
     procedure TabClickUserButton(Sender: TObject; AIndex: integer);
@@ -148,6 +152,7 @@ begin
   t_top.Images:= ImageList1;
   t_top.OptVarWidth:= true;
   t_top.ShowHint:= true;
+  tabTopHeight:= t_top.Height;
 
   t_top.AddTab(-1, 'Tab'#10'multiline');
   t_top.AddTab(-1, 'Tab middle len', nil, false, clGreen, 1, nil, [], 'tab some hint');
@@ -237,6 +242,14 @@ begin
     t_top.DeleteTab(i, false, false);
   for i:= 1 to 300 do
     t_top.AddTab(-1, IntToStr(i));
+end;
+
+procedure TForm1.BarScaleChange(Sender: TObject);
+begin
+  t_top.OptScalePercents:= BarScale.Position;
+  t_top.Height:= t_top.DoScale(tabTopHeight);
+  t_top.ApplyButtonLayout;
+  t_top.Invalidate;
 end;
 
 procedure TForm1.btnThemeBlack1Click(Sender: TObject);
