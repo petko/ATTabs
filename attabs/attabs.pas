@@ -25,12 +25,13 @@ uses
   {$endif}
   Classes, Types, Graphics,
   Controls, Messages, ImgList,
-  System.UITypes,
   {$ifdef FPC}
   InterfaceBase,
   LCLIntf,
   LCLType,
   LCLProc,
+  {$else}
+  System.UITypes,
   {$endif}
   ATTabs_Picture,
   Menus;
