@@ -1448,7 +1448,7 @@ begin
     if (AImageIndex>=0) and (AImageIndex<FImages.Count) then
     begin
       NIndentTop:=
-        (RectText.Top + RectText.Bottom - FImages.Height + FOptColoredBandSize) div 2;
+        (RectText.Top + RectText.Bottom - FImages.Height + DoScale(FOptColoredBandSize)) div 2;
       case FOptIconPosition of
         aipIconLefterThanText:
           begin
@@ -1477,7 +1477,7 @@ begin
           begin
             FImages.Draw(C,
               (RectText.Left + RectText.Right - FImages.Width) div 2,
-              RectText.Top + FOptColoredBandSize,
+              RectText.Top + DoScale(FOptColoredBandSize),
               AImageIndex);
             Inc(RectText.Top, FImages.Height+DoScale(FOptSpaceBetweenIconCaption));
           end;
@@ -1610,7 +1610,7 @@ begin
       exit;
     end
     else
-      DrawPlusSign(C, ARect, FOptArrowSize, FColorFont);
+      DrawPlusSign(C, ARect, DoScale(FOptArrowSize), FColorFont);
 
     DoPaintAfter(ElemType, -1, C, ARect);
   end;
@@ -1959,7 +1959,7 @@ end;
 
 function TATTabs.GetTabWidth_Plus_Raw: integer;
 begin
-  Result:= FOptArrowSize*4;
+  Result:= DoScale(FOptArrowSize)*4;
 end;
 
 function TATTabs.GetTabRectWidth(APlusBtn: boolean): integer;
@@ -2120,10 +2120,10 @@ begin
         if not Data.TabHideXButton then
           Inc(FTabWidth, DoScale(FOptSpaceXSize));
 
-      if FTabWidth<FOptTabWidthMinimal then
-        FTabWidth:= FOptTabWidthMinimal;
-      if FTabWidth>FOptTabWidthMaximal then
-        FTabWidth:= FOptTabWidthMaximal;
+      if FTabWidth<DoScale(FOptTabWidthMinimal) then
+        FTabWidth:= DoScale(FOptTabWidthMinimal);
+      if FTabWidth>DoScale(FOptTabWidthMaximal) then
+        FTabWidth:= DoScale(FOptTabWidthMaximal);
     end;
 
     if FOptMultiline and (i>0) then
@@ -2573,7 +2573,7 @@ begin
     atpBottom:
       begin
         if not FOptVarWidth then
-          Result:= FTabWidth<=FOptTabWidthMinimal
+          Result:= FTabWidth<=DoScale(FOptTabWidthMinimal)
         else
           Result:= GetMaxScrollPos>0;
       end;
@@ -2601,14 +2601,14 @@ begin
         if NPos>0 then
         begin
           R.Top:= IfThen(FOptPosition=atpBottom, DoScale(FOptTabHeight) + DoScale(FOptSpacer), 0);
-          R.Bottom:= R.Top + FOptScrollMarkSizeY;
+          R.Bottom:= R.Top + DoScale(FOptScrollMarkSizeY);
 
           R.Left:= FRealIndentLeft +
             Max(0, Min(
-              NSize-FOptScrollMarkSizeX,
-              Int64(FScrollPos) * (NSize-FOptScrollMarkSizeX) div NPos
+              NSize-DoScale(FOptScrollMarkSizeX),
+              Int64(FScrollPos) * (NSize-DoScale(FOptScrollMarkSizeX)) div NPos
             ));
-          R.Right:= R.Left + FOptScrollMarkSizeX;
+          R.Right:= R.Left + DoScale(FOptScrollMarkSizeX);
 
           C.Brush.Color:= FColorScrollMark;
           C.FillRect(R);
@@ -2624,20 +2624,20 @@ begin
         begin
           R.Top:= NIndent +
             Max(0, Min(
-              NSize - FOptScrollMarkSizeX,
-              Int64(FScrollPos) * (NSize-FOptScrollMarkSizeX) div NPos
+              NSize - DoScale(FOptScrollMarkSizeX),
+              Int64(FScrollPos) * (NSize-DoScale(FOptScrollMarkSizeX)) div NPos
               ));
-          R.Bottom:= R.Top + FOptScrollMarkSizeX;
+          R.Bottom:= R.Top + DoScale(FOptScrollMarkSizeX);
 
           if FOptPosition=atpLeft then
           begin
             R.Left:= 0;
-            R.Right:= R.Left + FOptScrollMarkSizeY;
+            R.Right:= R.Left + DoScale(FOptScrollMarkSizeY);
           end
           else
           begin
             R.Right:= ClientWidth;
-            R.Left:= R.Right - FOptScrollMarkSizeY;
+            R.Left:= R.Right - DoScale(FOptScrollMarkSizeY);
           end;
 
           C.Brush.Color:= FColorScrollMark;
@@ -3241,7 +3241,7 @@ begin
   else
     NColor:= FColorArrow;
 
-  DrawTriangleType(C, ATyp, ARect, NColor, FOptArrowSize div 2);
+  DrawTriangleType(C, ATyp, ARect, NColor, DoScale(FOptArrowSize) div 2);
 end;
 
 
@@ -3400,8 +3400,8 @@ begin
     - FRealIndentRight) div Count
       - DoScale(FOptSpaceBetweenTabs);
 
-  if Value<FOptTabWidthMinimal then
-    Value:= FOptTabWidthMinimal
+  if Value<DoScale(FOptTabWidthMinimal) then
+    Value:= DoScale(FOptTabWidthMinimal)
   else
   if Value>FOptTabWidthNormal then
     Value:= FOptTabWidthNormal;
@@ -3775,7 +3775,7 @@ begin
         FColorArrow);
 
       DoPaintBgTo(C, R);
-      DrawPlusSign(C, R, FOptArrowSize, NColor);
+      DrawPlusSign(C, R, DoScale(FOptArrowSize), NColor);
       DoPaintAfter(ElemType, -1, C, R);
     end;
 end;
@@ -3803,7 +3803,7 @@ begin
         FColorArrow);
 
       DoPaintBgTo(C, R);
-      DrawCrossSign(C, R, FOptArrowSize, NColor);
+      DrawCrossSign(C, R, DoScale(FOptArrowSize), NColor);
       DoPaintAfter(ElemType, -1, C, R);
     end;
 end;
@@ -4051,26 +4051,26 @@ begin
         R.Left:= ARect.Left+1;
         R.Right:= ARect.Right-1;
         R.Top:= ARect.Top+1-Ord(FOptShowFlat);
-        R.Bottom:= R.Top+FOptColoredBandSize;
+        R.Bottom:= R.Top+DoScale(FOptColoredBandSize);
       end;
     atpBottom:
       begin
         R.Left:= ARect.Left+1;
         R.Right:= ARect.Right-1;
         R.Bottom:= ARect.Bottom;
-        R.Top:= R.Bottom-FOptColoredBandSize;
+        R.Top:= R.Bottom-DoScale(FOptColoredBandSize);
       end;
     atpLeft:
       begin
         R.Left:= ARect.Left+1-Ord(FOptShowFlat);
-        R.Right:= R.Left+FOptColoredBandSize;
+        R.Right:= R.Left+DoScale(FOptColoredBandSize);
         R.Top:= ARect.Top+1;
         R.Bottom:= ARect.Bottom-1;
       end;
     atpRight:
       begin
         R.Right:= ARect.Right-1+Ord(FOptShowFlat);
-        R.Left:= R.Right-FOptColoredBandSize;
+        R.Left:= R.Right-DoScale(FOptColoredBandSize);
         R.Top:= ARect.Top+1;
         R.Bottom:= ARect.Bottom-1;
       end;
