@@ -1975,7 +1975,7 @@ begin
         if APlusBtn then
           Result:= GetTabWidth_Plus_Raw
         else
-          Result:= FOptTabWidthNormal;
+          Result:= DoScale(FOptTabWidthNormal);
         Inc(Result, 2*DoScale(FOptSpaceBeforeText));
       end;
   end;
@@ -2071,7 +2071,7 @@ begin
   if FOptShowPlusTab then
     NWidthPlus:= GetTabRectWidth(true);
   if FOptMultiline then
-    FTabWidth:= FOptTabWidthNormal;
+    FTabWidth:= DoScale(FOptTabWidthNormal);
   NWidthSaved:= FTabWidth;
 
   R.Left:= FRealIndentLeft+DoScale(FOptSpaceSide);
@@ -2540,14 +2540,14 @@ begin
       atpBottom:
         begin
           R.Left:= IfThen(i<=FTabIndex, R.Left, R.Right);
-          R.Left:= R.Left - FOptDropMarkSize div 2;
-          R.Right:= R.Left + FOptDropMarkSize;
+          R.Left:= R.Left - DoScale(FOptDropMarkSize) div 2;
+          R.Right:= R.Left + DoScale(FOptDropMarkSize);
         end;
       else
         begin
           R.Top:= IfThen(i<=FTabIndex, R.Top, R.Bottom);
-          R.Top:= R.Top  - FOptDropMarkSize div 2;
-          R.Bottom:= R.Top + FOptDropMarkSize;
+          R.Top:= R.Top  - DoScale(FOptDropMarkSize) div 2;
+          R.Bottom:= R.Top + DoScale(FOptDropMarkSize);
         end;
     end;
 
@@ -3403,8 +3403,8 @@ begin
   if Value<DoScale(FOptTabWidthMinimal) then
     Value:= DoScale(FOptTabWidthMinimal)
   else
-  if Value>FOptTabWidthNormal then
-    Value:= FOptTabWidthNormal;
+  if Value>DoScale(FOptTabWidthNormal) then
+    Value:= DoScale(FOptTabWidthNormal);
 
   FTabWidth:= Value;
 end;
@@ -3439,7 +3439,7 @@ begin
 
     if not FOptVarWidth then
       if FOptPosition in [atpTop, atpBottom] then
-        if FTabWidth<FOptTabWidthMinimalHidesX then
+        if FTabWidth<DoScale(FOptTabWidthMinimalHidesX) then
         begin
           Result:= false;
           Exit
@@ -4273,7 +4273,7 @@ begin
       end;
     else
       begin
-        for i:= 0 to FOptTabWidthNormal div FOptAnimationStepH-1 do
+        for i:= 0 to DoScale(FOptTabWidthNormal) div FOptAnimationStepH-1 do
         begin
           FAnimationOffset:= i*FOptAnimationStepH;
           Invalidate;
@@ -4315,7 +4315,7 @@ begin
       end;
     else
       begin
-        for i:= FOptTabWidthNormal div FOptAnimationStepH-1 downto 0 do
+        for i:= DoScale(FOptTabWidthNormal) div FOptAnimationStepH-1 downto 0 do
         begin
           FAnimationOffset:= i*FOptAnimationStepH;
           Invalidate;
