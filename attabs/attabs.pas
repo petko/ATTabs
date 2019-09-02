@@ -25,6 +25,7 @@ uses
   {$endif}
   Classes, Types, Graphics,
   Controls, Messages, ImgList,
+  System.UITypes,
   {$ifdef FPC}
   InterfaceBase,
   LCLIntf,
