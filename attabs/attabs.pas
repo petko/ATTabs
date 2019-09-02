@@ -365,6 +365,7 @@ type
     FOptAnimationStepH: integer;
     FOptAnimationPause: integer;
 
+    FOptScalePercents: integer;
     FOptVarWidth: boolean;
     FOptMultiline: boolean;
     FOptTruncateCaption: TATTabTruncateCaption;
@@ -633,6 +634,7 @@ type
     property ScrollPos: integer read FScrollPos write SetScrollPos;
     procedure SetTheme(const Data: TATTabTheme);
     property IsThemed: boolean read FThemed write FThemed;
+    function DoScale(AValue: integer): integer; inline;
 
   protected
     procedure Paint; override;
@@ -730,6 +732,7 @@ type
     property OptButtonSize: integer read FOptButtonSize write FOptButtonSize default _InitOptButtonSize;
     property OptButtonSizeSpace: integer read FOptButtonSizeSpace write FOptButtonSizeSpace default _InitOptButtonSizeSpace;
     property OptButtonSizeSeparator: integer read FOptButtonSizeSeparator write FOptButtonSizeSeparator default _InitOptButtonSizeSeparator;
+    property OptScalePercents: integer read FOptScalePercents write FOptScalePercents default 100; //scaling not working yet
     property OptVarWidth: boolean read FOptVarWidth write SetOptVarWidth default false;
     property OptMultiline: boolean read FOptMultiline write FOptMultiline default false;
     property OptFillWidth: boolean read FOptFillWidth write FOptFillWidth default _InitOptFillWidth;
@@ -1206,6 +1209,7 @@ begin
   FOptAnimationStepH:= _InitOptAnimationStepH;
   FOptAnimationPause:= _InitOptAnimationPause;
 
+  FOptScalePercents:= 100;
   FOptButtonSize:= _InitOptButtonSize;
   FOptButtonSizeSpace:= _InitOptButtonSizeSpace;
   FOptButtonSizeSeparator:= _InitOptButtonSizeSeparator;
@@ -3634,6 +3638,13 @@ begin
   end;
 end;
 
+function TATTabs.DoScale(AValue: integer): integer;
+begin
+  if FOptScalePercents=100 then
+    Result:= AValue
+  else
+    Result:= AValue * FOptScalePercents div 100;
+end;
 
 function TATTabs.GetScrollPageSize: integer;
 const
