@@ -1,4 +1,7 @@
 
+2019.09.02
++ add: OptScalePercents, allows to scale UI elements (without control size) by a factor
+
 2019.07.17
 + add: OptActiveVisibleOnResize
 
