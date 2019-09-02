@@ -699,6 +699,7 @@ type
     {$endif}
     //
     property OnMouseMove;
+    property OnMouseDown;
     property OnMouseUp;
     property OnMouseWheel;
     property OnMouseWheelDown;
