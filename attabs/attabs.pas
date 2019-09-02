@@ -1420,7 +1420,7 @@ var
   TempCaption: TATTabString;
   Extent: TSize;
   bNeedMoreSpace: boolean;
-  Color: TColor;
+  NColor: TColor;
   ColorPos: TATTabPosition;
   Data: TATTabData;
   i: integer;
@@ -1572,18 +1572,20 @@ begin
     end;
   end;
 
-  Color:= clNone;
+  NColor:= clNone;
   if ATabMouseOver and not ATabActive and Assigned(Data) and (Data.TabColorOver<>clNone) then
-    Color:= Data.TabColorOver
-  else if ATabActive and Assigned(Data) and (Data.TabColorActive<>clNone) then
-    Color:= Data.TabColorActive
-  else if Assigned(Data) and (Data.TabColor<>clNone) then
-    Color:= Data.TabColor;
+    NColor:= Data.TabColorOver
+  else
+  if ATabActive and Assigned(Data) and (Data.TabColorActive<>clNone) then
+    NColor:= Data.TabColorActive
+  else
+  if Assigned(Data) and (Data.TabColor<>clNone) then
+    NColor:= Data.TabColor;
 
   //colored band
   if not FOptShowEntireColor then
   begin
-    if Color<>clNone then
+    if NColor<>clNone then
     begin
       case FOptPosition of
         atpTop:
@@ -1597,7 +1599,7 @@ begin
         else
           raise Exception.Create('Unknown tab pos');
       end;
-      DoPaintColoredBand(C, ARect, Color, ColorPos);
+      DoPaintColoredBand(C, ARect, NColor, ColorPos);
     end;
   end;
 end;
@@ -4393,7 +4395,8 @@ begin
     Data:= GetTabData(AIndex);
     if (FTabIndexOver=AIndex) and not _IsDrag and Assigned(Data) and (Data.TabColorOver<>clNone) then
       Result:= Data.TabColorOver
-    else if Assigned(Data) and (Data.TabColor<>clNone) then
+    else
+    if Assigned(Data) and (Data.TabColor<>clNone) then
       Result:= Data.TabColor;
   end;
 end;
@@ -4412,7 +4415,8 @@ begin
     Data:= GetTabData(AIndex);
     if Assigned(Data) and (Data.TabColorActive<>clNone) then
       Result:= Data.TabColorActive
-    else if Assigned(Data) and (Data.TabColor<>clNone) then
+    else
+    if Assigned(Data) and (Data.TabColor<>clNone) then
       Result:= Data.TabColor;
   end;
 end;
