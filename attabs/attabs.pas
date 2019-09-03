@@ -179,14 +179,14 @@ type
   TATTabDrawEvent = procedure (Sender: TObject;
     AElemType: TATTabElemType; ATabIndex: integer;
     ACanvas: TCanvas; const ARect: TRect; var ACanDraw: boolean) of object;
-  TATTabMoveEvent = procedure (Sender: TObject; NFrom, NTo: integer) of object;  
+  TATTabMoveEvent = procedure (Sender: TObject; AIndexFrom, AIndexTo: integer) of object;
   TATTabChangeQueryEvent = procedure (Sender: TObject; ANewTabIndex: integer;
     var ACanChange: boolean) of object;
   TATTabClickUserButton = procedure (Sender: TObject; AIndex: integer) of object;
   TATTabGetTickEvent = function (Sender: TObject; ATabObject: TObject): Int64 of object;
   TATTabGetCloseActionEvent = procedure (Sender: TObject; var AAction: TATTabActionOnClose) of object;
   TATTabDblClickEvent = procedure (Sender: TObject; AIndex: integer) of object;
-  TATTabDropQueryEvent = procedure (Sender: TObject; NFrom, Nto: integer; var ACanDrop: boolean) of object;
+  TATTabDropQueryEvent = procedure (Sender: TObject; AIndexFrom, AIndexTo: integer; var ACanDrop: boolean) of object;
 
 type
   TATTabTriangle = (
