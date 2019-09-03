@@ -3271,12 +3271,14 @@ begin
         atriLeft: Pic:= FPic_Arrow_L_a;
         atriRight: Pic:= FPic_Arrow_R_a;
         atriDown: Pic:= FPic_Arrow_D_a;
+        else exit;
       end
     else
       case ATyp of
         atriLeft: Pic:= FPic_Arrow_L;
         atriRight: Pic:= FPic_Arrow_R;
         atriDown: Pic:= FPic_Arrow_D;
+        else exit;
       end;
     Pic.Draw(C,
       (ARect.Left+ARect.Right-Pic.Width) div 2,
