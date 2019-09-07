@@ -673,8 +673,6 @@ type
     {$ifdef fpc}
     property BorderSpacing;
     {$endif}
-    property ClientHeight;
-    property ClientWidth;
     property Constraints;
     property DragCursor;
     property DragKind;
