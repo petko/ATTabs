@@ -580,7 +580,6 @@ type
     function GetRectOfButtonIndex(AIndex: integer; AtLeft: boolean): TRect;
     function GetScrollPageSize: integer;
     procedure SetOptButtonLayout(const AValue: string);
-    procedure SetOptMouseDragEnabled(AValue: boolean);
     procedure SetOptScalePercents(AValue: integer);
     procedure SetOptVarWidth(AValue: boolean);
     procedure SetScrollPos(AValue: integer);
@@ -808,7 +807,7 @@ type
     property OptMouseMiddleClickClose: boolean read FOptMouseMiddleClickClose write FOptMouseMiddleClickClose default _InitOptMouseMiddleClickClose;
     property OptMouseDoubleClickClose: boolean read FOptMouseDoubleClickClose write FOptMouseDoubleClickClose default _InitOptMouseDoubleClickClose;
     property OptMouseDoubleClickPlus: boolean read FOptMouseDoubleClickPlus write FOptMouseDoubleClickPlus default _InitOptMouseDoubleClickPlus;
-    property OptMouseDragEnabled: boolean read FOptMouseDragEnabled write SetOptMouseDragEnabled default _InitOptMouseDragEnabled;
+    property OptMouseDragEnabled: boolean read FOptMouseDragEnabled write FOptMouseDragEnabled default _InitOptMouseDragEnabled;
     property OptMouseDragOutEnabled: boolean read FOptMouseDragOutEnabled write FOptMouseDragOutEnabled default _InitOptMouseDragOutEnabled;
 
     property OptHintForX: string read FHintForX write FHintForX;
@@ -2696,18 +2695,6 @@ begin
   FOptButtonLayout:= AValue;
   ApplyButtonLayout;
   Invalidate;
-end;
-
-procedure TATTabs.SetOptMouseDragEnabled(AValue: boolean);
-begin
-  if FOptMouseDragEnabled=AValue then Exit;
-
-  {$ifdef FPC}
-  FOptMouseDragEnabled:= AValue;
-  {$else}
-  ShowMessage('Dragging of tabs is not yet implemented under Delphi, sorry');
-  FOptMouseDragEnabled:= false;
-  {$endif}
 end;
 
 procedure TATTabs.SetOptScalePercents(AValue: integer);
